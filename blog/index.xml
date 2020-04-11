@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blogs on Tokamako</title>
+    <link>https://huanglei.rocks/blog/</link>
+    <description>Recent content in Blogs on Tokamako</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
+    <lastBuildDate>Sat, 11 Apr 2020 23:42:03 +0800</lastBuildDate>
+    
+	<atom:link href="https://huanglei.rocks/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Test</title>
+      <link>https://huanglei.rocks/blog/test/</link>
+      <pubDate>Sat, 11 Apr 2020 23:42:03 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/blog/test/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

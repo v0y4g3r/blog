@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tokamako</title>
+    <link>https://huanglei.rocks/</link>
+    <description>Recent content on Tokamako</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
+    <lastBuildDate>Sat, 11 Apr 2020 23:42:03 +0800</lastBuildDate>
+    
+	<atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Test</title>
+      <link>https://huanglei.rocks/blog/test/</link>
+      <pubDate>Sat, 11 Apr 2020 23:42:03 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/blog/test/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Test</title>
+      <link>https://huanglei.rocks/posts/test/</link>
+      <pubDate>Sat, 11 Apr 2020 23:26:41 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/test/</guid>
+      <description>fff</description>
+    </item>
+    
+    <item>
+      <title>World</title>
+      <link>https://huanglei.rocks/posts/world/</link>
+      <pubDate>Sat, 11 Apr 2020 23:17:44 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/world/</guid>
+      <description>fadaasasa  sa sa sa  /* HelloWorld.java */ public class HelloWorld { public static void main(String[] args) { System.out.println(&amp;#34;Hello World!&amp;#34;); } } </description>
+    </item>
+    
+    <item>
+      <title>Hello</title>
+      <link>https://huanglei.rocks/posts/hello/</link>
+      <pubDate>Sat, 11 Apr 2020 23:14:21 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/hello/</guid>
+      <description>This is a test blog Step 4: Add Some Content You can manually create content files (for example as content//.) and provide metadata in them, however you can use the new command to do few things for you (like add title and date):Step 4: Add Some Content You can manually create content files (for example as content//.) and provide metadata in them, however you can use the new command to do few things for you (like add title and date):Step 4: Add Some Content You can manually create content files (for example as content//.</description>
+    </item>
+    
+  </channel>
+</rss>

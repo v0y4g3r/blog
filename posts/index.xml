@@ -1,0 +1,67 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Posts on Tokamako</title>
+		<link>https://huanglei.rocks/posts/</link>
+		<description>Recent content in Posts on Tokamako</description>
+		<generator>Hugo -- gohugo.io</generator>
+		<language>en-us</language>
+		<copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
+		<lastBuildDate>Sat, 11 Apr 2020 23:26:41 +0800</lastBuildDate>
+		<atom:link href="https://huanglei.rocks/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Test</title>
+			<link>https://huanglei.rocks/posts/test/</link>
+			<pubDate>Sat, 11 Apr 2020 23:26:41 +0800</pubDate>
+			
+			<guid>https://huanglei.rocks/posts/test/</guid>
+			<description>fff</description>
+			<content type="html"><![CDATA[<p>fff</p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>World</title>
+			<link>https://huanglei.rocks/posts/world/</link>
+			<pubDate>Sat, 11 Apr 2020 23:17:44 +0800</pubDate>
+			
+			<guid>https://huanglei.rocks/posts/world/</guid>
+			<description>fadaasasa  sa sa sa  /* HelloWorld.java */ public class HelloWorld { public static void main(String[] args) { System.out.println(&amp;#34;Hello World!&amp;#34;); } } </description>
+			<content type="html"><![CDATA[<h1 id="fadaasasa">fadaasasa</h1>
+<ul>
+<li>sa</li>
+<li>sa</li>
+<li>sa</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="cm">/* HelloWorld.java
+</span><span class="cm"> */</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorld</span>
+<span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Hello World!&#34;</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>]]></content>
+		</item>
+		
+		<item>
+			<title>Hello</title>
+			<link>https://huanglei.rocks/posts/hello/</link>
+			<pubDate>Sat, 11 Apr 2020 23:14:21 +0800</pubDate>
+			
+			<guid>https://huanglei.rocks/posts/hello/</guid>
+			<description>This is a test blog Step 4: Add Some Content You can manually create content files (for example as content//.) and provide metadata in them, however you can use the new command to do few things for you (like add title and date):Step 4: Add Some Content You can manually create content files (for example as content//.) and provide metadata in them, however you can use the new command to do few things for you (like add title and date):Step 4: Add Some Content You can manually create content files (for example as content//.</description>
+			<content type="html"><![CDATA[<h1 id="this-is-a-test-blog">This is a test blog</h1>
+<p>Step 4: Add Some Content
+You can manually create content files (for example as content/<!-- raw HTML omitted -->/<!-- raw HTML omitted -->.<!-- raw HTML omitted -->) and provide metadata in them, however you can use the new command to do few things for you (like add title and date):Step 4: Add Some Content
+You can manually create content files (for example as content/<!-- raw HTML omitted -->/<!-- raw HTML omitted -->.<!-- raw HTML omitted -->) and provide metadata in them, however you can use the new command to do few things for you (like add title and date):Step 4: Add Some Content
+You can manually create content files (for example as content/<!-- raw HTML omitted -->/<!-- raw HTML omitted -->.<!-- raw HTML omitted -->) and provide metadata in them, however you can use the new command to do few things for you (like add title and date):Step 4: Add Some Content
+You can manually create content files (for example as content/<!-- raw HTML omitted -->/<!-- raw HTML omitted -->.<!-- raw HTML omitted -->) and provide metadata in them, however you can use the new command to do few things for you (like add title and date):Step 4: Add Some Content
+You can manually create content files (for example as content/<!-- raw HTML omitted -->/<!-- raw HTML omitted -->.<!-- raw HTML omitted -->) and provide metadata in them, however you can use the new command to do few things for you (like add title and date):Step 4: Add Some Content
+You can manually create content files (for example as content/<!-- raw HTML omitted -->/<!-- raw HTML omitted -->.<!-- raw HTML omitted -->) and provide metadata in them, however you can use the new command to do few things for you (like add title and date):</p>
+]]></content>
+		</item>
+		
+	</channel>
+</rss>
