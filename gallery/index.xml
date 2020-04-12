@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Galleries on Tokamako</title>
+    <link>https://huanglei.rocks/gallery/</link>
+    <description>Recent content in Galleries on Tokamako</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
+    <lastBuildDate>Sat, 04 Apr 2020 12:00:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://huanglei.rocks/gallery/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>April 2020</title>
+      <link>https://huanglei.rocks/gallery/2020/</link>
+      <pubDate>Sat, 04 Apr 2020 12:00:00 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/gallery/2020/</guid>
+      <description>Xihu, Hangzhou </description>
+    </item>
+    
+    <item>
+      <title>2019</title>
+      <link>https://huanglei.rocks/gallery/2019/</link>
+      <pubDate>Tue, 31 Dec 2019 23:59:59 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/gallery/2019/</guid>
+      <description>Temple on Qiyun Moutain Sunset, Shenzhen </description>
+    </item>
+    
+  </channel>
+</rss>
