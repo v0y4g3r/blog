@@ -13,6 +13,18 @@
     
     
     <item>
+      <title>Add MathJax and Graphviz support for HUGO</title>
+      <link>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</link>
+      <pubDate>Sun, 12 Apr 2020 14:22:22 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</guid>
+      <description>Get into your theme folder
+  Find some directory named layouts/posts/single.html
+  Inside the {{ define main }} block, paste following snippets
+  {{ if .Params.viz }} &amp;lt;script type=&amp;#34;text/javascript&amp;#34; src=&amp;#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&amp;#34;&amp;gt; &amp;lt;/script&amp;gt; &amp;lt;script type=&amp;#34;text/javascript&amp;#34;&amp;gt; (function(){ var vizPrefix = &amp;#34;language-viz-&amp;#34;; Array.prototype.forEach.call(document.querySelectorAll(&amp;#34;[class^=&amp;#34; + vizPrefix + &amp;#34;]&amp;#34;), function(x){ var engine; x.getAttribute(&amp;#34;class&amp;#34;).split(&amp;#34; &amp;#34;).forEach(function(cls){ if (cls.startsWith(vizPrefix)) { engine = cls.substr(vizPrefix.length); } }); var image = new DOMParser().parseFromString(Viz(x.innerText, {format:&amp;#34;svg&amp;#34;, engine:engine}), &amp;#34;image/svg+xml&amp;#34;); x.parentNode.insertBefore(image.documentElement, x); x.</description>
+    </item>
+    
+    <item>
       <title>About Me</title>
       <link>https://huanglei.rocks/about-me/</link>
       <pubDate>Sun, 12 Apr 2020 11:37:42 +0800</pubDate>
@@ -31,30 +43,12 @@
     </item>
     
     <item>
-      <title>Test</title>
-      <link>https://huanglei.rocks/posts/test/</link>
+      <title>Grapphviz and mathjax demo</title>
+      <link>https://huanglei.rocks/posts/math-and-dot-demo/</link>
       <pubDate>Sat, 11 Apr 2020 23:26:41 +0800</pubDate>
       
-      <guid>https://huanglei.rocks/posts/test/</guid>
-      <description>digraph g{ rankdir=LR; node [shape=record,width=01,height=.1]; a[label=&amp;quot;&amp;lt;1&amp;gt;Hash Table|&amp;lt;2&amp;gt;Node|&amp;lt;3&amp;gt;Node|...|&amp;lt;4&amp;gt;TreeNode&amp;quot;]; { // graph[rankdir=LR] node1[label=&amp;quot;{&amp;lt;1&amp;gt;A1|&amp;lt;2&amp;gt;A2|...|An}&amp;quot;] node2[label=&amp;quot;{&amp;lt;1&amp;gt;B1|&amp;lt;2&amp;gt;B2|...|Bn}&amp;quot;] // node3[label=&amp;quot;{&amp;lt;1&amp;gt;C1|&amp;lt;2&amp;gt;C2}&amp;quot;] subgraph cluster_treenode{ penwidth=0; node[shape=circle]; root[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2]; n1[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n2[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n3[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n4[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n5[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n6[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] root-&amp;gt;n1; n1-&amp;gt;n2; n1-&amp;gt;n3; root-&amp;gt;n4; n4-&amp;gt;n5; n4-&amp;gt;n6; } } a:2:e-&amp;gt;node1:1 [style=dashed]; a:3:e-&amp;gt;node2:1; a:4:e-&amp;gt;root; // node3:d-&amp;gt;node3:sa2; } </description>
-    </item>
-    
-    <item>
-      <title>World</title>
-      <link>https://huanglei.rocks/posts/world/</link>
-      <pubDate>Sat, 11 Apr 2020 23:17:44 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/posts/world/</guid>
-      <description>fadaasasa  sa sa sa  /* HelloWorld.java */ public class HelloWorld { public static void main(String[] args) { System.out.println(&amp;#34;Hello World!&amp;#34;); } } </description>
-    </item>
-    
-    <item>
-      <title>Hello</title>
-      <link>https://huanglei.rocks/posts/hello/</link>
-      <pubDate>Sat, 11 Apr 2020 23:14:21 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/posts/hello/</guid>
-      <description>This is a test blog Step 4: Add Some Content You can manually create content files (for example as content//.) and provide metadata in them, however you can use the new command to do few things for you (like add title and date):Step 4: Add Some Content You can manually create content files (for example as content//.) and provide metadata in them, however you can use the new command to do few things for you (like add title and date):Step 4: Add Some Content You can manually create content files (for example as content//.</description>
+      <guid>https://huanglei.rocks/posts/math-and-dot-demo/</guid>
+      <description>digraph g{ rankdir=LR; node [shape=record,width=01,height=.1]; a[label=&amp;quot;&amp;lt;1&amp;gt;Hash Table|&amp;lt;2&amp;gt;Node|&amp;lt;3&amp;gt;Node|...|&amp;lt;4&amp;gt;TreeNode&amp;quot;]; { // graph[rankdir=LR] node1[label=&amp;quot;{&amp;lt;1&amp;gt;A1|&amp;lt;2&amp;gt;A2|...|An}&amp;quot;] node2[label=&amp;quot;{&amp;lt;1&amp;gt;B1|&amp;lt;2&amp;gt;B2|...|Bn}&amp;quot;] // node3[label=&amp;quot;{&amp;lt;1&amp;gt;C1|&amp;lt;2&amp;gt;C2}&amp;quot;] subgraph cluster_treenode{ penwidth=0; node[shape=circle]; root[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2]; n1[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n2[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n3[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n4[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n5[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n6[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] root-&amp;gt;n1; n1-&amp;gt;n2; n1-&amp;gt;n3; root-&amp;gt;n4; n4-&amp;gt;n5; n4-&amp;gt;n6; } } a:2:e-&amp;gt;node1:1 [style=dashed]; a:3:e-&amp;gt;node2:1; a:4:e-&amp;gt;root; // node3:d-&amp;gt;node3:sa2; } $$f(a) = \frac{1}{2\pi i} \oint\frac{f(z)}{z-a}dz$$</description>
     </item>
     
   </channel>

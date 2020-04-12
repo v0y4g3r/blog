@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>hugo on Tokamako</title>
+    <link>https://huanglei.rocks/tags/hugo/</link>
+    <description>Recent content in hugo on Tokamako</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
+    <lastBuildDate>Sun, 12 Apr 2020 14:22:22 +0800</lastBuildDate>
+    
+	<atom:link href="https://huanglei.rocks/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Add MathJax and Graphviz support for HUGO</title>
+      <link>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</link>
+      <pubDate>Sun, 12 Apr 2020 14:22:22 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</guid>
+      <description>Get into your theme folder
+  Find some directory named layouts/posts/single.html
+  Inside the {{ define main }} block, paste following snippets
+  {{ if .Params.viz }} &amp;lt;script type=&amp;#34;text/javascript&amp;#34; src=&amp;#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&amp;#34;&amp;gt; &amp;lt;/script&amp;gt; &amp;lt;script type=&amp;#34;text/javascript&amp;#34;&amp;gt; (function(){ var vizPrefix = &amp;#34;language-viz-&amp;#34;; Array.prototype.forEach.call(document.querySelectorAll(&amp;#34;[class^=&amp;#34; + vizPrefix + &amp;#34;]&amp;#34;), function(x){ var engine; x.getAttribute(&amp;#34;class&amp;#34;).split(&amp;#34; &amp;#34;).forEach(function(cls){ if (cls.startsWith(vizPrefix)) { engine = cls.substr(vizPrefix.length); } }); var image = new DOMParser().parseFromString(Viz(x.innerText, {format:&amp;#34;svg&amp;#34;, engine:engine}), &amp;#34;image/svg+xml&amp;#34;); x.parentNode.insertBefore(image.documentElement, x); x.</description>
+    </item>
+    
+  </channel>
+</rss>
