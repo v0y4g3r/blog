@@ -5,7 +5,7 @@ draft: false
 ---
 
 ![banner](https://gw.alipayobjects.com/zos/antfincdn/oCf%26nwiV%26R/XQARE1908-small.jpg)
-> Drina River, border between Bosnia-Herzegovina and Serbia
+> River Drina, border between Bosnia-Herzegovina and Serbia
 
 Full-time coder, part-time photographer @HANGZHOU
 
