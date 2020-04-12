@@ -30,7 +30,7 @@
       <pubDate>Sun, 12 Apr 2020 11:37:42 +0800</pubDate>
       
       <guid>https://huanglei.rocks/about-me/</guid>
-      <description> Drina River, border between Bosnia-Herzegovina and Serbia
+      <description> River Drina, border between Bosnia-Herzegovina and Serbia
  Full-time coder, part-time photographer @HANGZHOU
  PEK/PVG/SHA/SZX/HGH/NKG NRT SIN SGN CDG/ORY MAD/BCN SVO/LED KBP/ODS BEG REP  </description>
     </item>
@@ -51,6 +51,24 @@
       
       <guid>https://huanglei.rocks/posts/math-and-dot-demo/</guid>
       <description>digraph g{ rankdir=LR; node [shape=record,width=01,height=.1]; a[label=&amp;quot;&amp;lt;1&amp;gt;Hash Table|&amp;lt;2&amp;gt;Node|&amp;lt;3&amp;gt;Node|...|&amp;lt;4&amp;gt;TreeNode&amp;quot;]; { // graph[rankdir=LR] node1[label=&amp;quot;{&amp;lt;1&amp;gt;A1|&amp;lt;2&amp;gt;A2|...|An}&amp;quot;] node2[label=&amp;quot;{&amp;lt;1&amp;gt;B1|&amp;lt;2&amp;gt;B2|...|Bn}&amp;quot;] // node3[label=&amp;quot;{&amp;lt;1&amp;gt;C1|&amp;lt;2&amp;gt;C2}&amp;quot;] subgraph cluster_treenode{ penwidth=0; node[shape=circle]; root[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2]; n1[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n2[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n3[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n4[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n5[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n6[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] root-&amp;gt;n1; n1-&amp;gt;n2; n1-&amp;gt;n3; root-&amp;gt;n4; n4-&amp;gt;n5; n4-&amp;gt;n6; } } a:2:e-&amp;gt;node1:1 [style=dashed]; a:3:e-&amp;gt;node2:1; a:4:e-&amp;gt;root; // node3:d-&amp;gt;node3:sa2; } $$f(a) = \frac{1}{2\pi i} \oint\frac{f(z)}{z-a}dz$$</description>
+    </item>
+    
+    <item>
+      <title>April 2020</title>
+      <link>https://huanglei.rocks/gallery/2020/</link>
+      <pubDate>Sat, 04 Apr 2020 12:00:00 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/gallery/2020/</guid>
+      <description>Xihu, Hangzhou </description>
+    </item>
+    
+    <item>
+      <title>2019</title>
+      <link>https://huanglei.rocks/gallery/2019/</link>
+      <pubDate>Tue, 31 Dec 2019 23:59:59 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/gallery/2019/</guid>
+      <description>Temple on Qiyun Moutain Sunset, Shenzhen </description>
     </item>
     
   </channel>
