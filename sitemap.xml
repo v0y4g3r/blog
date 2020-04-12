@@ -3,17 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://huanglei.rocks/about-me/</loc>
+    <lastmod>2020-04-12T11:37:42+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://huanglei.rocks/</loc>
+    <lastmod>2020-04-12T11:37:42+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://huanglei.rocks/blog/</loc>
     <lastmod>2020-04-11T23:42:03+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://huanglei.rocks/blog/test/</loc>
-    <lastmod>2020-04-11T23:42:03+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://huanglei.rocks/</loc>
     <lastmod>2020-04-11T23:42:03+08:00</lastmod>
   </url>
   
