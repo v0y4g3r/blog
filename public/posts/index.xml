@@ -15,9 +15,42 @@
 			<pubDate>Sat, 11 Apr 2020 23:26:41 +0800</pubDate>
 			
 			<guid>https://huanglei.rocks/posts/test/</guid>
-			<description>fff</description>
-			<content type="html"><![CDATA[<p>fff</p>
-]]></content>
+			<description>digraph g{ rankdir=LR; node [shape=record,width=01,height=.1]; a[label=&amp;quot;&amp;lt;1&amp;gt;Hash Table|&amp;lt;2&amp;gt;Node|&amp;lt;3&amp;gt;Node|...|&amp;lt;4&amp;gt;TreeNode&amp;quot;]; { // graph[rankdir=LR] node1[label=&amp;quot;{&amp;lt;1&amp;gt;A1|&amp;lt;2&amp;gt;A2|...|An}&amp;quot;] node2[label=&amp;quot;{&amp;lt;1&amp;gt;B1|&amp;lt;2&amp;gt;B2|...|Bn}&amp;quot;] // node3[label=&amp;quot;{&amp;lt;1&amp;gt;C1|&amp;lt;2&amp;gt;C2}&amp;quot;] subgraph cluster_treenode{ penwidth=0; node[shape=circle]; root[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2]; n1[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n2[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n3[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n4[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n5[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n6[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] root-&amp;gt;n1; n1-&amp;gt;n2; n1-&amp;gt;n3; root-&amp;gt;n4; n4-&amp;gt;n5; n4-&amp;gt;n6; } } a:2:e-&amp;gt;node1:1 [style=dashed]; a:3:e-&amp;gt;node2:1; a:4:e-&amp;gt;root; // node3:d-&amp;gt;node3:sa2; } </description>
+			<content type="html"><![CDATA[<pre><code class="language-viz-dot" data-lang="viz-dot">digraph g{
+    rankdir=LR;
+    node [shape=record,width=01,height=.1];
+	a[label=&quot;&lt;1&gt;Hash Table|&lt;2&gt;Node|&lt;3&gt;Node|...|&lt;4&gt;TreeNode&quot;];
+    {
+        // graph[rankdir=LR]    
+        node1[label=&quot;{&lt;1&gt;A1|&lt;2&gt;A2|...|An}&quot;]
+        node2[label=&quot;{&lt;1&gt;B1|&lt;2&gt;B2|...|Bn}&quot;]
+        // node3[label=&quot;{&lt;1&gt;C1|&lt;2&gt;C2}&quot;]
+        subgraph cluster_treenode{
+            penwidth=0;
+            node[shape=circle];
+            root[label=&quot;&quot;, style=filled,fillcolor=black,width=.2];
+            n1[label=&quot;&quot;, style=filled,fillcolor=red,width=.2]
+            n2[label=&quot;&quot;, style=filled,fillcolor=black,width=.2]
+            n3[label=&quot;&quot;, style=filled,fillcolor=black,width=.2]
+            n4[label=&quot;&quot;, style=filled,fillcolor=red,width=.2]
+            n5[label=&quot;&quot;, style=filled,fillcolor=black,width=.2]
+            n6[label=&quot;&quot;, style=filled,fillcolor=black,width=.2]
+            root-&gt;n1;
+            n1-&gt;n2;
+            n1-&gt;n3;
+            root-&gt;n4;
+            n4-&gt;n5;
+            n4-&gt;n6;
+        }
+    }
+    
+    a:2:e-&gt;node1:1 [style=dashed];
+    a:3:e-&gt;node2:1;    
+    a:4:e-&gt;root;    
+
+    // node3:d-&gt;node3:sa2;
+}
+</code></pre>]]></content>
 		</item>
 		
 		<item>
