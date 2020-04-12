@@ -1,5 +1,5 @@
 ---
-title: "Grapphviz and mathjax demo"
+title: "Graphviz and mathjax demo"
 date: 2020-04-11T23:26:41+08:00
 draft: true
 viz: true
