@@ -1,65 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
-  <url>
-    <loc>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</loc>
-    <lastmod>2020-04-12T14:22:22+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://huanglei.rocks/tags/hugo/</loc>
-    <lastmod>2020-04-12T14:22:22+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://huanglei.rocks/posts/</loc>
-    <lastmod>2020-04-12T14:22:22+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://huanglei.rocks/tags/</loc>
-    <lastmod>2020-04-12T14:22:22+08:00</lastmod>
-  </url>
-  
   <url>
     <loc>https://huanglei.rocks/about-me/</loc>
     <lastmod>2020-04-12T11:37:42+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://huanglei.rocks/</loc>
-    <lastmod>2020-04-12T11:37:42+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://huanglei.rocks/blog/</loc>
-    <lastmod>2020-04-11T23:42:03+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://huanglei.rocks/blog/test/</loc>
-    <lastmod>2020-04-11T23:42:03+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://huanglei.rocks/posts/math-and-dot-demo/</loc>
-    <lastmod>2020-04-11T23:26:41+08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huanglei.rocks/gallery/2020/</loc>
     <lastmod>2020-04-04T12:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huanglei.rocks/gallery/</loc>
     <lastmod>2020-04-04T12:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
+    <loc>https://huanglei.rocks/</loc>
+    <lastmod>2020-04-04T12:00:00+08:00</lastmod>
+  </url><url>
     <loc>https://huanglei.rocks/gallery/2019/</loc>
     <lastmod>2019-12-31T23:59:59+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/tags/</loc>
   </url>
-  
 </urlset>
