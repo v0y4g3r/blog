@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#282c34">
+	<meta name="msapplication-TileColor" content="#282c34">
+<meta itemprop="name" content="Object Safety">
+<meta itemprop="description" content="Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。 ​
+为什么需要 object safety？ ​
+Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
+Trait object 的内存布局 ​
+  Where Self Meets Sized: Revisiting Object Safety   ​
+首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
+ trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​
+接下来是关于方法的 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性："><meta itemprop="datePublished" content="2022-02-09T21:57:33+08:00" />
+<meta itemprop="dateModified" content="2022-02-09T21:57:33+08:00" />
+<meta itemprop="wordCount" content="267">
+<meta itemprop="keywords" content="untagged," /><meta property="og:title" content="Object Safety" />
+<meta property="og:description" content="Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。 ​
+为什么需要 object safety？ ​
+Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
+Trait object 的内存布局 ​
+  Where Self Meets Sized: Revisiting Object Safety   ​
+首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
+ trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​
+接下来是关于方法的 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huanglei.rocks/posts/object-safety/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-02-09T21:57:33+08:00" />
+<meta property="article:modified_time" content="2022-02-09T21:57:33+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Object Safety"/>
+<meta name="twitter:description" content="Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。 ​
+为什么需要 object safety？ ​
+Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
+Trait object 的内存布局 ​
+  Where Self Meets Sized: Revisiting Object Safety   ​
+首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
+ trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​
+接下来是关于方法的 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性："/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>Object Safety</title>
+	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.037b6ee8f8c1baab6a3d0a9da11c3ff18a7552471f16c59fd98538d5ce99208b.css" integrity="sha256-A3tu6PjBuqtqPQqdoRw/8Yp1UkcfFsWf2YU41c6ZIIs=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://huanglei.rocks">Tokamako</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://huanglei.rocks/posts/">Posts</a>
+				<a href="https://huanglei.rocks/gallery/">Gallery</a>
+				<a href="https://huanglei.rocks/about-me/">About Me</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<span class="hdr-social hide-in-mobile"><a href="https://twitter.com/MrSatangel" target="_blank" rel="noopener me" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a><a href="https://www.instagram.com/tokamako/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/RayneHwang" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://huanglei.rocks/posts/">Posts</a></li>
+			<li><a href="https://huanglei.rocks/gallery/">Gallery</a></li>
+			<li><a href="https://huanglei.rocks/about-me/">About Me</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Feb 9, 2022</span></div>
+				<h1>Object Safety</h1>
+			</header>
+			<div class="content">
+				<p>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。
+​</p>
+<p>为什么需要 object safety？
+​</p>
+<p>Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。
+​</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2022/png/139136/1644393130537-0059bb37-3cd3-451f-b374-428184f97927.png#clientId=ue18c06d3-2796-4&amp;crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;from=paste&amp;height=355&amp;id=u9ce60c7c&amp;margin=%5Bobject%20Object%5D&amp;name=image.png&amp;originHeight=988&amp;originWidth=1488&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;size=80336&amp;status=done&amp;style=none&amp;taskId=u408cafaf-1752-477a-af98-d4e4003d9c4&amp;title=&amp;width=534" alt="image.png">
+<em>Trait object 的内存布局</em>
+​</p>
+<blockquote>
+<ul>
+<li><a href="https://huonw.github.io/blog/2015/05/where-self-meets-sized-revisiting-object-safety/">Where Self Meets Sized: Revisiting Object Safety</a></li>
+</ul>
+</blockquote>
+<p>​</p>
+<p>首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：</p>
+<ul>
+<li>trait 的类型不能限定为 <code>Self: Sized</code>1️⃣；</li>
+<li>trait 中所定义的所有方法都是 object-safe 的2️⃣。</li>
+</ul>
+<p>​</p>
+<p>接下来是关于方法的
+一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：</p>
+<ul>
+<li>方法 receiver 的类型限定是 <code>Self: Sized</code>3️⃣；或者</li>
+<li>满足以下所有条件：
+<ul>
+<li>方法不能有泛型参数4️⃣；且</li>
+<li>receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型5️⃣。目前只包括<code>self</code>/ <code>&amp;self</code> / <code>&amp;mut self</code>/ <code>self: Box&lt;Self&gt;</code>。以后可能也会扩展到 <code>Rc&lt;Self&gt;</code>等等。</li>
+<li><code>Self</code>类型只能用作 receiver 6️⃣</li>
+</ul>
+</li>
+</ul>
+<p>​</p>
+<p>1️⃣ 也就是说，如下的 trait 是不能用作 trait object 的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">trait</span><span class="w"> </span><span class="n">Test</span>: <span class="nb">Sized</span> <span class="p">{</span><span class="w">
+</span><span class="w">	</span><span class="k">fn</span> <span class="nf">some_method</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">);</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></div><p>为什么trait 的方法的 receiver 不能限定为 <code>Self: Sized</code>？因为 trait object 本身是动态分派的，编译期无法确定 trait object 背后的 Self 具体是什么类型，也就无法确定 Self 的大小。如果这个时候 trait object 的方法又要求 Self 大小可确定，那就互相矛盾了。需要注意的是，trait object 自身的大小是可确定的，因为其只包括指向数据的指针和指向 vtable 的指针而已。
+​</p>
+<p>2️⃣ 要求 trait 所有的方法都是对象安全的也是为了确保动态分派的时候能够正确从 vtable 中找到方法进行调用。
+​</p>
+<p>3️⃣ 由于 trait object 自身是 Unsized，如果方法限定了<code>Self: Sized</code>，那么一定无法通过 trait object 去调用。也就不会导致动态分派的 object safety 问题，因此一个限定了 <code>Self: Sized</code>的 trait 方法也被认为是 object-safe 的。
+​</p>
+<blockquote>
+<ul>
+<li><a href="https://stackoverflow.com/questions/42620022/why-does-a-generic-method-inside-a-trait-require-trait-object-to-be-sized">Why does a generic method inside a trait require trait object to be sized? - Stack Overflow</a></li>
+<li><a href="https://github.com/rust-lang/rust/issues/22031">A method marked where Self: Sized on a trait should not be considered during object safety checks #22031</a></li>
+</ul>
+</blockquote>
+<p>​</p>
+<p>4️⃣ 如果方法不限定 <code>Self: Sized</code> ，就意味着那么这个方法首先不能有泛型参数。如果有泛型参数，那么 vtable 中的方法列表大小是难以确定的。当然如果非要做，在编译期，rust 编译器可以拿到 trait 的所有具体实现，然后为每一个具体实现在 vtable 生成一个特化的方法项。但是首先这会大大降低编译速度，其次也会引入极大的复杂性。因此 Rust 的 trait object 直接禁止了这种使用场景。
+​</p>
+<blockquote>
+<p><a href="https://stackoverflow.com/questions/67767207/why-are-trait-methods-with-generic-type-parameters-object-unsafe">Why are trait methods with generic type parameters object-unsafe?</a></p>
+</blockquote>
+<p>​</p>
+<p>5️⃣ 如果方法没有 receiver，那么使用 trait object 毫无意义，因为这个方法的调用根本不需要 trait object 里面的 data 指针。
+​</p>
+<p>6️⃣ 假设 trait 定义了这么一个方法：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">trait</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">	</span><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">Self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Self</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></div><p>那么这个 trait 的 duplicate 方法要求返回的类型和方法 receiver 的类型是一样的。如果 Trait 是静态分派，那么在编译器就可以确定所有可能的方法签名。比如结构体 A、B 实现了 Test trait，那么 duplicate 方法所有可能的签名是：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">A</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">A</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">B</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">B</span><span class="p">;</span><span class="w">
+</span></code></pre></div><p>而在动态分派下，从一个 trait object 发起方法的调用，也就无法在编译期约束不同位置的 Self 类型都是一致的，完全有可能出现 下面的情况。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">B</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">A</span><span class="p">;</span><span class="w">
+</span></code></pre></div><ul>
+<li><a href="https://rust-lang.github.io/rfcs/0255-object-safety.html">https://rust-lang.github.io/rfcs/0255-object-safety.html</a></li>
+</ul>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/untagged">untagged</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>267 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-02-09 21:57 &#43;0800</p>
+			</footer>
+		</article>
+		<div class="post-nav thin">
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2022 <a href="https://huanglei.rocks">Lei, HUANG</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
+		<p>
+			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a> &#183; <a href="https://huanglei.rocks/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+		</p>
+	</footer>
+
+
+
+	<script src="https://huanglei.rocks/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>

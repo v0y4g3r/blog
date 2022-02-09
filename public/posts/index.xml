@@ -6,134 +6,94 @@
 		<generator>Hugo -- gohugo.io</generator>
 		<language>en-us</language>
 		<copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-		<lastBuildDate>Sun, 12 Apr 2020 14:22:22 +0800</lastBuildDate>
+		<lastBuildDate>Wed, 09 Feb 2022 21:57:33 +0800</lastBuildDate>
 		<atom:link href="https://huanglei.rocks/posts/index.xml" rel="self" type="application/rss+xml" />
 		
 		<item>
-			<title>Add MathJax and Graphviz support for HUGO</title>
-			<link>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</link>
-			<pubDate>Sun, 12 Apr 2020 14:22:22 +0800</pubDate>
+			<title>Object Safety</title>
+			<link>https://huanglei.rocks/posts/object-safety/</link>
+			<pubDate>Wed, 09 Feb 2022 21:57:33 +0800</pubDate>
 			
-			<guid>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</guid>
-			<description>Get into your theme folder
-  Find some directory named layouts/posts/single.html
-  Inside the {{ define main }} block, paste following snippets
-  {{ if .Params.viz }} &amp;lt;script type=&amp;#34;text/javascript&amp;#34; src=&amp;#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&amp;#34;&amp;gt; &amp;lt;/script&amp;gt; &amp;lt;script type=&amp;#34;text/javascript&amp;#34;&amp;gt; (function(){ var vizPrefix = &amp;#34;language-viz-&amp;#34;; Array.prototype.forEach.call(document.querySelectorAll(&amp;#34;[class^=&amp;#34; + vizPrefix + &amp;#34;]&amp;#34;), function(x){ var engine; x.getAttribute(&amp;#34;class&amp;#34;).split(&amp;#34; &amp;#34;).forEach(function(cls){ if (cls.startsWith(vizPrefix)) { engine = cls.substr(vizPrefix.length); } }); var image = new DOMParser().parseFromString(Viz(x.innerText, {format:&amp;#34;svg&amp;#34;, engine:engine}), &amp;#34;image/svg+xml&amp;#34;); x.parentNode.insertBefore(image.documentElement, x); x.</description>
-			<content type="html"><![CDATA[<ol>
-<li>
-<p>Get into your theme folder</p>
-</li>
-<li>
-<p>Find some directory named <code>layouts/posts/single.html</code></p>
-</li>
-<li>
-<p>Inside the <code>{{ define main }}</code> block, paste following snippets</p>
-</li>
-</ol>
-<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="p">{{</span> <span class="k">if</span> <span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">viz</span> <span class="p">}}</span>
-  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&#34;</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="err">/script&gt;</span>
-  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span><span class="o">&gt;</span>
-  <span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-    <span class="kd">var</span> <span class="nx">vizPrefix</span> <span class="o">=</span> <span class="s2">&#34;language-viz-&#34;</span><span class="p">;</span>
-    <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">forEach</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s2">&#34;[class^=&#34;</span> <span class="o">+</span> <span class="nx">vizPrefix</span> <span class="o">+</span> <span class="s2">&#34;]&#34;</span><span class="p">),</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">){</span>
-      <span class="kd">var</span> <span class="nx">engine</span><span class="p">;</span>
-      <span class="nx">x</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">&#34;class&#34;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s2">&#34; &#34;</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">cls</span><span class="p">){</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">cls</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="nx">vizPrefix</span><span class="p">))</span> <span class="p">{</span>
-          <span class="nx">engine</span> <span class="o">=</span> <span class="nx">cls</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">vizPrefix</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
-        <span class="p">}</span>
-      <span class="p">});</span>
-      <span class="kd">var</span> <span class="nx">image</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DOMParser</span><span class="p">().</span><span class="nx">parseFromString</span><span class="p">(</span><span class="nx">Viz</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">innerText</span><span class="p">,</span> <span class="p">{</span><span class="nx">format</span><span class="o">:</span><span class="s2">&#34;svg&#34;</span><span class="p">,</span> <span class="nx">engine</span><span class="o">:</span><span class="nx">engine</span><span class="p">}),</span> <span class="s2">&#34;image/svg+xml&#34;</span><span class="p">);</span>
-      <span class="nx">x</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">image</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
-      <span class="nx">x</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
-      <span class="nx">x</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">backgroundColor</span> <span class="o">=</span> <span class="s2">&#34;white&#34;</span>
-    <span class="p">});</span>
-  <span class="p">})();</span>
-  <span class="o">&lt;</span><span class="err">/script&gt;</span>
-<span class="p">{{</span> <span class="nx">end</span> <span class="p">}}</span>
-
-<span class="p">{{</span> <span class="k">if</span>  <span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">math</span>   <span class="p">}}</span>
-  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span><span class="o">&gt;</span>
-    <span class="nb">window</span><span class="p">.</span><span class="nx">MathJax</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="nx">tex2jax</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">inlineMath</span><span class="o">:</span> <span class="p">[[</span><span class="s1">&#39;$&#39;</span><span class="p">,</span><span class="s1">&#39;$&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;\\(&#39;</span><span class="p">,</span><span class="s1">&#39;\\)&#39;</span><span class="p">]],</span>
-        <span class="nx">displayMath</span><span class="o">:</span> <span class="p">[[</span><span class="s1">&#39;$$&#39;</span><span class="p">,</span><span class="s1">&#39;$$&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;\[&#39;</span><span class="p">,</span><span class="s1">&#39;\]&#39;</span><span class="p">]],</span>
-        <span class="nx">processEscapes</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nx">processEnvironments</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nx">skipTags</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;script&#39;</span><span class="p">,</span> <span class="s1">&#39;noscript&#39;</span><span class="p">,</span> <span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;textarea&#39;</span><span class="p">,</span> <span class="s1">&#39;pre&#39;</span><span class="p">],</span>
-        <span class="nx">TeX</span><span class="o">:</span> <span class="p">{</span> <span class="nx">equationNumbers</span><span class="o">:</span> <span class="p">{</span> <span class="nx">autoNumber</span><span class="o">:</span> <span class="s2">&#34;AMS&#34;</span> <span class="p">},</span>
-          <span class="nx">extensions</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;AMSmath.js&#34;</span><span class="p">,</span> <span class="s2">&#34;AMSsymbols.js&#34;</span><span class="p">,</span> <span class="s2">&#34;color.js&#34;</span><span class="p">]</span> <span class="p">}</span>
-      <span class="p">},</span>
-      <span class="nx">AuthorInit</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="nx">MathJax</span><span class="p">.</span><span class="nx">Hub</span><span class="p">.</span><span class="nx">Register</span><span class="p">.</span><span class="nx">StartupHook</span><span class="p">(</span><span class="s2">&#34;Begin&#34;</span><span class="p">,</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-          <span class="nx">MathJax</span><span class="p">.</span><span class="nx">Hub</span><span class="p">.</span><span class="nx">Queue</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">all</span> <span class="o">=</span> <span class="nx">MathJax</span><span class="p">.</span><span class="nx">Hub</span><span class="p">.</span><span class="nx">getAllJax</span><span class="p">(),</span> <span class="nx">i</span><span class="p">;</span>
-            <span class="k">for</span><span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">all</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">all</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">SourceElement</span><span class="p">().</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">className</span> <span class="o">+=</span> <span class="s1">&#39; has-jax&#39;</span><span class="p">;</span>
-            <span class="p">}</span>
-          <span class="p">})</span>
-        <span class="p">});</span>
-      <span class="p">}</span>
-    <span class="p">};</span>
-  <span class="o">&lt;</span><span class="err">/script&gt;</span>
-  <span class="o">&lt;</span><span class="nx">script</span>  <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span>
-    <span class="nx">src</span><span class="o">=</span><span class="s2">&#34;https://cdn.bootcss.com/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML&#34;</span><span class="o">&gt;</span>
-  <span class="o">&lt;</span><span class="err">/script&gt;</span>
-<span class="p">{{</span> <span class="nx">end</span> <span class="p">}}</span>
-</code></pre></div><ol start="4">
-<li>Create some posts and add following config inside front-matter</li>
-</ol>
-<pre><code>viz: true
-math: true
-</code></pre><p>And try some graphviz and mathjax stuff!</p>
-<p><img src="/images/mathjax-dot-demo.png" alt="mathjax-dot-demo"></p>
+			<guid>https://huanglei.rocks/posts/object-safety/</guid>
+			<description>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。 ​
+为什么需要 object safety？ ​
+Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
+Trait object 的内存布局 ​
+  Where Self Meets Sized: Revisiting Object Safety   ​
+首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
+ trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​
+接下来是关于方法的 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：</description>
+			<content type="html"><![CDATA[<p>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。
+​</p>
+<p>为什么需要 object safety？
+​</p>
+<p>Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。
+​</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2022/png/139136/1644393130537-0059bb37-3cd3-451f-b374-428184f97927.png#clientId=ue18c06d3-2796-4&amp;crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;from=paste&amp;height=355&amp;id=u9ce60c7c&amp;margin=%5Bobject%20Object%5D&amp;name=image.png&amp;originHeight=988&amp;originWidth=1488&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;size=80336&amp;status=done&amp;style=none&amp;taskId=u408cafaf-1752-477a-af98-d4e4003d9c4&amp;title=&amp;width=534" alt="image.png">
+<em>Trait object 的内存布局</em>
+​</p>
 <blockquote>
-<p>You may check the demo <a href="/posts/math-and-dot-demo">here</a></p>
+<ul>
+<li><a href="https://huonw.github.io/blog/2015/05/where-self-meets-sized-revisiting-object-safety/">Where Self Meets Sized: Revisiting Object Safety</a></li>
+</ul>
 </blockquote>
-]]></content>
-		</item>
-		
-		<item>
-			<title>Graphviz and mathjax demo</title>
-			<link>https://huanglei.rocks/posts/math-and-dot-demo/</link>
-			<pubDate>Sat, 11 Apr 2020 23:26:41 +0800</pubDate>
-			
-			<guid>https://huanglei.rocks/posts/math-and-dot-demo/</guid>
-			<description>digraph g{ rankdir=LR; node [shape=record,width=01,height=.1]; a[label=&amp;quot;&amp;lt;1&amp;gt;Hash Table|&amp;lt;2&amp;gt;Node|&amp;lt;3&amp;gt;Node|...|&amp;lt;4&amp;gt;TreeNode&amp;quot;]; { // graph[rankdir=LR] node1[label=&amp;quot;{&amp;lt;1&amp;gt;A1|&amp;lt;2&amp;gt;A2|...|An}&amp;quot;] node2[label=&amp;quot;{&amp;lt;1&amp;gt;B1|&amp;lt;2&amp;gt;B2|...|Bn}&amp;quot;] // node3[label=&amp;quot;{&amp;lt;1&amp;gt;C1|&amp;lt;2&amp;gt;C2}&amp;quot;] subgraph cluster_treenode{ penwidth=0; node[shape=circle]; root[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2]; n1[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n2[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n3[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n4[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n5[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n6[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] root-&amp;gt;n1; n1-&amp;gt;n2; n1-&amp;gt;n3; root-&amp;gt;n4; n4-&amp;gt;n5; n4-&amp;gt;n6; } } a:2:e-&amp;gt;node1:1 [style=dashed]; a:3:e-&amp;gt;node2:1; a:4:e-&amp;gt;root; // node3:d-&amp;gt;node3:sa2; } $$f(a) = \frac{1}{2\pi i} \oint\frac{f(z)}{z-a}dz$$</description>
-			<content type="html"><![CDATA[<pre><code class="language-viz-dot" data-lang="viz-dot">digraph g{
-    rankdir=LR;
-    node [shape=record,width=01,height=.1];
-	a[label=&quot;&lt;1&gt;Hash Table|&lt;2&gt;Node|&lt;3&gt;Node|...|&lt;4&gt;TreeNode&quot;];
-    {
-        // graph[rankdir=LR]    
-        node1[label=&quot;{&lt;1&gt;A1|&lt;2&gt;A2|...|An}&quot;]
-        node2[label=&quot;{&lt;1&gt;B1|&lt;2&gt;B2|...|Bn}&quot;]
-        // node3[label=&quot;{&lt;1&gt;C1|&lt;2&gt;C2}&quot;]
-        subgraph cluster_treenode{
-            penwidth=0;
-            node[shape=circle];
-            root[label=&quot;&quot;, style=filled,fillcolor=black,width=.2];
-            n1[label=&quot;&quot;, style=filled,fillcolor=red,width=.2]
-            n2[label=&quot;&quot;, style=filled,fillcolor=black,width=.2]
-            n3[label=&quot;&quot;, style=filled,fillcolor=black,width=.2]
-            n4[label=&quot;&quot;, style=filled,fillcolor=red,width=.2]
-            n5[label=&quot;&quot;, style=filled,fillcolor=black,width=.2]
-            n6[label=&quot;&quot;, style=filled,fillcolor=black,width=.2]
-            root-&gt;n1;
-            n1-&gt;n2;
-            n1-&gt;n3;
-            root-&gt;n4;
-            n4-&gt;n5;
-            n4-&gt;n6;
-        }
-    }
-    
-    a:2:e-&gt;node1:1 [style=dashed];
-    a:3:e-&gt;node2:1;    
-    a:4:e-&gt;root;    
-
-    // node3:d-&gt;node3:sa2;
-}
-</code></pre><p>$$f(a) = \frac{1}{2\pi i} \oint\frac{f(z)}{z-a}dz$$</p>
+<p>​</p>
+<p>首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：</p>
+<ul>
+<li>trait 的类型不能限定为 <code>Self: Sized</code>1️⃣；</li>
+<li>trait 中所定义的所有方法都是 object-safe 的2️⃣。</li>
+</ul>
+<p>​</p>
+<p>接下来是关于方法的
+一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：</p>
+<ul>
+<li>方法 receiver 的类型限定是 <code>Self: Sized</code>3️⃣；或者</li>
+<li>满足以下所有条件：
+<ul>
+<li>方法不能有泛型参数4️⃣；且</li>
+<li>receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型5️⃣。目前只包括<code>self</code>/ <code>&amp;self</code> / <code>&amp;mut self</code>/ <code>self: Box&lt;Self&gt;</code>。以后可能也会扩展到 <code>Rc&lt;Self&gt;</code>等等。</li>
+<li><code>Self</code>类型只能用作 receiver 6️⃣</li>
+</ul>
+</li>
+</ul>
+<p>​</p>
+<p>1️⃣ 也就是说，如下的 trait 是不能用作 trait object 的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">trait</span><span class="w"> </span><span class="n">Test</span>: <span class="nb">Sized</span> <span class="p">{</span><span class="w">
+</span><span class="w">	</span><span class="k">fn</span> <span class="nf">some_method</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">);</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></div><p>为什么trait 的方法的 receiver 不能限定为 <code>Self: Sized</code>？因为 trait object 本身是动态分派的，编译期无法确定 trait object 背后的 Self 具体是什么类型，也就无法确定 Self 的大小。如果这个时候 trait object 的方法又要求 Self 大小可确定，那就互相矛盾了。需要注意的是，trait object 自身的大小是可确定的，因为其只包括指向数据的指针和指向 vtable 的指针而已。
+​</p>
+<p>2️⃣ 要求 trait 所有的方法都是对象安全的也是为了确保动态分派的时候能够正确从 vtable 中找到方法进行调用。
+​</p>
+<p>3️⃣ 由于 trait object 自身是 Unsized，如果方法限定了<code>Self: Sized</code>，那么一定无法通过 trait object 去调用。也就不会导致动态分派的 object safety 问题，因此一个限定了 <code>Self: Sized</code>的 trait 方法也被认为是 object-safe 的。
+​</p>
+<blockquote>
+<ul>
+<li><a href="https://stackoverflow.com/questions/42620022/why-does-a-generic-method-inside-a-trait-require-trait-object-to-be-sized">Why does a generic method inside a trait require trait object to be sized? - Stack Overflow</a></li>
+<li><a href="https://github.com/rust-lang/rust/issues/22031">A method marked where Self: Sized on a trait should not be considered during object safety checks #22031</a></li>
+</ul>
+</blockquote>
+<p>​</p>
+<p>4️⃣ 如果方法不限定 <code>Self: Sized</code> ，就意味着那么这个方法首先不能有泛型参数。如果有泛型参数，那么 vtable 中的方法列表大小是难以确定的。当然如果非要做，在编译期，rust 编译器可以拿到 trait 的所有具体实现，然后为每一个具体实现在 vtable 生成一个特化的方法项。但是首先这会大大降低编译速度，其次也会引入极大的复杂性。因此 Rust 的 trait object 直接禁止了这种使用场景。
+​</p>
+<blockquote>
+<p><a href="https://stackoverflow.com/questions/67767207/why-are-trait-methods-with-generic-type-parameters-object-unsafe">Why are trait methods with generic type parameters object-unsafe?</a></p>
+</blockquote>
+<p>​</p>
+<p>5️⃣ 如果方法没有 receiver，那么使用 trait object 毫无意义，因为这个方法的调用根本不需要 trait object 里面的 data 指针。
+​</p>
+<p>6️⃣ 假设 trait 定义了这么一个方法：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">trait</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">	</span><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">Self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Self</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></div><p>那么这个 trait 的 duplicate 方法要求返回的类型和方法 receiver 的类型是一样的。如果 Trait 是静态分派，那么在编译器就可以确定所有可能的方法签名。比如结构体 A、B 实现了 Test trait，那么 duplicate 方法所有可能的签名是：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">A</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">A</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">B</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">B</span><span class="p">;</span><span class="w">
+</span></code></pre></div><p>而在动态分派下，从一个 trait object 发起方法的调用，也就无法在编译期约束不同位置的 Self 类型都是一致的，完全有可能出现 下面的情况。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">B</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">A</span><span class="p">;</span><span class="w">
+</span></code></pre></div><ul>
+<li><a href="https://rust-lang.github.io/rfcs/0255-object-safety.html">https://rust-lang.github.io/rfcs/0255-object-safety.html</a></li>
+</ul>
 ]]></content>
 		</item>
 		
