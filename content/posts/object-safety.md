@@ -17,7 +17,7 @@ Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何�
 Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。
 ​
 
-![image.png](https://cdn.nlark.com/yuque/0/2022/png/139136/1644393130537-0059bb37-3cd3-451f-b374-428184f97927.png)
+![trait-object.png](https://gw.alipayobjects.com/zos/antfincdn/QAgzwRCoT/1644416416.png)
 _Trait object 的内存布局_
 
 > - [Where Self Meets Sized: Revisiting Object Safety](https://huonw.github.io/blog/2015/05/where-self-meets-sized-revisiting-object-safety/)
