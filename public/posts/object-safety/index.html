@@ -11,22 +11,18 @@
 <meta itemprop="description" content="Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。 ​
 为什么需要 object safety？ ​
 Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
-  Where Self Meets Sized: Revisiting Object Safety   ​
+ _Trait object 的内存布局_     Where Self Meets Sized: Revisiting Object Safety   ​
 首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
- trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​
-接下来是关于方法的 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：
- 方法 receiver 的类型限定是 Self: Sized3️⃣；或者 满足以下所有条件：  方法不能有泛型参数4️⃣；且 receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型5️⃣。目前只包括self/ &amp;self / &amp;mut self/ self: Box&lt;Self&gt;。以后可能也会扩展到 Rc&lt;Self&gt;等等。 Self类型只能用作 receiver 6️⃣    ​"><meta itemprop="datePublished" content="2022-02-09T21:57:33+08:00" />
+ trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​"><meta itemprop="datePublished" content="2022-02-09T21:57:33+08:00" />
 <meta itemprop="dateModified" content="2022-02-09T21:57:33+08:00" />
-<meta itemprop="wordCount" content="263">
+<meta itemprop="wordCount" content="266">
 <meta itemprop="keywords" content="Rust," /><meta property="og:title" content="Object Safety" />
 <meta property="og:description" content="Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。 ​
 为什么需要 object safety？ ​
 Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
-  Where Self Meets Sized: Revisiting Object Safety   ​
+ _Trait object 的内存布局_     Where Self Meets Sized: Revisiting Object Safety   ​
 首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
- trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​
-接下来是关于方法的 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：
- 方法 receiver 的类型限定是 Self: Sized3️⃣；或者 满足以下所有条件：  方法不能有泛型参数4️⃣；且 receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型5️⃣。目前只包括self/ &amp;self / &amp;mut self/ self: Box&lt;Self&gt;。以后可能也会扩展到 Rc&lt;Self&gt;等等。 Self类型只能用作 receiver 6️⃣    ​" />
+ trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huanglei.rocks/posts/object-safety/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-02-09T21:57:33+08:00" />
@@ -37,11 +33,9 @@ Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是�
 <meta name="twitter:description" content="Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。 ​
 为什么需要 object safety？ ​
 Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
-  Where Self Meets Sized: Revisiting Object Safety   ​
+ _Trait object 的内存布局_     Where Self Meets Sized: Revisiting Object Safety   ​
 首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
- trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​
-接下来是关于方法的 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：
- 方法 receiver 的类型限定是 Self: Sized3️⃣；或者 满足以下所有条件：  方法不能有泛型参数4️⃣；且 receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型5️⃣。目前只包括self/ &amp;self / &amp;mut self/ self: Box&lt;Self&gt;。以后可能也会扩展到 Rc&lt;Self&gt;等等。 Self类型只能用作 receiver 6️⃣    ​"/>
+ trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​"/>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -99,7 +93,11 @@ Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是�
 <p>Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。
 ​</p>
 <p><img src="https://gw.alipayobjects.com/zos/antfincdn/QAgzwRCoT/1644416416.png" alt="trait-object.png"></p>
-<!-- raw HTML omitted -->
+<div style="text-align: center;">
+<i>
+ _Trait object 的内存布局_ 
+</i>
+</div>
 <blockquote>
 <ul>
 <li><a href="https://huonw.github.io/blog/2015/05/where-self-meets-sized-revisiting-object-safety/">Where Self Meets Sized: Revisiting Object Safety</a></li>
@@ -169,7 +167,7 @@ Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是�
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/rust">Rust</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>263 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>266 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-02-09 21:57 &#43;0800</p>
 			</footer>
 		</article>

@@ -18,7 +18,7 @@ Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是�
 ​
 
 ![trait-object.png](https://gw.alipayobjects.com/zos/antfincdn/QAgzwRCoT/1644416416.png)
-{{% center %}} _Trait object 的内存布局_ {{% /center %}} 
+{{% center_italic %}} Trait object 的内存布局 {{% /center_italic %}} 
 
 > - [Where Self Meets Sized: Revisiting Object Safety](https://huonw.github.io/blog/2015/05/where-self-meets-sized-revisiting-object-safety/)
 
