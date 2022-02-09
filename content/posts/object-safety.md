@@ -26,19 +26,19 @@ Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是�
 
 首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
 
-- trait 的类型不能限定为 `Self: Sized`<sup>1️⃣；</sup>
-- trait 中所定义的所有方法都是 object-safe 的<sup>2️⃣。</sup>
+- trait 的类型不能限定为 `Self: Sized`<sup>1️⃣</sup>；
+- trait 中所定义的所有方法都是 object-safe 的<sup>2️⃣</sup>；
 
 ​
 
 接下来是关于方法的
 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：
 
-- 方法 receiver 的类型限定是 `Self: Sized`<sup>3️⃣；</sup>或者
+- 方法 receiver 的类型限定是 `Self: Sized`<sup>3️⃣ </sup>；或者
 - 满足以下所有条件：
-   - 方法不能有泛型参数<sup>4️⃣；</sup>且
-   - receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型<sup>5️⃣。</sup>。目前只包括`self`/ `&self` / `&mut self`/ `self: Box<Self>`。以后可能也会扩展到 `Rc<Self>`等等。
-   - `Self`类型只能用作 receiver <sup>6️⃣</sup>
+   - 方法不能有泛型参数<sup>4️⃣</sup>；且
+   - receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型<sup>5️⃣ </sup>。目前只包括`self`/ `&self` / `&mut self`/ `self: Box<Self>`。以后可能也会扩展到 `Rc<Self>`等等。
+   - `Self`类型只能用作 receiver <sup>6️⃣ </sup>
 
 ​
 

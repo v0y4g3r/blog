@@ -19,7 +19,7 @@
 Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
  Trait object 的内存布局     Where Self Meets Sized: Revisiting Object Safety   ​
 首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
- trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​</description>
+ trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣；  ​</description>
     </item>
     
     <item>

@@ -20,7 +20,7 @@
 Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
  Trait object 的内存布局     Where Self Meets Sized: Revisiting Object Safety   ​
 首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
- trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​</description>
+ trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣；  ​</description>
 			<content type="html"><![CDATA[<p>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。
 ​</p>
 <p>为什么需要 object safety？
@@ -41,19 +41,19 @@ Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是�
 <p>​</p>
 <p>首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：</p>
 <ul>
-<li>trait 的类型不能限定为 <code>Self: Sized</code><sup>1️⃣；</sup></li>
-<li>trait 中所定义的所有方法都是 object-safe 的<sup>2️⃣。</sup></li>
+<li>trait 的类型不能限定为 <code>Self: Sized</code><sup>1️⃣</sup>；</li>
+<li>trait 中所定义的所有方法都是 object-safe 的<sup>2️⃣</sup>；</li>
 </ul>
 <p>​</p>
 <p>接下来是关于方法的
 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：</p>
 <ul>
-<li>方法 receiver 的类型限定是 <code>Self: Sized</code><sup>3️⃣；</sup>或者</li>
+<li>方法 receiver 的类型限定是 <code>Self: Sized</code><sup>3️⃣ </sup>；或者</li>
 <li>满足以下所有条件：
 <ul>
-<li>方法不能有泛型参数<sup>4️⃣；</sup>且</li>
-<li>receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型<sup>5️⃣。</sup>。目前只包括<code>self</code>/ <code>&amp;self</code> / <code>&amp;mut self</code>/ <code>self: Box&lt;Self&gt;</code>。以后可能也会扩展到 <code>Rc&lt;Self&gt;</code>等等。</li>
-<li><code>Self</code>类型只能用作 receiver <sup>6️⃣</sup></li>
+<li>方法不能有泛型参数<sup>4️⃣</sup>；且</li>
+<li>receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型<sup>5️⃣ </sup>。目前只包括<code>self</code>/ <code>&amp;self</code> / <code>&amp;mut self</code>/ <code>self: Box&lt;Self&gt;</code>。以后可能也会扩展到 <code>Rc&lt;Self&gt;</code>等等。</li>
+<li><code>Self</code>类型只能用作 receiver <sup>6️⃣ </sup></li>
 </ul>
 </li>
 </ul>
