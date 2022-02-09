@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sat, 11 Apr 2020 23:42:03 +0800</lastBuildDate>
-    
-	<atom:link href="https://huanglei.rocks/blog/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sat, 11 Apr 2020 23:42:03 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Test</title>
       <link>https://huanglei.rocks/blog/test/</link>
