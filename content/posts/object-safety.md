@@ -26,23 +26,23 @@ Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是�
 
 首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
 
-- trait 的类型不能限定为 `Self: Sized`1️⃣；
-- trait 中所定义的所有方法都是 object-safe 的2️⃣。
+- trait 的类型不能限定为 `Self: Sized`<sup>1️⃣；</sup>
+- trait 中所定义的所有方法都是 object-safe 的<sup>2️⃣。</sup>
 
 ​
 
 接下来是关于方法的
 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：
 
-- 方法 receiver 的类型限定是 `Self: Sized`3️⃣；或者
+- 方法 receiver 的类型限定是 `Self: Sized`<sup>3️⃣；</sup>或者
 - 满足以下所有条件：
-   - 方法不能有泛型参数4️⃣；且
-   - receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型5️⃣。目前只包括`self`/ `&self` / `&mut self`/ `self: Box<Self>`。以后可能也会扩展到 `Rc<Self>`等等。
-   - `Self`类型只能用作 receiver 6️⃣
+   - 方法不能有泛型参数<sup>4️⃣；</sup>且
+   - receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型<sup>5️⃣。</sup>。目前只包括`self`/ `&self` / `&mut self`/ `self: Box<Self>`。以后可能也会扩展到 `Rc<Self>`等等。
+   - `Self`类型只能用作 receiver <sup>6️⃣</sup>
 
 ​
 
-1️⃣ 也就是说，如下的 trait 是不能用作 trait object 的。
+1️⃣   也就是说，如下的 trait 是不能用作 trait object 的。
 ```rust
 trait Test: Sized {
 	fn some_method(&self);
@@ -51,10 +51,10 @@ trait Test: Sized {
 为什么trait 的方法的 receiver 不能限定为 `Self: Sized`？因为 trait object 本身是动态分派的，编译期无法确定 trait object 背后的 Self 具体是什么类型，也就无法确定 Self 的大小。如果这个时候 trait object 的方法又要求 Self 大小可确定，那就互相矛盾了。需要注意的是，trait object 自身的大小是可确定的，因为其只包括指向数据的指针和指向 vtable 的指针而已。
 ​
 
-2️⃣ 要求 trait 所有的方法都是对象安全的也是为了确保动态分派的时候能够正确从 vtable 中找到方法进行调用。
+2️⃣   要求 trait 所有的方法都是对象安全的也是为了确保动态分派的时候能够正确从 vtable 中找到方法进行调用。
 ​
 
-3️⃣ 由于 trait object 自身是 Unsized，如果方法限定了`Self: Sized`，那么一定无法通过 trait object 去调用。也就不会导致动态分派的 object safety 问题，因此一个限定了 `Self: Sized`的 trait 方法也被认为是 object-safe 的。
+3️⃣   由于 trait object 自身是 Unsized，如果方法限定了`Self: Sized`，那么一定无法通过 trait object 去调用。也就不会导致动态分派的 object safety 问题，因此一个限定了 `Self: Sized`的 trait 方法也被认为是 object-safe 的。
 ​
 
 > - [Why does a generic method inside a trait require trait object to be sized? - Stack Overflow](https://stackoverflow.com/questions/42620022/why-does-a-generic-method-inside-a-trait-require-trait-object-to-be-sized)
@@ -62,17 +62,17 @@ trait Test: Sized {
 
 ​
 
-4️⃣ 如果方法不限定 `Self: Sized` ，就意味着那么这个方法首先不能有泛型参数。如果有泛型参数，那么 vtable 中的方法列表大小是难以确定的。当然如果非要做，在编译期，rust 编译器可以拿到 trait 的所有具体实现，然后为每一个具体实现在 vtable 生成一个特化的方法项。但是首先这会大大降低编译速度，其次也会引入极大的复杂性。因此 Rust 的 trait object 直接禁止了这种使用场景。
+4️⃣   如果方法不限定 `Self: Sized` ，就意味着那么这个方法首先不能有泛型参数。如果有泛型参数，那么 vtable 中的方法列表大小是难以确定的。当然如果非要做，在编译期，rust 编译器可以拿到 trait 的所有具体实现，然后为每一个具体实现在 vtable 生成一个特化的方法项。但是首先这会大大降低编译速度，其次也会引入极大的复杂性。因此 Rust 的 trait object 直接禁止了这种使用场景。
 ​
 
 > [Why are trait methods with generic type parameters object-unsafe?](https://stackoverflow.com/questions/67767207/why-are-trait-methods-with-generic-type-parameters-object-unsafe)
 
 ​
 
-5️⃣ 如果方法没有 receiver，那么使用 trait object 毫无意义，因为这个方法的调用根本不需要 trait object 里面的 data 指针。
+5️⃣   如果方法没有 receiver，那么使用 trait object 毫无意义，因为这个方法的调用根本不需要 trait object 里面的 data 指针。
 ​
 
-6️⃣ 假设 trait 定义了这么一个方法：
+6️⃣   假设 trait 定义了这么一个方法：
 ```rust
 trait Test {
 	fn duplicate(self: Self) -> Self
