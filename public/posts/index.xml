@@ -18,7 +18,7 @@
 			<description>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。 ​
 为什么需要 object safety？ ​
 Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
- _Trait object 的内存布局_     Where Self Meets Sized: Revisiting Object Safety   ​
+ Trait object 的内存布局     Where Self Meets Sized: Revisiting Object Safety   ​
 首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
  trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​</description>
 			<content type="html"><![CDATA[<p>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。
@@ -30,7 +30,7 @@ Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是�
 <p><img src="https://gw.alipayobjects.com/zos/antfincdn/QAgzwRCoT/1644416416.png" alt="trait-object.png"></p>
 <div style="text-align: center;">
 <i>
- _Trait object 的内存布局_ 
+ Trait object 的内存布局 
 </i>
 </div>
 <blockquote>
