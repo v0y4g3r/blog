@@ -1,7 +1,7 @@
 ---
 title: "Graphviz and mathjax demo"
 date: 2020-04-11T23:26:41+08:00
-draft: true
+draft: false
 viz: true
 math: true
 ---

@@ -8,13 +8,13 @@
     <loc>https://huanglei.rocks/posts/</loc>
     <lastmod>2022-02-09T21:57:33+08:00</lastmod>
   </url><url>
+    <loc>https://huanglei.rocks/tags/rust/</loc>
+    <lastmod>2022-02-09T21:57:33+08:00</lastmod>
+  </url><url>
     <loc>https://huanglei.rocks/tags/</loc>
     <lastmod>2022-02-09T21:57:33+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/</loc>
-    <lastmod>2022-02-09T21:57:33+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/tags/untagged/</loc>
     <lastmod>2022-02-09T21:57:33+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</loc>
@@ -25,12 +25,6 @@
   </url><url>
     <loc>https://huanglei.rocks/about-me/</loc>
     <lastmod>2020-04-12T11:37:42+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/blog/</loc>
-    <lastmod>2020-04-11T23:42:03+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/blog/test/</loc>
-    <lastmod>2020-04-11T23:42:03+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/posts/math-and-dot-demo/</loc>
     <lastmod>2020-04-11T23:26:41+08:00</lastmod>

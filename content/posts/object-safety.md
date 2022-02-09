@@ -5,7 +5,7 @@ draft: false
 toc: false
 images:
 tags: 
-  - untagged
+  - Rust
 ---
 
 Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。
@@ -17,9 +17,8 @@ Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何�
 Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。
 ​
 
-![image.png](https://cdn.nlark.com/yuque/0/2022/png/139136/1644393130537-0059bb37-3cd3-451f-b374-428184f97927.png#clientId=ue18c06d3-2796-4&crop=0&crop=0&crop=1&crop=1&from=paste&height=355&id=u9ce60c7c&margin=%5Bobject%20Object%5D&name=image.png&originHeight=988&originWidth=1488&originalType=binary&ratio=1&rotation=0&showTitle=false&size=80336&status=done&style=none&taskId=u408cafaf-1752-477a-af98-d4e4003d9c4&title=&width=534)
+![image.png](https://cdn.nlark.com/yuque/0/2022/png/139136/1644393130537-0059bb37-3cd3-451f-b374-428184f97927.png)
 _Trait object 的内存布局_
-​
 
 > - [Where Self Meets Sized: Revisiting Object Safety](https://huonw.github.io/blog/2015/05/where-self-meets-sized-revisiting-object-safety/)
 

@@ -1,7 +1,7 @@
 ---
 title: "Add MathJax and Graphviz support for HUGO"
 date: 2020-04-12T14:22:22+08:00
-draft: true
+draft: false
 toc: false
 images:
 tags: 

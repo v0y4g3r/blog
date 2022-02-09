@@ -18,20 +18,20 @@
 			<description>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。 ​
 为什么需要 object safety？ ​
 Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
-Trait object 的内存布局 ​
+Trait object 的内存布局
   Where Self Meets Sized: Revisiting Object Safety   ​
 首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
  trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​
-接下来是关于方法的 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：</description>
+接下来是关于方法的 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：
+ 方法 receiver 的类型限定是 Self: Sized3️⃣；或者 满足以下所有条件：  方法不能有泛型参数4️⃣；且 receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型5️⃣。目前只包括self/ &amp;amp;self / &amp;amp;mut self/ self: Box&amp;lt;Self&amp;gt;。以后可能也会扩展到 Rc&amp;lt;Self&amp;gt;等等。 Self类型只能用作 receiver 6️⃣    ​</description>
 			<content type="html"><![CDATA[<p>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。
 ​</p>
 <p>为什么需要 object safety？
 ​</p>
 <p>Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。
 ​</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2022/png/139136/1644393130537-0059bb37-3cd3-451f-b374-428184f97927.png#clientId=ue18c06d3-2796-4&amp;crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;from=paste&amp;height=355&amp;id=u9ce60c7c&amp;margin=%5Bobject%20Object%5D&amp;name=image.png&amp;originHeight=988&amp;originWidth=1488&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;size=80336&amp;status=done&amp;style=none&amp;taskId=u408cafaf-1752-477a-af98-d4e4003d9c4&amp;title=&amp;width=534" alt="image.png">
-<em>Trait object 的内存布局</em>
-​</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2022/png/139136/1644393130537-0059bb37-3cd3-451f-b374-428184f97927.png" alt="image.png">
+<em>Trait object 的内存布局</em></p>
 <blockquote>
 <ul>
 <li><a href="https://huonw.github.io/blog/2015/05/where-self-meets-sized-revisiting-object-safety/">Where Self Meets Sized: Revisiting Object Safety</a></li>
