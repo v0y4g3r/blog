@@ -6,8 +6,62 @@
 		<generator>Hugo -- gohugo.io</generator>
 		<language>en-us</language>
 		<copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-		<lastBuildDate>Wed, 09 Feb 2022 21:57:33 +0800</lastBuildDate>
+		<lastBuildDate>Thu, 10 Feb 2022 15:07:10 +0800</lastBuildDate>
 		<atom:link href="https://huanglei.rocks/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>使用 GitHub Issue 作为 Hugo 的评论系统</title>
+			<link>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</link>
+			<pubDate>Thu, 10 Feb 2022 15:07:10 +0800</pubDate>
+			
+			<guid>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</guid>
+			<description>安装 Octomments 按照 Octomments 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。
+配置 GitHub issue 在配置文件中增加配置项：
+ comment.owner：Issue repo 的拥有者 comment.repo：Issue repo 的名字  配置 Comment 组件 在您的博客站点根目录下的layouts/partials/comments.html 模板中增加：
+{{ if .Params.issueNumber -}} &amp;lt;link href=&amp;#34;https://unpkg.com/octomments/build/ocs-ui.min.css&amp;#34; rel=&amp;#34;stylesheet&amp;#34;&amp;gt; &amp;lt;div id=&amp;#34;comments&amp;#34;&amp;gt;&amp;lt;/div&amp;gt; &amp;lt;script src=&amp;#34;https://unpkg.com/octomments/build/ocs.min.js&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;script&amp;gt; Octomments({ github: { owner: &amp;#39;{{ $.Site.Params.comment.owner }}&amp;#39;, repo: &amp;#39;{{ $.Site.Params.comment.repo }}&amp;#39;, }, issueNumber: {{ .Params.issueNumber }}, renderer: [OctommentsRenderer, &amp;#39;#comments&amp;#39;] }).init(); &amp;lt;/script&amp;gt; {{ end }} 配置需要评论的文章 在文章的 metadata 章节加入创建的 issue 的 issue number，如本文的 metadata：</description>
+			<content type="html"><![CDATA[<h1 id="安装-octomments">安装 Octomments</h1>
+<p>按照 <a href="https://ocs.vercel.app/">Octomments</a> 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。</p>
+<h1 id="配置-github-issue">配置 GitHub issue</h1>
+<p>在配置文件中增加配置项：</p>
+<ul>
+<li><code>comment.owner</code>：Issue repo 的拥有者</li>
+<li><code>comment.repo</code>：Issue repo 的名字</li>
+</ul>
+<h1 id="配置-comment-组件">配置 Comment 组件</h1>
+<p>在您的博客站点根目录下的<code>layouts/partials/comments.html</code> 模板中增加：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html">{{ if .Params.issueNumber -}}
+<span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/octomments/build/ocs-ui.min.css&#34;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;stylesheet&#34;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;comments&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/octomments/build/ocs.min.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+  <span class="nx">Octomments</span><span class="p">({</span>
+    <span class="nx">github</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">owner</span><span class="o">:</span> <span class="s1">&#39;{{ $.Site.Params.comment.owner }}&#39;</span><span class="p">,</span>
+      <span class="nx">repo</span><span class="o">:</span> <span class="s1">&#39;{{ $.Site.Params.comment.repo }}&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="nx">issueNumber</span><span class="o">:</span> <span class="p">{{</span> <span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">issueNumber</span> <span class="p">}},</span>
+    <span class="nx">renderer</span><span class="o">:</span> <span class="p">[</span><span class="nx">OctommentsRenderer</span><span class="p">,</span> <span class="s1">&#39;#comments&#39;</span><span class="p">]</span>
+  <span class="p">}).</span><span class="nx">init</span><span class="p">();</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+
+{{ end }}
+</code></pre></div><h1 id="配置需要评论的文章">配置需要评论的文章</h1>
+<p>在文章的 metadata 章节加入创建的 issue 的 issue number，如本文的 metadata：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nn">---</span><span class="w">
+</span><span class="w"></span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;使用 GitHub Issue 作为 Hugo 的评论系统&#34;</span><span class="w">
+</span><span class="w"></span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="ld">2022-02-10T15:07:10</span><span class="m">+08</span><span class="p">:</span><span class="m">00</span><span class="w">
+</span><span class="w"></span><span class="nt">draft</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w"></span><span class="nt">toc</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w"></span><span class="nt">issueNumber</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span><span class="w"></span><span class="nt">images</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="nt">tags</span><span class="p">:</span><span class="w"> 
+</span><span class="w">  </span>- <span class="l">Hugo</span><span class="w">
+</span><span class="w">  </span>- <span class="l">Github</span><span class="w">
+</span><span class="w"></span><span class="nn">---</span><span class="w">
+</span></code></pre></div><p>这样本文的末尾就会出现一个评论栏啦，所有对本文的评论都会同步到 GitHub 的 issue 中。</p>
+]]></content>
+		</item>
 		
 		<item>
 			<title>Object Safety</title>

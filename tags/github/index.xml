@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>hugo on Tokamako</title>
-    <link>https://huanglei.rocks/tags/hugo/</link>
-    <description>Recent content in hugo on Tokamako</description>
+    <title>Github on Tokamako</title>
+    <link>https://huanglei.rocks/tags/github/</link>
+    <description>Recent content in Github on Tokamako</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Thu, 10 Feb 2022 15:07:10 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 10 Feb 2022 15:07:10 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/github/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>使用 GitHub Issue 作为 Hugo 的评论系统</title>
       <link>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</link>
@@ -18,18 +18,6 @@
 配置 GitHub issue 在配置文件中增加配置项：
  comment.owner：Issue repo 的拥有者 comment.repo：Issue repo 的名字  配置 Comment 组件 在您的博客站点根目录下的layouts/partials/comments.html 模板中增加：
 {{ if .Params.issueNumber -}} &amp;lt;link href=&amp;#34;https://unpkg.com/octomments/build/ocs-ui.min.css&amp;#34; rel=&amp;#34;stylesheet&amp;#34;&amp;gt; &amp;lt;div id=&amp;#34;comments&amp;#34;&amp;gt;&amp;lt;/div&amp;gt; &amp;lt;script src=&amp;#34;https://unpkg.com/octomments/build/ocs.min.js&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;script&amp;gt; Octomments({ github: { owner: &amp;#39;{{ $.Site.Params.comment.owner }}&amp;#39;, repo: &amp;#39;{{ $.Site.Params.comment.repo }}&amp;#39;, }, issueNumber: {{ .Params.issueNumber }}, renderer: [OctommentsRenderer, &amp;#39;#comments&amp;#39;] }).init(); &amp;lt;/script&amp;gt; {{ end }} 配置需要评论的文章 在文章的 metadata 章节加入创建的 issue 的 issue number，如本文的 metadata：</description>
-    </item>
-    
-    <item>
-      <title>Add MathJax and Graphviz support for HUGO</title>
-      <link>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</link>
-      <pubDate>Sun, 12 Apr 2020 14:22:22 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</guid>
-      <description>Get into your theme folder
-  Find some directory named layouts/posts/single.html
-  Inside the {{ define main }} block, paste following snippets
-  {{ if .Params.viz }} &amp;lt;script type=&amp;#34;text/javascript&amp;#34; src=&amp;#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&amp;#34;&amp;gt; &amp;lt;/script&amp;gt; &amp;lt;script type=&amp;#34;text/javascript&amp;#34;&amp;gt; (function(){ var vizPrefix = &amp;#34;language-viz-&amp;#34;; Array.prototype.forEach.call(document.querySelectorAll(&amp;#34;[class^=&amp;#34; + vizPrefix + &amp;#34;]&amp;#34;), function(x){ var engine; x.getAttribute(&amp;#34;class&amp;#34;).split(&amp;#34; &amp;#34;).forEach(function(cls){ if (cls.startsWith(vizPrefix)) { engine = cls.substr(vizPrefix.length); } }); var image = new DOMParser().parseFromString(Viz(x.innerText, {format:&amp;#34;svg&amp;#34;, engine:engine}), &amp;#34;image/svg+xml&amp;#34;); x.parentNode.insertBefore(image.documentElement, x); x.</description>
     </item>
     
   </channel>

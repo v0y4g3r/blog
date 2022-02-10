@@ -2,25 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://huanglei.rocks/posts/object-safety/</loc>
-    <lastmod>2022-02-09T21:57:33+08:00</lastmod>
+    <loc>https://huanglei.rocks/tags/github/</loc>
+    <lastmod>2022-02-10T15:07:10+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/tags/hugo/</loc>
+    <lastmod>2022-02-10T15:07:10+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/posts/</loc>
+    <lastmod>2022-02-10T15:07:10+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/tags/</loc>
+    <lastmod>2022-02-10T15:07:10+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/</loc>
+    <lastmod>2022-02-10T15:07:10+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</loc>
+    <lastmod>2022-02-10T15:07:10+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/posts/object-safety/</loc>
     <lastmod>2022-02-09T21:57:33+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/tags/rust/</loc>
     <lastmod>2022-02-09T21:57:33+08:00</lastmod>
   </url><url>
-    <loc>https://huanglei.rocks/tags/</loc>
-    <lastmod>2022-02-09T21:57:33+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/</loc>
-    <lastmod>2022-02-09T21:57:33+08:00</lastmod>
-  </url><url>
     <loc>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</loc>
-    <lastmod>2020-04-12T14:22:22+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/tags/hugo/</loc>
     <lastmod>2020-04-12T14:22:22+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/about-me/</loc>
