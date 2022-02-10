@@ -64,23 +64,20 @@
 		</item>
 		
 		<item>
-			<title>Object Safety</title>
+			<title>Rust 对象安全详解</title>
 			<link>https://huanglei.rocks/posts/object-safety/</link>
 			<pubDate>Wed, 09 Feb 2022 21:57:33 +0800</pubDate>
 			
 			<guid>https://huanglei.rocks/posts/object-safety/</guid>
-			<description>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。 ​
-为什么需要 object safety？ ​
-Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
- Trait object 的内存布局     Where Self Meets Sized: Revisiting Object Safety   ​
-首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
- trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣；  ​</description>
-			<content type="html"><![CDATA[<p>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。
-​</p>
-<p>为什么需要 object safety？
-​</p>
-<p>Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。
-​</p>
+			<description>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。
+为什么需要 object safety？
+Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。
+ Trait object 的内存布局     Where Self Meets Sized: Revisiting Object Safety   首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
+ trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣；  接下来是关于方法的 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：
+ 方法 receiver 的类型限定是 Self: Sized3️⃣ ；或者 满足以下所有条件：  方法不能有泛型参数4️⃣；且 receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型5️⃣ 。目前只包括self/ &amp;amp;self / &amp;amp;mut self/ self: Box&amp;lt;Self&amp;gt;。以后可能也会扩展到 Rc&amp;lt;Self&amp;gt;等等。 Self类型只能用作 receiver 6️⃣     1️⃣ 也就是说，如下的 trait 是不能用作 trait object 的。</description>
+			<content type="html"><![CDATA[<p>Rust 的 <a href="https://rust-lang.github.io/rfcs/0255-object-safety.html">RFC</a> 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。</p>
+<p>为什么需要 object safety？</p>
+<p>Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。</p>
 <p><img src="https://gw.alipayobjects.com/zos/antfincdn/QAgzwRCoT/1644416416.png" alt="trait-object.png"></p>
 <div style="text-align: center;">
 <i>
@@ -92,13 +89,11 @@ Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是�
 <li><a href="https://huonw.github.io/blog/2015/05/where-self-meets-sized-revisiting-object-safety/">Where Self Meets Sized: Revisiting Object Safety</a></li>
 </ul>
 </blockquote>
-<p>​</p>
 <p>首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：</p>
 <ul>
 <li>trait 的类型不能限定为 <code>Self: Sized</code><sup>1️⃣</sup>；</li>
 <li>trait 中所定义的所有方法都是 object-safe 的<sup>2️⃣</sup>；</li>
 </ul>
-<p>​</p>
 <p>接下来是关于方法的
 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：</p>
 <ul>
@@ -111,32 +106,24 @@ Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是�
 </ul>
 </li>
 </ul>
-<p>​</p>
 <p>1️⃣   也就是说，如下的 trait 是不能用作 trait object 的。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">trait</span><span class="w"> </span><span class="n">Test</span>: <span class="nb">Sized</span> <span class="p">{</span><span class="w">
 </span><span class="w">	</span><span class="k">fn</span> <span class="nf">some_method</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">);</span><span class="w">
 </span><span class="w"></span><span class="p">}</span><span class="w">
-</span></code></pre></div><p>为什么trait 的方法的 receiver 不能限定为 <code>Self: Sized</code>？因为 trait object 本身是动态分派的，编译期无法确定 trait object 背后的 Self 具体是什么类型，也就无法确定 Self 的大小。如果这个时候 trait object 的方法又要求 Self 大小可确定，那就互相矛盾了。需要注意的是，trait object 自身的大小是可确定的，因为其只包括指向数据的指针和指向 vtable 的指针而已。
-​</p>
-<p>2️⃣   要求 trait 所有的方法都是对象安全的也是为了确保动态分派的时候能够正确从 vtable 中找到方法进行调用。
-​</p>
-<p>3️⃣   由于 trait object 自身是 Unsized，如果方法限定了<code>Self: Sized</code>，那么一定无法通过 trait object 去调用。也就不会导致动态分派的 object safety 问题，因此一个限定了 <code>Self: Sized</code>的 trait 方法也被认为是 object-safe 的。
-​</p>
+</span></code></pre></div><p>为什么trait 的方法的 receiver 不能限定为 <code>Self: Sized</code>？因为 trait object 本身是动态分派的，编译期无法确定 trait object 背后的 Self 具体是什么类型，也就无法确定 Self 的大小。如果这个时候 trait object 的方法又要求 Self 大小可确定，那就互相矛盾了。需要注意的是，trait object 自身的大小是可确定的，因为其只包括指向数据的指针和指向 vtable 的指针而已。</p>
+<p>2️⃣   要求 trait 所有的方法都是对象安全的也是为了确保动态分派的时候能够正确从 vtable 中找到方法进行调用。</p>
+<p>3️⃣   由于 trait object 自身是 Unsized，如果方法限定了<code>Self: Sized</code>，那么一定无法通过 trait object 去调用。也就不会导致动态分派的 object safety 问题，因此一个限定了 <code>Self: Sized</code>的 trait 方法也被认为是 object-safe 的。</p>
 <blockquote>
 <ul>
 <li><a href="https://stackoverflow.com/questions/42620022/why-does-a-generic-method-inside-a-trait-require-trait-object-to-be-sized">Why does a generic method inside a trait require trait object to be sized? - Stack Overflow</a></li>
 <li><a href="https://github.com/rust-lang/rust/issues/22031">A method marked where Self: Sized on a trait should not be considered during object safety checks #22031</a></li>
 </ul>
 </blockquote>
-<p>​</p>
-<p>4️⃣   如果方法不限定 <code>Self: Sized</code> ，就意味着那么这个方法首先不能有泛型参数。如果有泛型参数，那么 vtable 中的方法列表大小是难以确定的。当然如果非要做，在编译期，rust 编译器可以拿到 trait 的所有具体实现，然后为每一个具体实现在 vtable 生成一个特化的方法项。但是首先这会大大降低编译速度，其次也会引入极大的复杂性。因此 Rust 的 trait object 直接禁止了这种使用场景。
-​</p>
+<p>4️⃣   如果方法不限定 <code>Self: Sized</code> ，就意味着那么这个方法首先不能有泛型参数。如果有泛型参数，那么 vtable 中的方法列表大小是难以确定的。当然如果非要做，在编译期，rust 编译器可以拿到 trait 的所有具体实现，然后为每一个具体实现在 vtable 生成一个特化的方法项。但是首先这会大大降低编译速度，其次也会引入极大的复杂性。因此 Rust 的 trait object 直接禁止了这种使用场景。</p>
 <blockquote>
 <p><a href="https://stackoverflow.com/questions/67767207/why-are-trait-methods-with-generic-type-parameters-object-unsafe">Why are trait methods with generic type parameters object-unsafe?</a></p>
 </blockquote>
-<p>​</p>
-<p>5️⃣   如果方法没有 receiver，那么使用 trait object 毫无意义，因为这个方法的调用根本不需要 trait object 里面的 data 指针。
-​</p>
+<p>5️⃣   如果方法没有 receiver，那么使用 trait object 毫无意义，因为这个方法的调用根本不需要 trait object 里面的 data 指针。</p>
 <p>6️⃣   假设 trait 定义了这么一个方法：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">trait</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span><span class="w">	</span><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">Self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Self</span><span class="w">
