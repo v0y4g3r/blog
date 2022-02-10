@@ -1,8 +1,8 @@
 ---
 title: "使用 GitHub Issue 作为 Hugo 的评论系统"
 date: 2022-02-10T15:07:10+08:00
-draft: true
-toc: false
+draft: false
+toc: true
 issueNumber: 3
 images:
 tags: 
