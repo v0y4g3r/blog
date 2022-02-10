@@ -1,17 +1,14 @@
-{{ if .Params.issueNumber -}}
-<link href="https://unpkg.com/octomments/build/ocs-ui.min.css" rel="stylesheet">
-<div id="comments"></div>
-<script src="https://unpkg.com/octomments/build/ocs.min.js"></script>
-
-<script>
-  Octomments({
-    github: {
-      owner: '{{ $.Site.Params.comment.owner }}',
-      repo: '{{ $.Site.Params.comment.repo }}',
-    },
-    issueNumber: {{ .Params.issueNumber }},
-    renderer: [OctommentsRenderer, '#comments']
-  }).init();
+<script src="https://giscus.app/client.js"
+        data-repo="RayneHwang/blog"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkyNTQ5MDMwOTk="
+        data-category="Announcements"
+        data-category-id="DIC_kwDODzGDO84CBGIK"
+        data-mapping="pathname"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="dark_dimmed"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
 </script>
-
-{{ end }}
