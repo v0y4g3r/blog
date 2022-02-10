@@ -4,6 +4,7 @@ date: 2022-02-09T21:57:33+08:00
 draft: false
 toc: false
 images:
+issueNumber: 2
 tags: 
   - Rust
 ---
@@ -90,4 +91,3 @@ fn duplicate(self: B) -> A;
 
 
 - [https://rust-lang.github.io/rfcs/0255-object-safety.html](https://rust-lang.github.io/rfcs/0255-object-safety.html)
-

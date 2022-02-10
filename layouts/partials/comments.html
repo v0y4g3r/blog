@@ -1,0 +1,17 @@
+{{ if .Params.issueNumber -}}
+<link href="https://unpkg.com/octomments/build/ocs-ui.min.css" rel="stylesheet">
+<div id="comments"></div>
+<script src="https://unpkg.com/octomments/build/ocs.min.js"></script>
+
+<script>
+  Octomments({
+    github: {
+      owner: '{{ $.Site.Params.comment.owner }}',
+      repo: '{{ $.Site.Params.comment.repo }}',
+    },
+    issueNumber: {{ .Params.issueNumber }},
+    renderer: [OctommentsRenderer, '#comments']
+  }).init();
+</script>
+
+{{ end }}
