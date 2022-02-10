@@ -7,7 +7,23 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Thu, 10 Feb 2022 15:07:10 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 10 Feb 2022 22:34:39 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LSM Tree 笔记</title>
+      <link>https://huanglei.rocks/posts/note-on-lsmt/</link>
+      <pubDate>Thu, 10 Feb 2022 22:34:39 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/note-on-lsmt/</guid>
+      <description>写入（Write path）   先从磁盘（HDD）写入的特性引入 append-only 的 WAL。
+  对于 KV 结构，如果写入是 append only的，那么就需要合并，不然写入性能太差。
+  单文件合并性能差，因此需要按阈值切分为多个小文件，通过归并排序的思路优化合并的效率。
+  多路归并要求每个文件有序，为了保证每个文件有序，就需要，数据写入的时候，不直接把 operation 直接写入到磁盘，而是先在内存缓存一段时间，并且在内存排好序，然后再 flush 到磁盘。
+ 内存有序的数据结构：跳表、红黑树、B+ 树 buffer 在内存的数据丢了怎么办？先写 redo log    有序数据结构  RocksDB 的数据结构比较：选择跳表的原因是跳表支持并发插入。
+ LSMT 的数据分类
+ 内存数据：MemTable 磁盘数据：SSTable（Sorted Sequence Table） 日志：redo log  内存数据组织 内存的数据需要保证有序，同时支持高性能的插入和查找。
+ ART：自适应基树（比如 Bitcask 采用）； SkipList：LevelDB、RocksDB 等。  SSTable 文件格式 按 Block 进行存储，可以参考 LevelDB 和 RocksDB 的 SST 文件的格式。</description>
+    </item>
+    
     <item>
       <title>使用 GitHub Issue 作为 Hugo 的评论系统</title>
       <link>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</link>
