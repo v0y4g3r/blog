@@ -1,6 +1,6 @@
 ---
 title: "Rust 对象安全详解"
-date: 2022-02-09T21:57:33+08:00
+date: 2021-12-09T21:57:33+08:00
 draft: false
 toc: false
 images:
