@@ -2,33 +2,31 @@
 title: "Rust 对象安全详解"
 date: 2021-12-09T21:57:33+08:00
 draft: false
-toc: false
+toc: true
 images:
 issueNumber: 2
 tags: 
   - Rust
 ---
 
-Rust 的 [RFC](https://rust-lang.github.io/rfcs/0255-object-safety.html) 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。
+Rust 的 [RFC](https://rust-lang.github.io/rfcs/0255-object-safety.html) 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety，这反而是初学者最为困惑的点。
 
-为什么需要 object safety？
+# 为什么需要 object safety？
 
-Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。
+Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。
+**Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。<u>Object-safety 就是为了保证 Rust 编译器能够为某个 trait 生成合法自动实现。</u>**
 
 ![trait-object.png](https://gw.alipayobjects.com/zos/antfincdn/QAgzwRCoT/1644416416.png)
 {{% center_italic %}} Trait object 的内存布局 {{% /center_italic %}} 
 
-> - [Where Self Meets Sized: Revisiting Object Safety](https://huonw.github.io/blog/2015/05/where-self-meets-sized-revisiting-object-safety/)
+> [Where Self Meets Sized: Revisiting Object Safety](https://huonw.github.io/blog/2015/05/where-self-meets-sized-revisiting-object-safety/)
 
-
-首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
+首先是关于 trait 的 object safety，一个 trait 是对象安全的，当且仅当它**满足以下<u>所有</u>条件**：
 
 - trait 的类型不能限定为 `Self: Sized`<sup>1️⃣</sup>；
 - trait 中所定义的所有方法都是 object-safe 的<sup>2️⃣</sup>；
 
-
-接下来是关于方法的
-一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：
+接下来是关于方法的 object safety：一个方法是对象安全的，当且仅当这个方法**满足下面<u>任意一个</u>特性**：
 
 - 方法 receiver 的类型限定是 `Self: Sized`<sup>3️⃣ </sup>；或者
 - 满足以下所有条件：
@@ -43,7 +41,8 @@ trait Test: Sized {
 	fn some_method(&self);
 }
 ```
-为什么trait 的方法的 receiver 不能限定为 `Self: Sized`？因为 trait object 本身是动态分派的，编译期无法确定 trait object 背后的 Self 具体是什么类型，也就无法确定 Self 的大小。如果这个时候 trait object 的方法又要求 Self 大小可确定，那就互相矛盾了。需要注意的是，trait object 自身的大小是可确定的，因为其只包括指向数据的指针和指向 vtable 的指针而已。
+为什么trait 的方法的 receiver 不能限定为 `Self: Sized`？因为 trait object 本身是动态分派的，编译期无法确定 trait object 的大小。如果这个时候 trait object 的方法又要求 Self 大小可确定，那就互相矛盾了。
+需要注意的是，trait object 自身的大小是可确定的，因为其只包括指向数据的指针和指向 vtable 的指针而已。
 
 2️⃣   要求 trait 所有的方法都是对象安全的也是为了确保动态分派的时候能够正确从 vtable 中找到方法进行调用。
 
@@ -71,10 +70,13 @@ trait Test {
 fn duplicate(self: A) -> A;
 fn duplicate(self: B) -> B;
 ```
-而在动态分派下，从一个 trait object 发起方法的调用，也就无法在编译期约束不同位置的 Self 类型都是一致的，完全有可能出现 下面的情况。
+而在动态分派下，从一个 trait object 发起方法的调用，也就无法在编译期约束不同位置的 Self 类型都是一致的，完全有可能出现下面的情况：
+
 ```rust
 fn duplicate(self: B) -> A;
 ```
+
+显然这不是对 `Test` 这个 trait 的一个合法实现。
 
 
 - [https://rust-lang.github.io/rfcs/0255-object-safety.html](https://rust-lang.github.io/rfcs/0255-object-safety.html)
