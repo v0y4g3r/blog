@@ -23,7 +23,7 @@
     <item>
       <title>Rust 对象安全详解</title>
       <link>https://huanglei.rocks/posts/object-safety/</link>
-      <pubDate>Wed, 09 Feb 2022 21:57:33 +0800</pubDate>
+      <pubDate>Thu, 09 Dec 2021 21:57:33 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/object-safety/</guid>
       <description>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。
