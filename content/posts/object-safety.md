@@ -1,5 +1,5 @@
 ---
-title: "Object Safety"
+title: "Rust 对象安全详解"
 date: 2022-02-09T21:57:33+08:00
 draft: false
 toc: false
@@ -9,28 +9,23 @@ tags:
   - Rust
 ---
 
-Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。
-​
+Rust 的 [RFC](https://rust-lang.github.io/rfcs/0255-object-safety.html) 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。
 
 为什么需要 object safety？
-​
 
 Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。
-​
 
 ![trait-object.png](https://gw.alipayobjects.com/zos/antfincdn/QAgzwRCoT/1644416416.png)
 {{% center_italic %}} Trait object 的内存布局 {{% /center_italic %}} 
 
 > - [Where Self Meets Sized: Revisiting Object Safety](https://huonw.github.io/blog/2015/05/where-self-meets-sized-revisiting-object-safety/)
 
-​
 
 首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
 
 - trait 的类型不能限定为 `Self: Sized`<sup>1️⃣</sup>；
 - trait 中所定义的所有方法都是 object-safe 的<sup>2️⃣</sup>；
 
-​
 
 接下来是关于方法的
 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：
@@ -41,7 +36,6 @@ Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是�
    - receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型<sup>5️⃣ </sup>。目前只包括`self`/ `&self` / `&mut self`/ `self: Box<Self>`。以后可能也会扩展到 `Rc<Self>`等等。
    - `Self`类型只能用作 receiver <sup>6️⃣ </sup>
 
-​
 
 1️⃣   也就是说，如下的 trait 是不能用作 trait object 的。
 ```rust
@@ -50,28 +44,21 @@ trait Test: Sized {
 }
 ```
 为什么trait 的方法的 receiver 不能限定为 `Self: Sized`？因为 trait object 本身是动态分派的，编译期无法确定 trait object 背后的 Self 具体是什么类型，也就无法确定 Self 的大小。如果这个时候 trait object 的方法又要求 Self 大小可确定，那就互相矛盾了。需要注意的是，trait object 自身的大小是可确定的，因为其只包括指向数据的指针和指向 vtable 的指针而已。
-​
 
 2️⃣   要求 trait 所有的方法都是对象安全的也是为了确保动态分派的时候能够正确从 vtable 中找到方法进行调用。
-​
 
 3️⃣   由于 trait object 自身是 Unsized，如果方法限定了`Self: Sized`，那么一定无法通过 trait object 去调用。也就不会导致动态分派的 object safety 问题，因此一个限定了 `Self: Sized`的 trait 方法也被认为是 object-safe 的。
-​
 
 > - [Why does a generic method inside a trait require trait object to be sized? - Stack Overflow](https://stackoverflow.com/questions/42620022/why-does-a-generic-method-inside-a-trait-require-trait-object-to-be-sized)
 > - [A method marked where Self: Sized on a trait should not be considered during object safety checks #22031](https://github.com/rust-lang/rust/issues/22031)
 
-​
 
 4️⃣   如果方法不限定 `Self: Sized` ，就意味着那么这个方法首先不能有泛型参数。如果有泛型参数，那么 vtable 中的方法列表大小是难以确定的。当然如果非要做，在编译期，rust 编译器可以拿到 trait 的所有具体实现，然后为每一个具体实现在 vtable 生成一个特化的方法项。但是首先这会大大降低编译速度，其次也会引入极大的复杂性。因此 Rust 的 trait object 直接禁止了这种使用场景。
-​
 
 > [Why are trait methods with generic type parameters object-unsafe?](https://stackoverflow.com/questions/67767207/why-are-trait-methods-with-generic-type-parameters-object-unsafe)
 
-​
 
 5️⃣   如果方法没有 receiver，那么使用 trait object 毫无意义，因为这个方法的调用根本不需要 trait object 里面的 data 指针。
-​
 
 6️⃣   假设 trait 定义了这么一个方法：
 ```rust
