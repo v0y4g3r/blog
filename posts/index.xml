@@ -6,8 +6,134 @@
 		<generator>Hugo -- gohugo.io</generator>
 		<language>en-us</language>
 		<copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-		<lastBuildDate>Thu, 10 Feb 2022 15:07:10 +0800</lastBuildDate>
+		<lastBuildDate>Thu, 10 Feb 2022 22:34:39 +0800</lastBuildDate>
 		<atom:link href="https://huanglei.rocks/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>LSM Tree 笔记</title>
+			<link>https://huanglei.rocks/posts/note-on-lsmt/</link>
+			<pubDate>Thu, 10 Feb 2022 22:34:39 +0800</pubDate>
+			
+			<guid>https://huanglei.rocks/posts/note-on-lsmt/</guid>
+			<description>写入（Write path）   先从磁盘（HDD）写入的特性引入 append-only 的 WAL。
+  对于 KV 结构，如果写入是 append only的，那么就需要合并，不然写入性能太差。
+  单文件合并性能差，因此需要按阈值切分为多个小文件，通过归并排序的思路优化合并的效率。
+  多路归并要求每个文件有序，为了保证每个文件有序，就需要，数据写入的时候，不直接把 operation 直接写入到磁盘，而是先在内存缓存一段时间，并且在内存排好序，然后再 flush 到磁盘。
+ 内存有序的数据结构：跳表、红黑树、B+ 树 buffer 在内存的数据丢了怎么办？先写 redo log    有序数据结构  RocksDB 的数据结构比较：选择跳表的原因是跳表支持并发插入。
+ LSMT 的数据分类
+ 内存数据：MemTable 磁盘数据：SSTable（Sorted Sequence Table） 日志：redo log  内存数据组织 内存的数据需要保证有序，同时支持高性能的插入和查找。
+ ART：自适应基树（比如 Bitcask 采用）； SkipList：LevelDB、RocksDB 等。  SSTable 文件格式 按 Block 进行存储，可以参考 LevelDB 和 RocksDB 的 SST 文件的格式。</description>
+			<content type="html"><![CDATA[<h2 id="写入write-path">写入（Write path）</h2>
+<ul>
+<li>
+<p>先从磁盘（HDD）写入的特性引入 append-only 的 WAL。</p>
+</li>
+<li>
+<p>对于 KV 结构，如果写入是 append only的，那么就需要合并，不然写入性能太差。</p>
+</li>
+<li>
+<p>单文件合并性能差，因此需要按阈值切分为多个小文件，通过归并排序的思路优化合并的效率。</p>
+</li>
+<li>
+<p>多路归并要求每个文件有序，为了保证每个文件有序，就需要，数据写入的时候，不直接把 operation 直接写入到磁盘，而是先在内存缓存一段时间，并且在内存排好序，然后再 flush 到磁盘。</p>
+<ul>
+<li>内存有序的数据结构：跳表、红黑树、B+ 树</li>
+<li>buffer 在内存的数据丢了怎么办？先写 redo log</li>
+</ul>
+</li>
+</ul>
+<h2 id="有序数据结构">有序数据结构</h2>
+<p><img src="https://gw.alipayobjects.com/zos/antfincdn/V8oKiYS5z/1639280343.png" alt=""></p>
+<blockquote>
+<p><a href="https://github.com/facebook/rocksdb/wiki/MemTable">RocksDB 的数据结构比较</a>：选择跳表的原因是跳表支持并发插入。</p>
+</blockquote>
+<p>LSMT 的数据分类</p>
+<ul>
+<li>内存数据：MemTable</li>
+<li>磁盘数据：SSTable（Sorted Sequence Table）</li>
+<li>日志：redo log</li>
+</ul>
+<h2 id="内存数据组织">内存数据组织</h2>
+<p>内存的数据需要保证有序，同时支持高性能的插入和查找。</p>
+<ul>
+<li>ART：自适应基树（比如 Bitcask 采用）；</li>
+<li>SkipList：LevelDB、RocksDB 等。</li>
+</ul>
+<h2 id="sstable-文件格式">SSTable 文件格式</h2>
+<p>按 Block 进行存储，可以参考 LevelDB 和 RocksDB 的 SST 文件的格式。</p>
+<h2 id="合并策略">合并策略</h2>
+<ul>
+<li>
+<p>分级合并（Leveling Merge Policy）</p>
+<ul>
+<li>每一级都有且只有一个文件</li>
+</ul>
+</li>
+<li>
+<p>分层合并 (Tiering Merge Policy)</p>
+<ul>
+<li>每一级有多个小文件，每个小文件中的 key 不重叠（LevelDB 和 RocksDB采用，尽管他们称自己为 leveling merge）</li>
+</ul>
+</li>
+<li>
+<p>合并时间：定时合并、达到阈值合并。</p>
+</li>
+</ul>
+<h2 id="读取read-path">读取（Read path）</h2>
+<p>核心原则：先热后冷读取最新的数据，一旦读取到就停止。</p>
+<ul>
+<li>优先读取 MemTable，然后读取 SSTable</li>
+</ul>
+<h3 id="读取的优化">读取的优化</h3>
+<ul>
+<li>通过 BloomFilter 优化不存在的数据的判断</li>
+<li>SSTable 分区</li>
+<li>压缩</li>
+</ul>
+<h2 id="lsmt-的问题">LSMT 的问题</h2>
+<h3 id="读放大">读放大</h3>
+<p>一次 key 的读取需要由新到旧依次读取，涉及到不止一次IO，在范围查询的时候尤其明显。</p>
+<h3 id="写放大">写放大</h3>
+<p>后台合并（compaction）导致一个文件可能需要被写入多次。</p>
+<h3 id="空间放大">空间放大</h3>
+<p>Append-only 导致过期数据一致存在，直到被清理</p>
+<h2 id="总结">总结</h2>
+<ul>
+<li>写放大：尽管 LSM Tree 通过顺序 IO 提供了更大的写入吞吐，但是写入放大的问题会争抢正常写入的磁盘带宽，从而降低性能和磁盘的使用寿命。</li>
+<li>合并：后台的合并操作导致 write stall</li>
+<li>新硬件：Remote compaction，Compaction offloading，AEP</li>
+</ul>
+<p>索引存储</p>
+<ul>
+<li>索引不存储
+<ul>
+<li>buntdb：每次重启重建</li>
+</ul>
+</li>
+<li>索引存储
+<ul>
+<li>分离存储
+<ul>
+<li>Bitcask</li>
+<li>MySQL MyISAM</li>
+</ul>
+</li>
+<li>一起存储
+<ul>
+<li>BoltDB</li>
+<li>MySQL Innodb</li>
+<li>LevelDB (SStable)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="reference">Reference</h1>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=adamqSuHHck&amp;ab_channel=TalkGo">理论结合实践详解 lsm 树存储引擎（bitcask、moss、leveldb 等）</a></li>
+</ul>
+]]></content>
+		</item>
 		
 		<item>
 			<title>使用 GitHub Issue 作为 Hugo 的评论系统</title>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#282c34">
+	<meta name="msapplication-TileColor" content="#282c34">
+<meta itemprop="name" content="LSM Tree 笔记">
+<meta itemprop="description" content="写入（Write path）   先从磁盘（HDD）写入的特性引入 append-only 的 WAL。
+  对于 KV 结构，如果写入是 append only的，那么就需要合并，不然写入性能太差。
+  单文件合并性能差，因此需要按阈值切分为多个小文件，通过归并排序的思路优化合并的效率。
+  多路归并要求每个文件有序，为了保证每个文件有序，就需要，数据写入的时候，不直接把 operation 直接写入到磁盘，而是先在内存缓存一段时间，并且在内存排好序，然后再 flush 到磁盘。
+ 内存有序的数据结构：跳表、红黑树、B&#43; 树 buffer 在内存的数据丢了怎么办？先写 redo log    有序数据结构  RocksDB 的数据结构比较：选择跳表的原因是跳表支持并发插入。
+ LSMT 的数据分类
+ 内存数据：MemTable 磁盘数据：SSTable（Sorted Sequence Table） 日志：redo log  内存数据组织 内存的数据需要保证有序，同时支持高性能的插入和查找。
+ ART：自适应基树（比如 Bitcask 采用）； SkipList：LevelDB、RocksDB 等。  SSTable 文件格式 按 Block 进行存储，可以参考 LevelDB 和 RocksDB 的 SST 文件的格式。"><meta itemprop="datePublished" content="2022-02-10T22:34:39+08:00" />
+<meta itemprop="dateModified" content="2022-02-10T22:34:39+08:00" />
+<meta itemprop="wordCount" content="125">
+<meta itemprop="keywords" content="Database," /><meta property="og:title" content="LSM Tree 笔记" />
+<meta property="og:description" content="写入（Write path）   先从磁盘（HDD）写入的特性引入 append-only 的 WAL。
+  对于 KV 结构，如果写入是 append only的，那么就需要合并，不然写入性能太差。
+  单文件合并性能差，因此需要按阈值切分为多个小文件，通过归并排序的思路优化合并的效率。
+  多路归并要求每个文件有序，为了保证每个文件有序，就需要，数据写入的时候，不直接把 operation 直接写入到磁盘，而是先在内存缓存一段时间，并且在内存排好序，然后再 flush 到磁盘。
+ 内存有序的数据结构：跳表、红黑树、B&#43; 树 buffer 在内存的数据丢了怎么办？先写 redo log    有序数据结构  RocksDB 的数据结构比较：选择跳表的原因是跳表支持并发插入。
+ LSMT 的数据分类
+ 内存数据：MemTable 磁盘数据：SSTable（Sorted Sequence Table） 日志：redo log  内存数据组织 内存的数据需要保证有序，同时支持高性能的插入和查找。
+ ART：自适应基树（比如 Bitcask 采用）； SkipList：LevelDB、RocksDB 等。  SSTable 文件格式 按 Block 进行存储，可以参考 LevelDB 和 RocksDB 的 SST 文件的格式。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huanglei.rocks/posts/note-on-lsmt/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-02-10T22:34:39+08:00" />
+<meta property="article:modified_time" content="2022-02-10T22:34:39+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="LSM Tree 笔记"/>
+<meta name="twitter:description" content="写入（Write path）   先从磁盘（HDD）写入的特性引入 append-only 的 WAL。
+  对于 KV 结构，如果写入是 append only的，那么就需要合并，不然写入性能太差。
+  单文件合并性能差，因此需要按阈值切分为多个小文件，通过归并排序的思路优化合并的效率。
+  多路归并要求每个文件有序，为了保证每个文件有序，就需要，数据写入的时候，不直接把 operation 直接写入到磁盘，而是先在内存缓存一段时间，并且在内存排好序，然后再 flush 到磁盘。
+ 内存有序的数据结构：跳表、红黑树、B&#43; 树 buffer 在内存的数据丢了怎么办？先写 redo log    有序数据结构  RocksDB 的数据结构比较：选择跳表的原因是跳表支持并发插入。
+ LSMT 的数据分类
+ 内存数据：MemTable 磁盘数据：SSTable（Sorted Sequence Table） 日志：redo log  内存数据组织 内存的数据需要保证有序，同时支持高性能的插入和查找。
+ ART：自适应基树（比如 Bitcask 采用）； SkipList：LevelDB、RocksDB 等。  SSTable 文件格式 按 Block 进行存储，可以参考 LevelDB 和 RocksDB 的 SST 文件的格式。"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>LSM Tree 笔记</title>
+	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.037b6ee8f8c1baab6a3d0a9da11c3ff18a7552471f16c59fd98538d5ce99208b.css" integrity="sha256-A3tu6PjBuqtqPQqdoRw/8Yp1UkcfFsWf2YU41c6ZIIs=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://huanglei.rocks">Tokamako</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://huanglei.rocks/posts/">Posts</a>
+				<a href="https://huanglei.rocks/gallery/">Gallery</a>
+				<a href="https://huanglei.rocks/about-me/">About Me</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<span class="hdr-social hide-in-mobile"><a href="https://twitter.com/MrSatangel" target="_blank" rel="noopener me" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a><a href="https://www.instagram.com/tokamako/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/RayneHwang" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://huanglei.rocks/posts/">Posts</a></li>
+			<li><a href="https://huanglei.rocks/gallery/">Gallery</a></li>
+			<li><a href="https://huanglei.rocks/about-me/">About Me</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Feb 10, 2022</span></div>
+				<h1>LSM Tree 笔记</h1>
+			</header>
+			<div class="content">
+				<h2 id="写入write-path">写入（Write path）<a href="#写入write-path" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li>
+<p>先从磁盘（HDD）写入的特性引入 append-only 的 WAL。</p>
+</li>
+<li>
+<p>对于 KV 结构，如果写入是 append only的，那么就需要合并，不然写入性能太差。</p>
+</li>
+<li>
+<p>单文件合并性能差，因此需要按阈值切分为多个小文件，通过归并排序的思路优化合并的效率。</p>
+</li>
+<li>
+<p>多路归并要求每个文件有序，为了保证每个文件有序，就需要，数据写入的时候，不直接把 operation 直接写入到磁盘，而是先在内存缓存一段时间，并且在内存排好序，然后再 flush 到磁盘。</p>
+<ul>
+<li>内存有序的数据结构：跳表、红黑树、B+ 树</li>
+<li>buffer 在内存的数据丢了怎么办？先写 redo log</li>
+</ul>
+</li>
+</ul>
+<h2 id="有序数据结构">有序数据结构<a href="#有序数据结构" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><img src="https://gw.alipayobjects.com/zos/antfincdn/V8oKiYS5z/1639280343.png" alt=""></p>
+<blockquote>
+<p><a href="https://github.com/facebook/rocksdb/wiki/MemTable">RocksDB 的数据结构比较</a>：选择跳表的原因是跳表支持并发插入。</p>
+</blockquote>
+<p>LSMT 的数据分类</p>
+<ul>
+<li>内存数据：MemTable</li>
+<li>磁盘数据：SSTable（Sorted Sequence Table）</li>
+<li>日志：redo log</li>
+</ul>
+<h2 id="内存数据组织">内存数据组织<a href="#内存数据组织" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>内存的数据需要保证有序，同时支持高性能的插入和查找。</p>
+<ul>
+<li>ART：自适应基树（比如 Bitcask 采用）；</li>
+<li>SkipList：LevelDB、RocksDB 等。</li>
+</ul>
+<h2 id="sstable-文件格式">SSTable 文件格式<a href="#sstable-文件格式" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>按 Block 进行存储，可以参考 LevelDB 和 RocksDB 的 SST 文件的格式。</p>
+<h2 id="合并策略">合并策略<a href="#合并策略" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li>
+<p>分级合并（Leveling Merge Policy）</p>
+<ul>
+<li>每一级都有且只有一个文件</li>
+</ul>
+</li>
+<li>
+<p>分层合并 (Tiering Merge Policy)</p>
+<ul>
+<li>每一级有多个小文件，每个小文件中的 key 不重叠（LevelDB 和 RocksDB采用，尽管他们称自己为 leveling merge）</li>
+</ul>
+</li>
+<li>
+<p>合并时间：定时合并、达到阈值合并。</p>
+</li>
+</ul>
+<h2 id="读取read-path">读取（Read path）<a href="#读取read-path" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>核心原则：先热后冷读取最新的数据，一旦读取到就停止。</p>
+<ul>
+<li>优先读取 MemTable，然后读取 SSTable</li>
+</ul>
+<h3 id="读取的优化">读取的优化<a href="#读取的优化" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<ul>
+<li>通过 BloomFilter 优化不存在的数据的判断</li>
+<li>SSTable 分区</li>
+<li>压缩</li>
+</ul>
+<h2 id="lsmt-的问题">LSMT 的问题<a href="#lsmt-的问题" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="读放大">读放大<a href="#读放大" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>一次 key 的读取需要由新到旧依次读取，涉及到不止一次IO，在范围查询的时候尤其明显。</p>
+<h3 id="写放大">写放大<a href="#写放大" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>后台合并（compaction）导致一个文件可能需要被写入多次。</p>
+<h3 id="空间放大">空间放大<a href="#空间放大" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>Append-only 导致过期数据一致存在，直到被清理</p>
+<h2 id="总结">总结<a href="#总结" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li>写放大：尽管 LSM Tree 通过顺序 IO 提供了更大的写入吞吐，但是写入放大的问题会争抢正常写入的磁盘带宽，从而降低性能和磁盘的使用寿命。</li>
+<li>合并：后台的合并操作导致 write stall</li>
+<li>新硬件：Remote compaction，Compaction offloading，AEP</li>
+</ul>
+<p>索引存储</p>
+<ul>
+<li>索引不存储
+<ul>
+<li>buntdb：每次重启重建</li>
+</ul>
+</li>
+<li>索引存储
+<ul>
+<li>分离存储
+<ul>
+<li>Bitcask</li>
+<li>MySQL MyISAM</li>
+</ul>
+</li>
+<li>一起存储
+<ul>
+<li>BoltDB</li>
+<li>MySQL Innodb</li>
+<li>LevelDB (SStable)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="reference">Reference<a href="#reference" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=adamqSuHHck&amp;ab_channel=TalkGo">理论结合实践详解 lsm 树存储引擎（bitcask、moss、leveldb 等）</a></li>
+</ul>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/database">Database</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>125 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-02-10 22:34 &#43;0800</p>
+			</footer>
+		</article>
+		<div class="post-nav thin">
+			<a class="prev-post" href="https://huanglei.rocks/posts/hugo-comment-with-github-issues/">
+				<span class="post-nav-label">Older&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>使用 GitHub Issue 作为 Hugo 的评论系统</span>
+			</a>
+		</div>
+		<div id="comments" class="thin"></div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2022 <a href="https://huanglei.rocks">Lei, HUANG</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a> &#183; <a href="https://huanglei.rocks/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+		</p>
+	</footer>
+
+
+
+	<script src="https://huanglei.rocks/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>

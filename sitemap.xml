@@ -2,19 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://huanglei.rocks/tags/database/</loc>
+    <lastmod>2022-02-10T22:34:39+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/posts/note-on-lsmt/</loc>
+    <lastmod>2022-02-10T22:34:39+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/posts/</loc>
+    <lastmod>2022-02-10T22:34:39+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/tags/</loc>
+    <lastmod>2022-02-10T22:34:39+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/</loc>
+    <lastmod>2022-02-10T22:34:39+08:00</lastmod>
+  </url><url>
     <loc>https://huanglei.rocks/tags/github/</loc>
     <lastmod>2022-02-10T15:07:10+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/tags/hugo/</loc>
-    <lastmod>2022-02-10T15:07:10+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/posts/</loc>
-    <lastmod>2022-02-10T15:07:10+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/tags/</loc>
-    <lastmod>2022-02-10T15:07:10+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/</loc>
     <lastmod>2022-02-10T15:07:10+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</loc>
