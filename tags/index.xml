@@ -44,5 +44,23 @@
       <description></description>
     </item>
     
+    <item>
+      <title>Consensus</title>
+      <link>https://huanglei.rocks/tags/consensus/</link>
+      <pubDate>Mon, 14 Jun 2021 11:24:18 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/tags/consensus/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Paxos</title>
+      <link>https://huanglei.rocks/tags/paxos/</link>
+      <pubDate>Mon, 14 Jun 2021 11:24:18 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/tags/paxos/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>
