@@ -1,15 +1,14 @@
 ---
-title: "Bookkeeper Note"
+title: "BookKeeper 笔记"
 date: 2022-02-24T01:18:35+08:00
 draft: false
+toc: true
 ---
 
 # BookKeeper 的使用场景
 
 - WAL：比如 HDFS Namenode 的 EditLog（要求高可靠）
 - 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等
-
-
 
 # 核心理念
 
@@ -26,23 +25,23 @@ draft: false
 - bookie：存储 ledger 的节点；
 - ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger + seq 来读取一部分 entry。
 - quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。
-- data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制，不过 BookKeeper 的striping 的ensenble 数量是小于 quorum 数量的一种特殊的 striping。
+- data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。
 
 ![](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220224230803.png)
 
 {{% center_italic %}} BookKeeper 的 quorum write 机制 {{% /center_italic %}}
 
 
-Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了ZK去保存元数据，并且通过 triming 机制（BK称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。
+Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了 ZK 去保存元数据，并且通过 triming 机制（BK 称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。
 
 # 实现细节
 
-## Bookie
+## Bookie 的结构
 
-包含两个存储：
+Bookie 是存储节点，具体包含两个模块：
 
-- journal：WAL，同步写
-- ledger：包含索引，异步写
+- journal：WAL，同步写，负责保存 writer 的写入操作；
+- ledger：包含内存的状态（memtable）、ledger 的索引等，异步写。
 
 
 
@@ -63,7 +62,9 @@ Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK �
 
 
 
-## Ledger 创建
+## Ledger 操作
+
+### Ledger 创建
 
 一个 ledger 需要由一个 ensemble 来负责，因此创建 ledger 的时候必须指定 ledger 的 quorum 和 ensemble。具备 f+1 个节点的 quorum 可以容忍 f 个节点宕机。
 
@@ -83,13 +84,13 @@ Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK �
 ![image.png](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/paper-to-read-a-given-entry-e.png?versionId=CAEQIBiBgICTgJmx.RciIGNmMjU4OWFmYTE0YjQ4NzFiNjY0MTM4NzRjZjNjZTJi)
 
 
-## Ledger 关闭
+### Ledger 关闭
 
 Ledger 关闭是一个原子的操作，会在 ZK 中记录 ledger 最后一个 entry 的 seq。这里ZK 提供的一致性协议非常重要，否则 Bookkeper 的客户端可能会观察到 ledger 的 不一致。
-![image.png](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/1635067390415-cdc4ede3-9bd7-4bd3-82e7-f3c3091be3d1.png)
+![paper-closing-a-ledger](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/1635067390415-cdc4ede3-9bd7-4bd3-82e7-f3c3091be3d1.png)
 当 BK 的客户端没有 close 一个ledger 就 crash 怎么办？因此需要一个额外的机制来保证所有 open 的ledger 都能够最终被 close。
 
-## Ledger 的恢复
+### Ledger 的恢复
 
 
 Ledger 的写入者可能在没关闭 ledger 的时候就 crash 了，这种情况下 entry 的元数据尚未更新到 zk中， ledger 的读取者无法安全地确认 ledger中的最后的 entry 是什么，因此 ledger 需要 恢复操作（recovery）。
@@ -112,10 +113,6 @@ LAC：Last add confirmed，获取一个 quorum 中最后一个被确认写入的
 **这里比较容易混淆：LAC 应该是维护在 writer 本地的，只是每次写入到 bookie 的时候把它放在 entry 的某个字段中。Quorum 中所有 bookie 的最后一个 entry 的 LAC 最大值，所反映的一定是这个 writer 的 LAC 的最大值，这样一来 LAC 的作用就好理解了，相当于是把 writer 的写入确认水位状态随着 entry 写入到了每一个 bookie中。**
 
 > **这块的介绍可以看 **[**DistributedLog**](https://bookkeeper.apache.org/distributedlog/docs/latest/user_guide/design/main.html)**。**
-
-
-
-
 
 # Fencing
 
@@ -142,10 +139,19 @@ Ledger 的设计主要针对写为主的流量。读的场景下，如果命中�
 
 
 
+
+
 ## 源码分析
+
+### Entry 的写入
+
+
 
 ![entry-write-diagram.png](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/entry-write-diagram.png)
 
 {{% center_italic %}} Entry 写入的流程 {{% /center_italic %}}
+
+### Entry 的读取
+
 
 

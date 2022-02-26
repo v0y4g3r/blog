@@ -9,12 +9,12 @@
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
     <lastBuildDate>Thu, 24 Feb 2022 01:18:35 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Bookkeeper Note</title>
+      <title>BookKeeper 笔记</title>
       <link>https://huanglei.rocks/posts/bookkeeper-note/</link>
       <pubDate>Thu, 24 Feb 2022 01:18:35 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/bookkeeper-note/</guid>
-      <description>BookKeeper 的使用场景  WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等  核心理念  通过条带化写（Data Striping）实现数据的多副本，所有存储节点角色对等； 通过其他的存储组件（ZooKeeper）实现元数据高可靠，故障恢复（recover）流程强依赖 ZK 的元数据；  也可以选用其他的存储服务，要求 1. CP 系统；2. 提供 CAS 原语   基于 RocksDB 提供 (ledger, sequence) -&amp;gt; (file, physicalOffset) 的索引（SingleDirectoryDbLedgerStorage#ledgerIndex）； 同一时刻只有一个 writer 和多个 reader，通过 fencing 机制避免出现多 writer，避免 sequence 乱序； 读写分离，冷热分离（tailing read/catch-up read）提高吞吐；  BookKeeper 的术语  ledger：一写多读的 append-only 文件，ledger 的最小数据单元是 fragment； bookie：存储 ledger 的节点； ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger + seq 来读取一部分 entry。 quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。 data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制，不过 BookKeeper 的striping 的ensenble 数量是小于 quorum 数量的一种特殊的 striping。   BookKeeper 的 quorum write 机制   Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了ZK去保存元数据，并且通过 triming 机制（BK称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。</description>
+      <description>BookKeeper 的使用场景  WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等  核心理念  通过条带化写（Data Striping）实现数据的多副本，所有存储节点角色对等； 通过其他的存储组件（ZooKeeper）实现元数据高可靠，故障恢复（recover）流程强依赖 ZK 的元数据；  也可以选用其他的存储服务，要求 1. CP 系统；2. 提供 CAS 原语   基于 RocksDB 提供 (ledger, sequence) -&amp;gt; (file, physicalOffset) 的索引（SingleDirectoryDbLedgerStorage#ledgerIndex）； 同一时刻只有一个 writer 和多个 reader，通过 fencing 机制避免出现多 writer，避免 sequence 乱序； 读写分离，冷热分离（tailing read/catch-up read）提高吞吐；  BookKeeper 的术语  ledger：一写多读的 append-only 文件，ledger 的最小数据单元是 fragment； bookie：存储 ledger 的节点； ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger + seq 来读取一部分 entry。 quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。 data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。   BookKeeper 的 quorum write 机制   Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了 ZK 去保存元数据，并且通过 triming 机制（BK 称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。</description>
     </item>
     
     <item>

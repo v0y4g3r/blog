@@ -7,20 +7,20 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<meta name="theme-color" content="#282c34">
 	<meta name="msapplication-TileColor" content="#282c34">
-<meta itemprop="name" content="Bookkeeper Note">
-<meta itemprop="description" content="BookKeeper 的使用场景  WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等  核心理念  通过条带化写（Data Striping）实现数据的多副本，所有存储节点角色对等； 通过其他的存储组件（ZooKeeper）实现元数据高可靠，故障恢复（recover）流程强依赖 ZK 的元数据；  也可以选用其他的存储服务，要求 1. CP 系统；2. 提供 CAS 原语   基于 RocksDB 提供 (ledger, sequence) -&gt; (file, physicalOffset) 的索引（SingleDirectoryDbLedgerStorage#ledgerIndex）； 同一时刻只有一个 writer 和多个 reader，通过 fencing 机制避免出现多 writer，避免 sequence 乱序； 读写分离，冷热分离（tailing read/catch-up read）提高吞吐；  BookKeeper 的术语  ledger：一写多读的 append-only 文件，ledger 的最小数据单元是 fragment； bookie：存储 ledger 的节点； ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger &#43; seq 来读取一部分 entry。 quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。 data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制，不过 BookKeeper 的striping 的ensenble 数量是小于 quorum 数量的一种特殊的 striping。   BookKeeper 的 quorum write 机制   Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了ZK去保存元数据，并且通过 triming 机制（BK称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。"><meta itemprop="datePublished" content="2022-02-24T01:18:35+08:00" />
+<meta itemprop="name" content="BookKeeper 笔记">
+<meta itemprop="description" content="BookKeeper 的使用场景  WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等  核心理念  通过条带化写（Data Striping）实现数据的多副本，所有存储节点角色对等； 通过其他的存储组件（ZooKeeper）实现元数据高可靠，故障恢复（recover）流程强依赖 ZK 的元数据；  也可以选用其他的存储服务，要求 1. CP 系统；2. 提供 CAS 原语   基于 RocksDB 提供 (ledger, sequence) -&gt; (file, physicalOffset) 的索引（SingleDirectoryDbLedgerStorage#ledgerIndex）； 同一时刻只有一个 writer 和多个 reader，通过 fencing 机制避免出现多 writer，避免 sequence 乱序； 读写分离，冷热分离（tailing read/catch-up read）提高吞吐；  BookKeeper 的术语  ledger：一写多读的 append-only 文件，ledger 的最小数据单元是 fragment； bookie：存储 ledger 的节点； ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger &#43; seq 来读取一部分 entry。 quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。 data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。   BookKeeper 的 quorum write 机制   Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了 ZK 去保存元数据，并且通过 triming 机制（BK 称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。"><meta itemprop="datePublished" content="2022-02-24T01:18:35+08:00" />
 <meta itemprop="dateModified" content="2022-02-24T01:18:35+08:00" />
-<meta itemprop="wordCount" content="407">
-<meta itemprop="keywords" content="" /><meta property="og:title" content="Bookkeeper Note" />
-<meta property="og:description" content="BookKeeper 的使用场景  WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等  核心理念  通过条带化写（Data Striping）实现数据的多副本，所有存储节点角色对等； 通过其他的存储组件（ZooKeeper）实现元数据高可靠，故障恢复（recover）流程强依赖 ZK 的元数据；  也可以选用其他的存储服务，要求 1. CP 系统；2. 提供 CAS 原语   基于 RocksDB 提供 (ledger, sequence) -&gt; (file, physicalOffset) 的索引（SingleDirectoryDbLedgerStorage#ledgerIndex）； 同一时刻只有一个 writer 和多个 reader，通过 fencing 机制避免出现多 writer，避免 sequence 乱序； 读写分离，冷热分离（tailing read/catch-up read）提高吞吐；  BookKeeper 的术语  ledger：一写多读的 append-only 文件，ledger 的最小数据单元是 fragment； bookie：存储 ledger 的节点； ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger &#43; seq 来读取一部分 entry。 quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。 data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制，不过 BookKeeper 的striping 的ensenble 数量是小于 quorum 数量的一种特殊的 striping。   BookKeeper 的 quorum write 机制   Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了ZK去保存元数据，并且通过 triming 机制（BK称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。" />
+<meta itemprop="wordCount" content="414">
+<meta itemprop="keywords" content="" /><meta property="og:title" content="BookKeeper 笔记" />
+<meta property="og:description" content="BookKeeper 的使用场景  WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等  核心理念  通过条带化写（Data Striping）实现数据的多副本，所有存储节点角色对等； 通过其他的存储组件（ZooKeeper）实现元数据高可靠，故障恢复（recover）流程强依赖 ZK 的元数据；  也可以选用其他的存储服务，要求 1. CP 系统；2. 提供 CAS 原语   基于 RocksDB 提供 (ledger, sequence) -&gt; (file, physicalOffset) 的索引（SingleDirectoryDbLedgerStorage#ledgerIndex）； 同一时刻只有一个 writer 和多个 reader，通过 fencing 机制避免出现多 writer，避免 sequence 乱序； 读写分离，冷热分离（tailing read/catch-up read）提高吞吐；  BookKeeper 的术语  ledger：一写多读的 append-only 文件，ledger 的最小数据单元是 fragment； bookie：存储 ledger 的节点； ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger &#43; seq 来读取一部分 entry。 quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。 data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。   BookKeeper 的 quorum write 机制   Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了 ZK 去保存元数据，并且通过 triming 机制（BK 称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huanglei.rocks/posts/bookkeeper-note/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-02-24T01:18:35+08:00" />
 <meta property="article:modified_time" content="2022-02-24T01:18:35+08:00" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Bookkeeper Note"/>
-<meta name="twitter:description" content="BookKeeper 的使用场景  WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等  核心理念  通过条带化写（Data Striping）实现数据的多副本，所有存储节点角色对等； 通过其他的存储组件（ZooKeeper）实现元数据高可靠，故障恢复（recover）流程强依赖 ZK 的元数据；  也可以选用其他的存储服务，要求 1. CP 系统；2. 提供 CAS 原语   基于 RocksDB 提供 (ledger, sequence) -&gt; (file, physicalOffset) 的索引（SingleDirectoryDbLedgerStorage#ledgerIndex）； 同一时刻只有一个 writer 和多个 reader，通过 fencing 机制避免出现多 writer，避免 sequence 乱序； 读写分离，冷热分离（tailing read/catch-up read）提高吞吐；  BookKeeper 的术语  ledger：一写多读的 append-only 文件，ledger 的最小数据单元是 fragment； bookie：存储 ledger 的节点； ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger &#43; seq 来读取一部分 entry。 quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。 data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制，不过 BookKeeper 的striping 的ensenble 数量是小于 quorum 数量的一种特殊的 striping。   BookKeeper 的 quorum write 机制   Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了ZK去保存元数据，并且通过 triming 机制（BK称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。"/>
+<meta name="twitter:title" content="BookKeeper 笔记"/>
+<meta name="twitter:description" content="BookKeeper 的使用场景  WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等  核心理念  通过条带化写（Data Striping）实现数据的多副本，所有存储节点角色对等； 通过其他的存储组件（ZooKeeper）实现元数据高可靠，故障恢复（recover）流程强依赖 ZK 的元数据；  也可以选用其他的存储服务，要求 1. CP 系统；2. 提供 CAS 原语   基于 RocksDB 提供 (ledger, sequence) -&gt; (file, physicalOffset) 的索引（SingleDirectoryDbLedgerStorage#ledgerIndex）； 同一时刻只有一个 writer 和多个 reader，通过 fencing 机制避免出现多 writer，避免 sequence 乱序； 读写分离，冷热分离（tailing read/catch-up read）提高吞吐；  BookKeeper 的术语  ledger：一写多读的 append-only 文件，ledger 的最小数据单元是 fragment； bookie：存储 ledger 的节点； ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger &#43; seq 来读取一部分 entry。 quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。 data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。   BookKeeper 的 quorum write 机制   Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了 ZK 去保存元数据，并且通过 triming 机制（BK 称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。"/>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -29,7 +29,7 @@
 	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
 	<link rel="shortcut icon" href="/favicon.ico">
 
-	<title>Bookkeeper Note</title>
+	<title>BookKeeper 笔记</title>
 	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.a5b4b95562746fbb497f3eae9c726a2696cabdf6db53fc7a454f8d9298b3f09a.css" integrity="sha256-pbS5VWJ0b7tJfz6unHJqJpbKvfbbU/x6RU+Nkpiz8Jo=" crossorigin="anonymous">
 	
 </head>
@@ -51,7 +51,7 @@
 				</nav>
 			</div>
 			<div class="hdr-right hdr-icons">
-				<span class="hdr-social hide-in-mobile"><a href="https://twitter.com/MrSatangel" target="_blank" rel="noopener me" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a><a href="https://www.instagram.com/tokamako/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/RayneHwang" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+				<button id="toc-btn" class="hdr-btn desktop-only-ib" title="Table of Contents"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="https://twitter.com/MrSatangel" target="_blank" rel="noopener me" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a><a href="https://www.instagram.com/tokamako/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/RayneHwang" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
 			</div>
 		</div>
 	</header>
@@ -68,12 +68,12 @@
 		<article class="thin">
 			<header class="post-header">
 				<div class="post-meta"><span>Feb 24, 2022</span></div>
-				<h1>Bookkeeper Note</h1>
+				<h1>BookKeeper 笔记</h1>
 			</header>
 
 			<hr class="post-end">
 			<footer class="post-info">
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>407 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>414 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-02-24 01:18 &#43;0800</p>
 			</footer>
 		</br>
@@ -102,7 +102,7 @@
 <li>bookie：存储 ledger 的节点；</li>
 <li>ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger + seq 来读取一部分 entry。</li>
 <li>quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。</li>
-<li>data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制，不过 BookKeeper 的striping 的ensenble 数量是小于 quorum 数量的一种特殊的 striping。</li>
+<li>data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。</li>
 </ul>
 <p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220224230803.png" alt=""></p>
 <div style="text-align: center;">
@@ -110,13 +110,13 @@
  BookKeeper 的 quorum write 机制 
 </i>
 </div>
-<p>Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了ZK去保存元数据，并且通过 triming 机制（BK称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。</p>
+<p>Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了 ZK 去保存元数据，并且通过 triming 机制（BK 称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。</p>
 <h1 id="实现细节">实现细节<a href="#实现细节" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
-<h2 id="bookie">Bookie<a href="#bookie" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
-<p>包含两个存储：</p>
+<h2 id="bookie-的结构">Bookie 的结构<a href="#bookie-的结构" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>Bookie 是存储节点，具体包含两个模块：</p>
 <ul>
-<li>journal：WAL，同步写</li>
-<li>ledger：包含索引，异步写</li>
+<li>journal：WAL，同步写，负责保存 writer 的写入操作；</li>
+<li>ledger：包含内存的状态（memtable）、ledger 的索引等，异步写。</li>
 </ul>
 <p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220224231150.png" alt=""></p>
 <div style="text-align: center;">
@@ -134,7 +134,8 @@
 <li>关闭 ledger 避免后续数据写入</li>
 <li>删除一个ledger</li>
 </ul>
-<h2 id="ledger-创建">Ledger 创建<a href="#ledger-创建" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="ledger-操作">Ledger 操作<a href="#ledger-操作" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="ledger-创建">Ledger 创建<a href="#ledger-创建" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>一个 ledger 需要由一个 ensemble 来负责，因此创建 ledger 的时候必须指定 ledger 的 quorum 和 ensemble。具备 f+1 个节点的 quorum 可以容忍 f 个节点宕机。</p>
 <ul>
 <li>quorum：写入节点集合。更大的quorum 提供更强的可用性。</li>
@@ -149,11 +150,11 @@
 <p>这里有个问题，当bk客户端尝试读取 entry 的时候，需要确定从哪些bookie组成的quorum 读取，那这个quorum是怎么确定的？</p>
 </blockquote>
 <p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/paper-to-read-a-given-entry-e.png?versionId=CAEQIBiBgICTgJmx.RciIGNmMjU4OWFmYTE0YjQ4NzFiNjY0MTM4NzRjZjNjZTJi" alt="image.png"></p>
-<h2 id="ledger-关闭">Ledger 关闭<a href="#ledger-关闭" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="ledger-关闭">Ledger 关闭<a href="#ledger-关闭" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>Ledger 关闭是一个原子的操作，会在 ZK 中记录 ledger 最后一个 entry 的 seq。这里ZK 提供的一致性协议非常重要，否则 Bookkeper 的客户端可能会观察到 ledger 的 不一致。
-<img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/1635067390415-cdc4ede3-9bd7-4bd3-82e7-f3c3091be3d1.png" alt="image.png">
+<img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/1635067390415-cdc4ede3-9bd7-4bd3-82e7-f3c3091be3d1.png" alt="paper-closing-a-ledger">
 当 BK 的客户端没有 close 一个ledger 就 crash 怎么办？因此需要一个额外的机制来保证所有 open 的ledger 都能够最终被 close。</p>
-<h2 id="ledger-的恢复">Ledger 的恢复<a href="#ledger-的恢复" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="ledger-的恢复">Ledger 的恢复<a href="#ledger-的恢复" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>Ledger 的写入者可能在没关闭 ledger 的时候就 crash 了，这种情况下 entry 的元数据尚未更新到 zk中， ledger 的读取者无法安全地确认 ledger中的最后的 entry 是什么，因此 ledger 需要 恢复操作（recovery）。</p>
 <p>当 reader 打开一个 ledger 读取的时候，从 ZK 中获取元数据，同时如果发现这个 ledger 尚未被close，就触发一个 recovery 流程。（没 close 就触发吗？？？）</p>
 <p>Recovery：确定按所要求的 quorum 写入成功的最后一个 entry，写入到 ZK 中。</p>
@@ -183,15 +184,48 @@
 <p>对于每个ledger，bookie 在 ledger device 上还维护了一个索引，并且把这个索引 映射 到内存，降低索引构建导致的 IO 开销。</p>
 <p>Ledger 的设计主要针对写为主的流量。读的场景下，如果命中了内存中的ledger index，那么只需要一次磁盘 IO，否则需要先从 Ledger index文件找到 entry 所在 entry log 中的位置，然后再去 entry log 中读取entry内容。</p>
 <h2 id="源码分析">源码分析<a href="#源码分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="entry-的写入">Entry 的写入<a href="#entry-的写入" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/entry-write-diagram.png" alt="entry-write-diagram.png"></p>
 <div style="text-align: center;">
 <i>
  Entry 写入的流程 
 </i>
 </div>
+<h3 id="entry-的读取">Entry 的读取<a href="#entry-的读取" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 
 			</div>
 		</article>
+		<aside id="toc">
+			<div class="toc-title">Table of Contents</div>
+			<nav id="TableOfContents">
+  <ul>
+    <li><a href="#bookie-的结构">Bookie 的结构</a></li>
+    <li><a href="#bookkeeper-提供的-api">BookKeeper 提供的 API</a></li>
+    <li><a href="#ledger-操作">Ledger 操作</a>
+      <ul>
+        <li><a href="#ledger-创建">Ledger 创建</a></li>
+        <li><a href="#ledger-关闭">Ledger 关闭</a></li>
+        <li><a href="#ledger-的恢复">Ledger 的恢复</a></li>
+        <li><a href="#lac">LAC</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#从一个-open-状态的-ledger-读取数据">从一个 open 状态的 ledger 读取数据</a></li>
+      </ul>
+    </li>
+    <li><a href="#源码分析">源码分析</a>
+      <ul>
+        <li><a href="#entry-的写入">Entry 的写入</a></li>
+        <li><a href="#entry-的读取">Entry 的读取</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+		</aside>
 		<div class="post-nav thin">
 			<a class="prev-post" href="https://huanglei.rocks/posts/note-on-lsmt/">
 				<span class="post-nav-label">Older&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>LSM Tree 笔记</span>
