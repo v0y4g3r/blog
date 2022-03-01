@@ -10,7 +10,7 @@
 <meta itemprop="name" content="BookKeeper 笔记">
 <meta itemprop="description" content="BookKeeper 的使用场景  WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等  核心理念  通过条带化写（Data Striping）实现数据的多副本，所有存储节点角色对等； 通过其他的存储组件（ZooKeeper）实现元数据高可靠，故障恢复（recover）流程强依赖 ZK 的元数据；  也可以选用其他的存储服务，要求 1. CP 系统；2. 提供 CAS 原语   基于 RocksDB 提供 (ledger, sequence) -&gt; (file, physicalOffset) 的索引（SingleDirectoryDbLedgerStorage#ledgerIndex）； 同一时刻只有一个 writer 和多个 reader，通过 fencing 机制避免出现多 writer，避免 sequence 乱序； 读写分离，冷热分离（tailing read/catch-up read）提高吞吐；  BookKeeper 的术语  ledger：一写多读的 append-only 文件，ledger 的最小数据单元是 fragment； bookie：存储 ledger 的节点； ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger &#43; seq 来读取一部分 entry。 quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。 data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。   BookKeeper 的 quorum write 机制   Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了 ZK 去保存元数据，并且通过 triming 机制（BK 称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。"><meta itemprop="datePublished" content="2022-02-24T01:18:35+08:00" />
 <meta itemprop="dateModified" content="2022-02-24T01:18:35+08:00" />
-<meta itemprop="wordCount" content="414">
+<meta itemprop="wordCount" content="457">
 <meta itemprop="keywords" content="" /><meta property="og:title" content="BookKeeper 笔记" />
 <meta property="og:description" content="BookKeeper 的使用场景  WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等  核心理念  通过条带化写（Data Striping）实现数据的多副本，所有存储节点角色对等； 通过其他的存储组件（ZooKeeper）实现元数据高可靠，故障恢复（recover）流程强依赖 ZK 的元数据；  也可以选用其他的存储服务，要求 1. CP 系统；2. 提供 CAS 原语   基于 RocksDB 提供 (ledger, sequence) -&gt; (file, physicalOffset) 的索引（SingleDirectoryDbLedgerStorage#ledgerIndex）； 同一时刻只有一个 writer 和多个 reader，通过 fencing 机制避免出现多 writer，避免 sequence 乱序； 读写分离，冷热分离（tailing read/catch-up read）提高吞吐；  BookKeeper 的术语  ledger：一写多读的 append-only 文件，ledger 的最小数据单元是 fragment； bookie：存储 ledger 的节点； ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger &#43; seq 来读取一部分 entry。 quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。 data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。   BookKeeper 的 quorum write 机制   Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了 ZK 去保存元数据，并且通过 triming 机制（BK 称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。" />
 <meta property="og:type" content="article" />
@@ -73,7 +73,7 @@
 
 			<hr class="post-end">
 			<footer class="post-info">
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>414 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>457 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-02-24 01:18 &#43;0800</p>
 			</footer>
 		</br>
@@ -156,12 +156,12 @@
 当 BK 的客户端没有 close 一个ledger 就 crash 怎么办？因此需要一个额外的机制来保证所有 open 的ledger 都能够最终被 close。</p>
 <h3 id="ledger-的恢复">Ledger 的恢复<a href="#ledger-的恢复" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>Ledger 的写入者可能在没关闭 ledger 的时候就 crash 了，这种情况下 entry 的元数据尚未更新到 zk中， ledger 的读取者无法安全地确认 ledger中的最后的 entry 是什么，因此 ledger 需要 恢复操作（recovery）。</p>
-<p>当 reader 打开一个 ledger 读取的时候，从 ZK 中获取元数据，同时如果发现这个 ledger 尚未被close，就触发一个 recovery 流程。（没 close 就触发吗？？？）</p>
+<p>当 reader 打开一个 ledger 读取的时候，从 ZK 中获取元数据，同时如果发现这个 ledger 尚未被 close，就触发一个 recovery 流程。</p>
 <p>Recovery：确定按所要求的 quorum 写入成功的最后一个 entry，写入到 ZK 中。</p>
-<p>如何确认最后一个 entry？
-可以简单地从 ledger 一次读取所有的entry，重新写入一遍。
+<blockquote>
+<p>如何确认最后一个 entry？可以简单地从 ledger 一次读取所有的entry，重新写入一遍。
 为了加速，reader 向 ensemble 中所有的 bookie 询问 此ledger 写入的最新的 entry 的LAC字段（Last Add Confirmed）。然后恢复流程就可以从最高的 LAC 位置开始，而无需读取整个 ledger。</p>
-<p>？？？这里的恢复流程尚不是太清楚。</p>
+</blockquote>
 <h3 id="lac">LAC<a href="#lac" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>LAC：Last add confirmed，获取一个 quorum 中最后一个被确认写入的 entry 的 id
 对于 单个 bookie 而言，所谓的LAC就是当前 ledger 最后一个写入的 entry 的 entry id。而对于客户端而言，获取quorum 的LAC就是获取整个 quorum 中最大的LAC。</p>
@@ -175,7 +175,7 @@
 <h3 id="从一个-open-状态的-ledger-读取数据">从一个 open 状态的 ledger 读取数据<a href="#从一个-open-状态的-ledger-读取数据" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>前述都是基于 reader 只能读取 closed 的 ledger 的前提。但是 reader完全有可能需要读取 open 的ledger（废话。。。），因此 BK 提供了绕过了 recovery 流程的读取API。在这个API 中，为了防止 reader 读取到 transient entry（只在 quorum 中复制了一部分，关闭 ledger 后可能会被 trim 掉的 entry），reader会向bookie 查询 ledger 的 LAC，读取 LAC 以前的 entry 是安全的，因为他们都已经被完整地复制了。</p>
 <p>Ledger device：第一版不同的 ledger 有不同的文件，后来改为一个（类似RocketMQ的CommitLog），成为entry log。原因是多个文件的随机写入带来的磁盘寻道、Page cache 的竞争大大降低了写入吞吐。不同 ledger 的 entry 都存储在一个 entry log 中。</p>
-<p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/1645460567153-66dff109-b35e-4676-b45a-f03706a58eb0.png?versionId=CAEQIBiBgMCI8LGx.RciIGFhYTZkNTNjYWFiOTQzOWU4MzRkYmNjMzRkMWJlMzQz" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/bookkeeper-write.svg?" alt=""></p>
 <div style="text-align: center;">
 <i>
  Journal to Ledger Log 
@@ -192,6 +192,22 @@
 </i>
 </div>
 <h3 id="entry-的读取">Entry 的读取<a href="#entry-的读取" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>还是根据 write set 找到负责 entry 的 bookie 列表，然后向这些 bookie 发送读取请求。</p>
+<p>Entry 读取的时候可能存在一种特殊情况：读取的 entry 范围一jnkmlxc部分落在一个 ensemble，一部分落在另一个 ensemble，比如下面图中的情况。</p>
+<p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220228234606.png" alt="entry scatter"></p>
+<div style="text-align: center;">
+<i>
+ 尝试读取散落在不同 ensemble 的 entry 
+</i>
+</div>
+<p>为了处理读取散落在不同 ensemble 的 entry 的情况，BookKeeper 每次读取 entry 前都会判断所读取的 entry id 是否出现 ensemble change。</p>
+<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/Bookkeeper.drawio.svg?" alt=""></p>
+<div style="text-align: center;">
+<i>
+ Entry 读取的主流程代码 
+</i>
+</div>
+<p>为了避免部分慢节点导致延迟升高，提升读取的性能，BookKeeper 客户端还采用了 speculative read（推测读取）的方式，如果当前读取的 bookie 没有在特定时间内返回数据，那么客户端会立刻尝试向另一个 bookie 发送读取请求，并同时等待两个 bookie 的响应。具体可见 <a href="https://bookkeeper.apache.org/docs/4.5.0/api/javadoc/org/apache/bookkeeper/client/DefaultSpeculativeRequestExecutionPolicy.html">DefaultSpeculativeRequestExecutionPolicy</a>.</p>
 
 			</div>
 		</article>

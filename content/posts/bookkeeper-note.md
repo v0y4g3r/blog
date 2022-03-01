@@ -95,15 +95,12 @@ Ledger 关闭是一个原子的操作，会在 ZK 中记录 ledger 最后一个 
 
 Ledger 的写入者可能在没关闭 ledger 的时候就 crash 了，这种情况下 entry 的元数据尚未更新到 zk中， ledger 的读取者无法安全地确认 ledger中的最后的 entry 是什么，因此 ledger 需要 恢复操作（recovery）。
 
-当 reader 打开一个 ledger 读取的时候，从 ZK 中获取元数据，同时如果发现这个 ledger 尚未被close，就触发一个 recovery 流程。（没 close 就触发吗？？？）
+当 reader 打开一个 ledger 读取的时候，从 ZK 中获取元数据，同时如果发现这个 ledger 尚未被 close，就触发一个 recovery 流程。
 
 Recovery：确定按所要求的 quorum 写入成功的最后一个 entry，写入到 ZK 中。
 
-如何确认最后一个 entry？
-可以简单地从 ledger 一次读取所有的entry，重新写入一遍。
-为了加速，reader 向 ensemble 中所有的 bookie 询问 此ledger 写入的最新的 entry 的LAC字段（Last Add Confirmed）。然后恢复流程就可以从最高的 LAC 位置开始，而无需读取整个 ledger。
-
-？？？这里的恢复流程尚不是太清楚。
+> 如何确认最后一个 entry？可以简单地从 ledger 一次读取所有的entry，重新写入一遍。
+> 为了加速，reader 向 ensemble 中所有的 bookie 询问 此ledger 写入的最新的 entry 的LAC字段（Last Add Confirmed）。然后恢复流程就可以从最高的 LAC 位置开始，而无需读取整个 ledger。
 
 ### LAC
 
@@ -129,7 +126,7 @@ bookie 检测到某个 ledger 出于 recovery 流程中时，拒绝掉所有这�
 
 Ledger device：第一版不同的 ledger 有不同的文件，后来改为一个（类似RocketMQ的CommitLog），成为entry log。原因是多个文件的随机写入带来的磁盘寻道、Page cache 的竞争大大降低了写入吞吐。不同 ledger 的 entry 都存储在一个 entry log 中。
 
-![](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/1645460567153-66dff109-b35e-4676-b45a-f03706a58eb0.png?versionId=CAEQIBiBgMCI8LGx.RciIGFhYTZkNTNjYWFiOTQzOWU4MzRkYmNjMzRkMWJlMzQz)
+![](https://raw.githubusercontent.com/RayneHwang/img-repo/main/bookkeeper-write.svg?)
 
 {{% center_italic %}} Journal to Ledger Log {{% /center_italic %}}
 
@@ -153,5 +150,19 @@ Ledger 的设计主要针对写为主的流量。读的场景下，如果命中�
 
 ### Entry 的读取
 
+还是根据 write set 找到负责 entry 的 bookie 列表，然后向这些 bookie 发送读取请求。
 
+Entry 读取的时候可能存在一种特殊情况：读取的 entry 范围一jnkmlxc部分落在一个 ensemble，一部分落在另一个 ensemble，比如下面图中的情况。
+
+![entry scatter](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220228234606.png)
+
+{{% center_italic %}} 尝试读取散落在不同 ensemble 的 entry {{% /center_italic %}}
+
+为了处理读取散落在不同 ensemble 的 entry 的情况，BookKeeper 每次读取 entry 前都会判断所读取的 entry id 是否出现 ensemble change。
+
+![](https://raw.githubusercontent.com/RayneHwang/img-repo/main/Bookkeeper.drawio.svg?)
+
+{{% center_italic %}} Entry 读取的主流程代码 {{% /center_italic %}}
+
+为了避免部分慢节点导致延迟升高，提升读取的性能，BookKeeper 客户端还采用了 speculative read（推测读取）的方式，如果当前读取的 bookie 没有在特定时间内返回数据，那么客户端会立刻尝试向另一个 bookie 发送读取请求，并同时等待两个 bookie 的响应。具体可见 [DefaultSpeculativeRequestExecutionPolicy](https://bookkeeper.apache.org/docs/4.5.0/api/javadoc/org/apache/bookkeeper/client/DefaultSpeculativeRequestExecutionPolicy.html).
 
