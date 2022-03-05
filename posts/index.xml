@@ -6,8 +6,135 @@
 		<generator>Hugo -- gohugo.io</generator>
 		<language>en-us</language>
 		<copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-		<lastBuildDate>Thu, 24 Feb 2022 01:18:35 +0800</lastBuildDate>
+		<lastBuildDate>Sat, 05 Mar 2022 15:44:33 +0800</lastBuildDate>
 		<atom:link href="https://huanglei.rocks/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Apache Parquet 格式简介</title>
+			<link>https://huanglei.rocks/posts/parquet/</link>
+			<pubDate>Sat, 05 Mar 2022 15:44:33 +0800</pubDate>
+			
+			<guid>https://huanglei.rocks/posts/parquet/</guid>
+			<description>简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。
+数据 layout 一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。
+ 官方的格式图    原始行格式的数据    Parquet 数据的遍历顺序    使用 Parquet 转换之后的格式   在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。
+元数据 从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。
+Footer Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。
+Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 8 到倒数第 4 字节，作为 footer 的长度，从而得到 footer 区的起始 offset。</description>
+			<content type="html"><![CDATA[<h2 id="简介">简介</h2>
+<p>Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。</p>
+<h2 id="数据-layout">数据 layout</h2>
+<p>一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。</p>
+<p><img src="https://raw.githubusercontent.com/apache/parquet-format/master/doc/images/FileLayout.gif#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=gFbsV&amp;originHeight=478&amp;originWidth=601&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<div style="text-align: center;">
+<i>
+ 官方的格式图  
+</i>
+</div>
+<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/parquet-original-light.svg" alt=""></p>
+<div style="text-align: center;">
+<i>
+ 原始行格式的数据  
+</i>
+</div>
+<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/parquet-iteration-order-light.svg" alt=""></p>
+<div style="text-align: center;">
+<i>
+ Parquet 数据的遍历顺序 
+</i>
+</div>
+<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/parquet-physical-light.svg" alt=""></p>
+<div style="text-align: center;">
+<i>
+ 使用 Parquet 转换之后的格式 
+</i>
+</div>
+<p>在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。</p>
+<h2 id="元数据">元数据</h2>
+<p><img src="https://raw.github.com/apache/parquet-format/master/doc/images/FileLayout.gif" alt="image.png"></p>
+<p>从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。</p>
+<h3 id="footer">Footer</h3>
+<p>Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。</p>
+<p>Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 8 到倒数第 4 字节，作为 footer 的长度，从而得到 footer 区的起始 offset。</p>
+<p>Footer 区数据遵循特定的编码格式（ThriftCompactProtocol），因此可以方便地反序列化。</p>
+<p>Footer 区还包含了 row group 和 row group 中的列的信息。</p>
+<h3 id="列的元数据">列的元数据</h3>
+<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/20220305160426.png" alt=""></p>
+<div style="text-align: center;">
+<i>
+  列的元数据位置  
+</i>
+</div>
+<p>在 footer 中，每一列的信息也被记录，包括：</p>
+<ul>
+<li>列的类型、编码；</li>
+<li>列值的数量；</li>
+<li>第一个数据页的 offset；</li>
+<li>第一个索引页的 offset；</li>
+<li>压测/解压缩的大小；</li>
+<li>以及一些额外的键值对。</li>
+</ul>
+<p>根据 footer 中的这些列的信息就可以快速找到 Parquet 文件中的数据地址和索引地址、以及如何解析这些数据。</p>
+<h3 id="文件内索列">文件内索列</h3>
+<p><a href="https://issues.apache.org/jira/browse/PARQUET-1201">Parquet 2.5 版本</a>支持了列值索引功能，具体的功能介绍可以参考 <a href="https://github.com/apache/parquet-format/blob/master/PageIndex.md">ColumnIndex Layout to Support Page Skipping</a>.</p>
+<p>在之前的版本中，统计数据（min、max）只在 column 的 metadata 和 page header 当中，当读取 page 的时候，可以根据 page header 中的统计数据决定是否需要跳过这一页，但这样还是需要遍历文件中的每一页。</p>
+<p>目标：通过 minmax 可以直接定位到 page 的方式提高范围查询和点查的 IO 效率。具体来说针对 row group 排序列的单行查询，每一列只需要读取一页数据。排序列的范围查询只读取范围所涉及的数据页；如果其他的查询具有高选择性，即使查询条件不是排序列，也要能够按需读取数据页。</p>
+<p>为了实现这样的目标，Parquet 在 row group 的元数据上增加了如下两个针对列的数据结构（即在一个 row group 中的每一个列都有下面的两个索引来描述它们）：</p>
+<ul>
+<li>ColumnIndex：针对 scan predicate，支持通过列值找到列的数据所在的页；</li>
+<li>OffsetIndex：通过 ColumnIndex 找到 match 的 row 之后，OffsetIndex 支持按 row index 去获取相应的值。一个 row group 的所有 column 的 OffsetIndex 都是存储在一起的。</li>
+</ul>
+<p>索引的地址在 footer 区之前的地方，footer 里面有一个字段指明了其 offset。</p>
+<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/parquet-index-page-location-light.svg#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=KmMZf&amp;originHeight=202&amp;originWidth=382&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<div style="text-align: center;">
+<i>
+ Index page 的位置 
+</i>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="cl"><span class="sd">/// Description for ColumnIndex.
+</span></span></span><span class="line"><span class="cl"><span class="sd">/// Each &lt;array-field&gt;[i] refers to the page at OffsetIndex.page_locations[i]
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="cp">#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">ColumnIndex</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="sd">/// A list of Boolean values to determine the validity of the corresponding
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// min and max values. If true, a page contains only null values, and writers
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// have to set the corresponding entries in min_values and max_values to
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// byte[0], so that all lists have the same length. If false, the
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// corresponding entries in min_values and max_values must be valid.
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="n">null_pages</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="sd">/// Two lists containing lower and upper bounds for the values of each page.
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// These may be the actual minimum and maximum values found on a page, but
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// can also be (more compact) values that do not exist on a page. For
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// example, instead of storing &#34;&#34;Blart Versenwald III&#34;, a writer may set
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// min_values[i]=&#34;B&#34;, max_values[i]=&#34;C&#34;. Such more compact values must still
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// be valid values within the column&#39;s logical type. Readers must make sure
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// that list entries are populated before using them by inspecting null_pages.
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="n">min_values</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="n">max_values</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="sd">/// Stores whether both min_values and max_values are orderd and if so, in
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// which direction. This allows readers to perform binary searches in both
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// lists. Readers cannot assume that max_values[i] &lt;= min_values[i+1], even
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// if the lists are ordered.
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="n">boundary_order</span>: <span class="nc">BoundaryOrder</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="sd">/// A list containing the number of null values for each page *
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="n">null_counts</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">i64</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="cp">#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">OffsetIndex</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="sd">/// PageLocations, ordered by increasing PageLocation.offset. It is required
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// that page_locations[i].first_row_index &lt; page_locations[i+1].first_row_index.
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="n">page_locations</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">PageLocation</span><span class="o">&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h2 id="parquet-的优势">Parquet 的优势</h2>
+<ul>
+<li>按需读取列的值，比如在 OLAP 场景下，大宽表往往最终只有少量的列会被读取到；</li>
+<li>自描述，自带 schema，支持数据结构嵌套；</li>
+<li>由于列保存在一起，因此可以提高压缩和编码的效率（比如 RLE、字典压、Bit Packing 等等）;</li>
+<li>文件自带索引，支持快速检索 data page。</li>
+</ul>
+]]></content>
+		</item>
 		
 		<item>
 			<title>BookKeeper 笔记</title>
@@ -294,37 +421,37 @@
 </ul>
 <h1 id="配置-comment-组件">配置 Comment 组件</h1>
 <p>在您的博客站点根目录下的<code>layouts/partials/comments.html</code> 模板中增加：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html">{{ if .Params.issueNumber -}}
-<span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/octomments/build/ocs-ui.min.css&#34;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;stylesheet&#34;</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;comments&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/octomments/build/ocs.min.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-
-<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
-  <span class="nx">Octomments</span><span class="p">({</span>
-    <span class="nx">github</span><span class="o">:</span> <span class="p">{</span>
-      <span class="nx">owner</span><span class="o">:</span> <span class="s1">&#39;{{ $.Site.Params.comment.owner }}&#39;</span><span class="p">,</span>
-      <span class="nx">repo</span><span class="o">:</span> <span class="s1">&#39;{{ $.Site.Params.comment.repo }}&#39;</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="nx">issueNumber</span><span class="o">:</span> <span class="p">{{</span> <span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">issueNumber</span> <span class="p">}},</span>
-    <span class="nx">renderer</span><span class="o">:</span> <span class="p">[</span><span class="nx">OctommentsRenderer</span><span class="p">,</span> <span class="s1">&#39;#comments&#39;</span><span class="p">]</span>
-  <span class="p">}).</span><span class="nx">init</span><span class="p">();</span>
-<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-
-{{ end }}
-</code></pre></div><h1 id="配置需要评论的文章">配置需要评论的文章</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl">{{ if .Params.issueNumber -}}
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/octomments/build/ocs-ui.min.css&#34;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;stylesheet&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;comments&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/octomments/build/ocs.min.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Octomments</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">github</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">owner</span><span class="o">:</span> <span class="s1">&#39;{{ $.Site.Params.comment.owner }}&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">repo</span><span class="o">:</span> <span class="s1">&#39;{{ $.Site.Params.comment.repo }}&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">issueNumber</span><span class="o">:</span> <span class="p">{{</span> <span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">issueNumber</span> <span class="p">}},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">renderer</span><span class="o">:</span> <span class="p">[</span><span class="nx">OctommentsRenderer</span><span class="p">,</span> <span class="s1">&#39;#comments&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}).</span><span class="nx">init</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{ end }}
+</span></span></code></pre></div><h1 id="配置需要评论的文章">配置需要评论的文章</h1>
 <p>在文章的 metadata 章节加入创建的 issue 的 issue number，如本文的 metadata：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nn">---</span><span class="w">
-</span><span class="w"></span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;使用 GitHub Issue 作为 Hugo 的评论系统&#34;</span><span class="w">
-</span><span class="w"></span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="ld">2022-02-10T15:07:10</span><span class="m">+08</span><span class="p">:</span><span class="m">00</span><span class="w">
-</span><span class="w"></span><span class="nt">draft</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
-</span><span class="w"></span><span class="nt">toc</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
-</span><span class="w"></span><span class="nt">issueNumber</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
-</span><span class="w"></span><span class="nt">images</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="nt">tags</span><span class="p">:</span><span class="w"> 
-</span><span class="w">  </span>- <span class="l">Hugo</span><span class="w">
-</span><span class="w">  </span>- <span class="l">Github</span><span class="w">
-</span><span class="w"></span><span class="nn">---</span><span class="w">
-</span></code></pre></div><p>这样本文的末尾就会出现一个评论栏啦，所有对本文的评论都会同步到 GitHub 的 issue 中。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nn">---</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;使用 GitHub Issue 作为 Hugo 的评论系统&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="ld">2022-02-10T15:07:10</span><span class="m">+08</span><span class="p">:</span><span class="m">00</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">draft</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">toc</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">issueNumber</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">images</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">tags</span><span class="p">:</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="l">Hugo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="l">Github</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nn">---</span><span class="w">
+</span></span></span></code></pre></div><p>这样本文的末尾就会出现一个评论栏啦，所有对本文的评论都会同步到 GitHub 的 issue 中。</p>
 ]]></content>
 		</item>
 		
@@ -370,10 +497,10 @@
 </li>
 </ul>
 <p>1️⃣   也就是说，如下的 trait 是不能用作 trait object 的。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">trait</span><span class="w"> </span><span class="n">Test</span>: <span class="nb">Sized</span> <span class="p">{</span><span class="w">
-</span><span class="w">	</span><span class="k">fn</span> <span class="nf">some_method</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">);</span><span class="w">
-</span><span class="w"></span><span class="p">}</span><span class="w">
-</span></code></pre></div><p>为什么trait 的方法的 receiver 不能限定为 <code>Self: Sized</code>？因为 trait object 本身是动态分派的，编译期无法确定 trait object 的大小。如果这个时候 trait object 的方法又要求 Self 大小可确定，那就互相矛盾了。
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="cl"><span class="k">trait</span><span class="w"> </span><span class="n">Test</span>: <span class="nb">Sized</span> <span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">fn</span> <span class="nf">some_method</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>为什么trait 的方法的 receiver 不能限定为 <code>Self: Sized</code>？因为 trait object 本身是动态分派的，编译期无法确定 trait object 的大小。如果这个时候 trait object 的方法又要求 Self 大小可确定，那就互相矛盾了。
 需要注意的是，trait object 自身的大小是可确定的，因为其只包括指向数据的指针和指向 vtable 的指针而已。</p>
 <p>2️⃣   要求 trait 所有的方法都是对象安全的也是为了确保动态分派的时候能够正确从 vtable 中找到方法进行调用。</p>
 <p>3️⃣   由于 trait object 自身是 Unsized，如果方法限定了<code>Self: Sized</code>，那么一定无法通过 trait object 去调用。也就不会导致动态分派的 object safety 问题，因此一个限定了 <code>Self: Sized</code>的 trait 方法也被认为是 object-safe 的。</p>
@@ -389,15 +516,15 @@
 </blockquote>
 <p>5️⃣   如果方法没有 receiver，那么使用 trait object 毫无意义，因为这个方法的调用根本不需要 trait object 里面的 data 指针。</p>
 <p>6️⃣   假设 trait 定义了这么一个方法：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">trait</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w">	</span><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">Self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Self</span><span class="w">
-</span><span class="w"></span><span class="p">}</span><span class="w">
-</span></code></pre></div><p>那么这个 trait 的 duplicate 方法要求返回的类型和方法 receiver 的类型是一样的。如果 Trait 是静态分派，那么在编译器就可以确定所有可能的方法签名。比如结构体 A、B 实现了 Test trait，那么 duplicate 方法所有可能的签名是：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">A</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">A</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">B</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">B</span><span class="p">;</span><span class="w">
-</span></code></pre></div><p>而在动态分派下，从一个 trait object 发起方法的调用，也就无法在编译期约束不同位置的 Self 类型都是一致的，完全有可能出现下面的情况：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">B</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">A</span><span class="p">;</span><span class="w">
-</span></code></pre></div><p>显然这不是对 <code>Test</code> 这个 trait 的一个合法实现。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="cl"><span class="k">trait</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">Self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Self</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>那么这个 trait 的 duplicate 方法要求返回的类型和方法 receiver 的类型是一样的。如果 Trait 是静态分派，那么在编译器就可以确定所有可能的方法签名。比如结构体 A、B 实现了 Test trait，那么 duplicate 方法所有可能的签名是：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="cl"><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">A</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">A</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">B</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">B</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>而在动态分派下，从一个 trait object 发起方法的调用，也就无法在编译期约束不同位置的 Self 类型都是一致的，完全有可能出现下面的情况：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="cl"><span class="k">fn</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">B</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">A</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>显然这不是对 <code>Test</code> 这个 trait 的一个合法实现。</p>
 <ul>
 <li><a href="https://rust-lang.github.io/rfcs/0255-object-safety.html">https://rust-lang.github.io/rfcs/0255-object-safety.html</a></li>
 </ul>
@@ -466,56 +593,56 @@ P2c 约束了 proposer 每次提案之前先要知道 majority 的情况，由�
 <p>Inside the <code>{{ define main }}</code> block, paste following snippets</p>
 </li>
 </ol>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="p">{{</span> <span class="k">if</span> <span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">viz</span> <span class="p">}}</span>
-  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&#34;</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="err">/script&gt;</span>
-  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span><span class="o">&gt;</span>
-  <span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-    <span class="kd">var</span> <span class="nx">vizPrefix</span> <span class="o">=</span> <span class="s2">&#34;language-viz-&#34;</span><span class="p">;</span>
-    <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">forEach</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s2">&#34;[class^=&#34;</span> <span class="o">+</span> <span class="nx">vizPrefix</span> <span class="o">+</span> <span class="s2">&#34;]&#34;</span><span class="p">),</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">){</span>
-      <span class="kd">var</span> <span class="nx">engine</span><span class="p">;</span>
-      <span class="nx">x</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">&#34;class&#34;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s2">&#34; &#34;</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">cls</span><span class="p">){</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">cls</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="nx">vizPrefix</span><span class="p">))</span> <span class="p">{</span>
-          <span class="nx">engine</span> <span class="o">=</span> <span class="nx">cls</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">vizPrefix</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
-        <span class="p">}</span>
-      <span class="p">});</span>
-      <span class="kd">var</span> <span class="nx">image</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DOMParser</span><span class="p">().</span><span class="nx">parseFromString</span><span class="p">(</span><span class="nx">Viz</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">innerText</span><span class="p">,</span> <span class="p">{</span><span class="nx">format</span><span class="o">:</span><span class="s2">&#34;svg&#34;</span><span class="p">,</span> <span class="nx">engine</span><span class="o">:</span><span class="nx">engine</span><span class="p">}),</span> <span class="s2">&#34;image/svg+xml&#34;</span><span class="p">);</span>
-      <span class="nx">x</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">image</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
-      <span class="nx">x</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
-      <span class="nx">x</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">backgroundColor</span> <span class="o">=</span> <span class="s2">&#34;white&#34;</span>
-    <span class="p">});</span>
-  <span class="p">})();</span>
-  <span class="o">&lt;</span><span class="err">/script&gt;</span>
-<span class="p">{{</span> <span class="nx">end</span> <span class="p">}}</span>
-
-<span class="p">{{</span> <span class="k">if</span>  <span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">math</span>   <span class="p">}}</span>
-  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span><span class="o">&gt;</span>
-    <span class="nb">window</span><span class="p">.</span><span class="nx">MathJax</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="nx">tex2jax</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">inlineMath</span><span class="o">:</span> <span class="p">[[</span><span class="s1">&#39;$&#39;</span><span class="p">,</span><span class="s1">&#39;$&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;\\(&#39;</span><span class="p">,</span><span class="s1">&#39;\\)&#39;</span><span class="p">]],</span>
-        <span class="nx">displayMath</span><span class="o">:</span> <span class="p">[[</span><span class="s1">&#39;$$&#39;</span><span class="p">,</span><span class="s1">&#39;$$&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;\[&#39;</span><span class="p">,</span><span class="s1">&#39;\]&#39;</span><span class="p">]],</span>
-        <span class="nx">processEscapes</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nx">processEnvironments</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nx">skipTags</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;script&#39;</span><span class="p">,</span> <span class="s1">&#39;noscript&#39;</span><span class="p">,</span> <span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;textarea&#39;</span><span class="p">,</span> <span class="s1">&#39;pre&#39;</span><span class="p">],</span>
-        <span class="nx">TeX</span><span class="o">:</span> <span class="p">{</span> <span class="nx">equationNumbers</span><span class="o">:</span> <span class="p">{</span> <span class="nx">autoNumber</span><span class="o">:</span> <span class="s2">&#34;AMS&#34;</span> <span class="p">},</span>
-          <span class="nx">extensions</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;AMSmath.js&#34;</span><span class="p">,</span> <span class="s2">&#34;AMSsymbols.js&#34;</span><span class="p">,</span> <span class="s2">&#34;color.js&#34;</span><span class="p">]</span> <span class="p">}</span>
-      <span class="p">},</span>
-      <span class="nx">AuthorInit</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="nx">MathJax</span><span class="p">.</span><span class="nx">Hub</span><span class="p">.</span><span class="nx">Register</span><span class="p">.</span><span class="nx">StartupHook</span><span class="p">(</span><span class="s2">&#34;Begin&#34;</span><span class="p">,</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-          <span class="nx">MathJax</span><span class="p">.</span><span class="nx">Hub</span><span class="p">.</span><span class="nx">Queue</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">all</span> <span class="o">=</span> <span class="nx">MathJax</span><span class="p">.</span><span class="nx">Hub</span><span class="p">.</span><span class="nx">getAllJax</span><span class="p">(),</span> <span class="nx">i</span><span class="p">;</span>
-            <span class="k">for</span><span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">all</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">all</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">SourceElement</span><span class="p">().</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">className</span> <span class="o">+=</span> <span class="s1">&#39; has-jax&#39;</span><span class="p">;</span>
-            <span class="p">}</span>
-          <span class="p">})</span>
-        <span class="p">});</span>
-      <span class="p">}</span>
-    <span class="p">};</span>
-  <span class="o">&lt;</span><span class="err">/script&gt;</span>
-  <span class="o">&lt;</span><span class="nx">script</span>  <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span>
-    <span class="nx">src</span><span class="o">=</span><span class="s2">&#34;https://cdn.bootcss.com/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML&#34;</span><span class="o">&gt;</span>
-  <span class="o">&lt;</span><span class="err">/script&gt;</span>
-<span class="p">{{</span> <span class="nx">end</span> <span class="p">}}</span>
-</code></pre></div><ol start="4">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="p">{{</span> <span class="k">if</span> <span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">viz</span> <span class="p">}}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&#34;</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">vizPrefix</span> <span class="o">=</span> <span class="s2">&#34;language-viz-&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">forEach</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s2">&#34;[class^=&#34;</span> <span class="o">+</span> <span class="nx">vizPrefix</span> <span class="o">+</span> <span class="s2">&#34;]&#34;</span><span class="p">),</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">      <span class="kd">var</span> <span class="nx">engine</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">x</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">&#34;class&#34;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s2">&#34; &#34;</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">cls</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nx">cls</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="nx">vizPrefix</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">engine</span> <span class="o">=</span> <span class="nx">cls</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">vizPrefix</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">});</span>
+</span></span><span class="line"><span class="cl">      <span class="kd">var</span> <span class="nx">image</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DOMParser</span><span class="p">().</span><span class="nx">parseFromString</span><span class="p">(</span><span class="nx">Viz</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">innerText</span><span class="p">,</span> <span class="p">{</span><span class="nx">format</span><span class="o">:</span><span class="s2">&#34;svg&#34;</span><span class="p">,</span> <span class="nx">engine</span><span class="o">:</span><span class="nx">engine</span><span class="p">}),</span> <span class="s2">&#34;image/svg+xml&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">x</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">image</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">x</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">x</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">backgroundColor</span> <span class="o">=</span> <span class="s2">&#34;white&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">});</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})();</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="nx">end</span> <span class="p">}}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="k">if</span>  <span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">math</span>   <span class="p">}}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">window</span><span class="p">.</span><span class="nx">MathJax</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">tex2jax</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">inlineMath</span><span class="o">:</span> <span class="p">[[</span><span class="s1">&#39;$&#39;</span><span class="p">,</span><span class="s1">&#39;$&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;\\(&#39;</span><span class="p">,</span><span class="s1">&#39;\\)&#39;</span><span class="p">]],</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">displayMath</span><span class="o">:</span> <span class="p">[[</span><span class="s1">&#39;$$&#39;</span><span class="p">,</span><span class="s1">&#39;$$&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;\[&#39;</span><span class="p">,</span><span class="s1">&#39;\]&#39;</span><span class="p">]],</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">processEscapes</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">processEnvironments</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">skipTags</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;script&#39;</span><span class="p">,</span> <span class="s1">&#39;noscript&#39;</span><span class="p">,</span> <span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;textarea&#39;</span><span class="p">,</span> <span class="s1">&#39;pre&#39;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">TeX</span><span class="o">:</span> <span class="p">{</span> <span class="nx">equationNumbers</span><span class="o">:</span> <span class="p">{</span> <span class="nx">autoNumber</span><span class="o">:</span> <span class="s2">&#34;AMS&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">extensions</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;AMSmath.js&#34;</span><span class="p">,</span> <span class="s2">&#34;AMSsymbols.js&#34;</span><span class="p">,</span> <span class="s2">&#34;color.js&#34;</span><span class="p">]</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">},</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">AuthorInit</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">MathJax</span><span class="p">.</span><span class="nx">Hub</span><span class="p">.</span><span class="nx">Register</span><span class="p">.</span><span class="nx">StartupHook</span><span class="p">(</span><span class="s2">&#34;Begin&#34;</span><span class="p">,</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">MathJax</span><span class="p">.</span><span class="nx">Hub</span><span class="p">.</span><span class="nx">Queue</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="kd">var</span> <span class="nx">all</span> <span class="o">=</span> <span class="nx">MathJax</span><span class="p">.</span><span class="nx">Hub</span><span class="p">.</span><span class="nx">getAllJax</span><span class="p">(),</span> <span class="nx">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span><span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">all</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">all</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">SourceElement</span><span class="p">().</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">className</span> <span class="o">+=</span> <span class="s1">&#39; has-jax&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">          <span class="p">})</span>
+</span></span><span class="line"><span class="cl">        <span class="p">});</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="nx">script</span>  <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">src</span><span class="o">=</span><span class="s2">&#34;https://cdn.bootcss.com/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">{{</span> <span class="nx">end</span> <span class="p">}}</span>
+</span></span></code></pre></div><ol start="4">
 <li>Create some posts and add following config inside front-matter</li>
 </ol>
 <pre tabindex="0"><code>viz: true
@@ -534,26 +661,26 @@ math: true
 			<pubDate>Sat, 11 Apr 2020 23:26:41 +0800</pubDate>
 			
 			<guid>https://huanglei.rocks/posts/math-and-dot-demo/</guid>
-			<description>digraph g{ rankdir=LR; node [shape=record,width=01,height=.1]; a[label=&amp;quot;&amp;lt;1&amp;gt;Hash Table|&amp;lt;2&amp;gt;Node|&amp;lt;3&amp;gt;Node|...|&amp;lt;4&amp;gt;TreeNode&amp;quot;]; { // graph[rankdir=LR] node1[label=&amp;quot;{&amp;lt;1&amp;gt;A1|&amp;lt;2&amp;gt;A2|...|An}&amp;quot;] node2[label=&amp;quot;{&amp;lt;1&amp;gt;B1|&amp;lt;2&amp;gt;B2|...|Bn}&amp;quot;] // node3[label=&amp;quot;{&amp;lt;1&amp;gt;C1|&amp;lt;2&amp;gt;C2}&amp;quot;] subgraph cluster_treenode{ penwidth=0; node[shape=circle]; root[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2]; n1[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n2[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n3[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n4[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n5[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n6[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] root-&amp;gt;n1; n1-&amp;gt;n2; n1-&amp;gt;n3; root-&amp;gt;n4; n4-&amp;gt;n5; n4-&amp;gt;n6; } } a:2:e-&amp;gt;node1:1 [style=dashed]; a:3:e-&amp;gt;node2:1; a:4:e-&amp;gt;root; // node3:d-&amp;gt;node3:sa2; } $$f(a) = \frac{1}{2\pi i} \oint\frac{f(z)}{z-a}dz$$</description>
+			<description>digraph g{ rankdir=LR; node [shape=record,width=01,height=.1]; a[label=&amp;#34;&amp;lt;1&amp;gt;Hash Table|&amp;lt;2&amp;gt;Node|&amp;lt;3&amp;gt;Node|...|&amp;lt;4&amp;gt;TreeNode&amp;#34;]; { // graph[rankdir=LR] node1[label=&amp;#34;{&amp;lt;1&amp;gt;A1|&amp;lt;2&amp;gt;A2|...|An}&amp;#34;] node2[label=&amp;#34;{&amp;lt;1&amp;gt;B1|&amp;lt;2&amp;gt;B2|...|Bn}&amp;#34;] // node3[label=&amp;#34;{&amp;lt;1&amp;gt;C1|&amp;lt;2&amp;gt;C2}&amp;#34;] subgraph cluster_treenode{ penwidth=0; node[shape=circle]; root[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2]; n1[label=&amp;#34;&amp;#34;, style=filled,fillcolor=red,width=.2] n2[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2] n3[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2] n4[label=&amp;#34;&amp;#34;, style=filled,fillcolor=red,width=.2] n5[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2] n6[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2] root-&amp;gt;n1; n1-&amp;gt;n2; n1-&amp;gt;n3; root-&amp;gt;n4; n4-&amp;gt;n5; n4-&amp;gt;n6; } } a:2:e-&amp;gt;node1:1 [style=dashed]; a:3:e-&amp;gt;node2:1; a:4:e-&amp;gt;root; // node3:d-&amp;gt;node3:sa2; } $$f(a) = \frac{1}{2\pi i} \oint\frac{f(z)}{z-a}dz$$</description>
 			<content type="html"><![CDATA[<pre tabindex="0"><code class="language-viz-dot" data-lang="viz-dot">digraph g{
     rankdir=LR;
     node [shape=record,width=01,height=.1];
-	a[label=&quot;&lt;1&gt;Hash Table|&lt;2&gt;Node|&lt;3&gt;Node|...|&lt;4&gt;TreeNode&quot;];
+	a[label=&#34;&lt;1&gt;Hash Table|&lt;2&gt;Node|&lt;3&gt;Node|...|&lt;4&gt;TreeNode&#34;];
     {
         // graph[rankdir=LR]    
-        node1[label=&quot;{&lt;1&gt;A1|&lt;2&gt;A2|...|An}&quot;]
-        node2[label=&quot;{&lt;1&gt;B1|&lt;2&gt;B2|...|Bn}&quot;]
-        // node3[label=&quot;{&lt;1&gt;C1|&lt;2&gt;C2}&quot;]
+        node1[label=&#34;{&lt;1&gt;A1|&lt;2&gt;A2|...|An}&#34;]
+        node2[label=&#34;{&lt;1&gt;B1|&lt;2&gt;B2|...|Bn}&#34;]
+        // node3[label=&#34;{&lt;1&gt;C1|&lt;2&gt;C2}&#34;]
         subgraph cluster_treenode{
             penwidth=0;
             node[shape=circle];
-            root[label=&quot;&quot;, style=filled,fillcolor=black,width=.2];
-            n1[label=&quot;&quot;, style=filled,fillcolor=red,width=.2]
-            n2[label=&quot;&quot;, style=filled,fillcolor=black,width=.2]
-            n3[label=&quot;&quot;, style=filled,fillcolor=black,width=.2]
-            n4[label=&quot;&quot;, style=filled,fillcolor=red,width=.2]
-            n5[label=&quot;&quot;, style=filled,fillcolor=black,width=.2]
-            n6[label=&quot;&quot;, style=filled,fillcolor=black,width=.2]
+            root[label=&#34;&#34;, style=filled,fillcolor=black,width=.2];
+            n1[label=&#34;&#34;, style=filled,fillcolor=red,width=.2]
+            n2[label=&#34;&#34;, style=filled,fillcolor=black,width=.2]
+            n3[label=&#34;&#34;, style=filled,fillcolor=black,width=.2]
+            n4[label=&#34;&#34;, style=filled,fillcolor=red,width=.2]
+            n5[label=&#34;&#34;, style=filled,fillcolor=black,width=.2]
+            n6[label=&#34;&#34;, style=filled,fillcolor=black,width=.2]
             root-&gt;n1;
             n1-&gt;n2;
             n1-&gt;n3;

@@ -2,22 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://huanglei.rocks/posts/parquet/</loc>
+    <lastmod>2022-03-05T15:44:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/tags/database/</loc>
+    <lastmod>2022-03-05T15:44:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/posts/</loc>
+    <lastmod>2022-03-05T15:44:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/tags/</loc>
+    <lastmod>2022-03-05T15:44:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/</loc>
+    <lastmod>2022-03-05T15:44:33+08:00</lastmod>
+  </url><url>
     <loc>https://huanglei.rocks/posts/bookkeeper-note/</loc>
     <lastmod>2022-02-24T01:18:35+08:00</lastmod>
   </url><url>
-    <loc>https://huanglei.rocks/posts/</loc>
-    <lastmod>2022-02-24T01:18:35+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/</loc>
-    <lastmod>2022-02-24T01:18:35+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/tags/database/</loc>
-    <lastmod>2022-02-10T22:34:39+08:00</lastmod>
-  </url><url>
     <loc>https://huanglei.rocks/posts/note-on-lsmt/</loc>
-    <lastmod>2022-02-10T22:34:39+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/tags/</loc>
     <lastmod>2022-02-10T22:34:39+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/tags/github/</loc>

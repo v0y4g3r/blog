@@ -7,7 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Thu, 10 Feb 2022 22:34:39 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/database/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 05 Mar 2022 15:44:33 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/database/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Apache Parquet 格式简介</title>
+      <link>https://huanglei.rocks/posts/parquet/</link>
+      <pubDate>Sat, 05 Mar 2022 15:44:33 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/parquet/</guid>
+      <description>简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。
+数据 layout 一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。
+ 官方的格式图    原始行格式的数据    Parquet 数据的遍历顺序    使用 Parquet 转换之后的格式   在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。
+元数据 从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。
+Footer Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。
+Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 8 到倒数第 4 字节，作为 footer 的长度，从而得到 footer 区的起始 offset。</description>
+    </item>
+    
     <item>
       <title>LSM Tree 笔记</title>
       <link>https://huanglei.rocks/posts/note-on-lsmt/</link>
