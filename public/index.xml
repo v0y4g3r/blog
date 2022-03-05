@@ -7,7 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Thu, 24 Feb 2022 01:18:35 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 05 Mar 2022 15:44:33 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Apache Parquet 格式简介</title>
+      <link>https://huanglei.rocks/posts/parquet/</link>
+      <pubDate>Sat, 05 Mar 2022 15:44:33 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/parquet/</guid>
+      <description>简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。
+数据 layout 一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。
+ 官方的格式图    原始行格式的数据    Parquet 数据的遍历顺序    使用 Parquet 转换之后的格式   在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。
+元数据 从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。
+Footer Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。
+Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 8 到倒数第 4 字节，作为 footer 的长度，从而得到 footer 区的起始 offset。</description>
+    </item>
+    
     <item>
       <title>BookKeeper 笔记</title>
       <link>https://huanglei.rocks/posts/bookkeeper-note/</link>
@@ -110,16 +124,7 @@
       <pubDate>Sat, 11 Apr 2020 23:26:41 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/math-and-dot-demo/</guid>
-      <description>digraph g{ rankdir=LR; node [shape=record,width=01,height=.1]; a[label=&amp;quot;&amp;lt;1&amp;gt;Hash Table|&amp;lt;2&amp;gt;Node|&amp;lt;3&amp;gt;Node|...|&amp;lt;4&amp;gt;TreeNode&amp;quot;]; { // graph[rankdir=LR] node1[label=&amp;quot;{&amp;lt;1&amp;gt;A1|&amp;lt;2&amp;gt;A2|...|An}&amp;quot;] node2[label=&amp;quot;{&amp;lt;1&amp;gt;B1|&amp;lt;2&amp;gt;B2|...|Bn}&amp;quot;] // node3[label=&amp;quot;{&amp;lt;1&amp;gt;C1|&amp;lt;2&amp;gt;C2}&amp;quot;] subgraph cluster_treenode{ penwidth=0; node[shape=circle]; root[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2]; n1[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n2[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n3[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n4[label=&amp;quot;&amp;quot;, style=filled,fillcolor=red,width=.2] n5[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] n6[label=&amp;quot;&amp;quot;, style=filled,fillcolor=black,width=.2] root-&amp;gt;n1; n1-&amp;gt;n2; n1-&amp;gt;n3; root-&amp;gt;n4; n4-&amp;gt;n5; n4-&amp;gt;n6; } } a:2:e-&amp;gt;node1:1 [style=dashed]; a:3:e-&amp;gt;node2:1; a:4:e-&amp;gt;root; // node3:d-&amp;gt;node3:sa2; } $$f(a) = \frac{1}{2\pi i} \oint\frac{f(z)}{z-a}dz$$</description>
-    </item>
-    
-    <item>
-      <title>April 2020</title>
-      <link>https://huanglei.rocks/gallery/2020/</link>
-      <pubDate>Sat, 04 Apr 2020 12:00:00 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/gallery/2020/</guid>
-      <description>Longjing Village, Hangzhou, 04/Apr/2020 Spring Afternoon, Hangzhou, 11/Apr/2020 Xixi National Wetland Park, Hangzhou, 11/Apr/2020 </description>
+      <description>digraph g{ rankdir=LR; node [shape=record,width=01,height=.1]; a[label=&amp;#34;&amp;lt;1&amp;gt;Hash Table|&amp;lt;2&amp;gt;Node|&amp;lt;3&amp;gt;Node|...|&amp;lt;4&amp;gt;TreeNode&amp;#34;]; { // graph[rankdir=LR] node1[label=&amp;#34;{&amp;lt;1&amp;gt;A1|&amp;lt;2&amp;gt;A2|...|An}&amp;#34;] node2[label=&amp;#34;{&amp;lt;1&amp;gt;B1|&amp;lt;2&amp;gt;B2|...|Bn}&amp;#34;] // node3[label=&amp;#34;{&amp;lt;1&amp;gt;C1|&amp;lt;2&amp;gt;C2}&amp;#34;] subgraph cluster_treenode{ penwidth=0; node[shape=circle]; root[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2]; n1[label=&amp;#34;&amp;#34;, style=filled,fillcolor=red,width=.2] n2[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2] n3[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2] n4[label=&amp;#34;&amp;#34;, style=filled,fillcolor=red,width=.2] n5[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2] n6[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2] root-&amp;gt;n1; n1-&amp;gt;n2; n1-&amp;gt;n3; root-&amp;gt;n4; n4-&amp;gt;n5; n4-&amp;gt;n6; } } a:2:e-&amp;gt;node1:1 [style=dashed]; a:3:e-&amp;gt;node2:1; a:4:e-&amp;gt;root; // node3:d-&amp;gt;node3:sa2; } $$f(a) = \frac{1}{2\pi i} \oint\frac{f(z)}{z-a}dz$$</description>
     </item>
     
   </channel>

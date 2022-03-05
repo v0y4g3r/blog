@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#282c34">
+	<meta name="msapplication-TileColor" content="#282c34">
+<meta itemprop="name" content="Apache Parquet 格式简介">
+<meta itemprop="description" content="简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。
+数据 layout 一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。
+ 官方的格式图    原始行格式的数据    Parquet 数据的遍历顺序    使用 Parquet 转换之后的格式   在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。
+元数据 从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。
+Footer Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。
+Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 8 到倒数第 4 字节，作为 footer 的长度，从而得到 footer 区的起始 offset。"><meta itemprop="datePublished" content="2022-03-05T15:44:33+08:00" />
+<meta itemprop="dateModified" content="2022-03-05T15:44:33+08:00" />
+<meta itemprop="wordCount" content="436">
+<meta itemprop="keywords" content="Database," /><meta property="og:title" content="Apache Parquet 格式简介" />
+<meta property="og:description" content="简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。
+数据 layout 一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。
+ 官方的格式图    原始行格式的数据    Parquet 数据的遍历顺序    使用 Parquet 转换之后的格式   在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。
+元数据 从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。
+Footer Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。
+Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 8 到倒数第 4 字节，作为 footer 的长度，从而得到 footer 区的起始 offset。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huanglei.rocks/posts/parquet/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-03-05T15:44:33+08:00" />
+<meta property="article:modified_time" content="2022-03-05T15:44:33+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Apache Parquet 格式简介"/>
+<meta name="twitter:description" content="简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。
+数据 layout 一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。
+ 官方的格式图    原始行格式的数据    Parquet 数据的遍历顺序    使用 Parquet 转换之后的格式   在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。
+元数据 从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。
+Footer Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。
+Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 8 到倒数第 4 字节，作为 footer 的长度，从而得到 footer 区的起始 offset。"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>Apache Parquet 格式简介</title>
+	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.a5b4b95562746fbb497f3eae9c726a2696cabdf6db53fc7a454f8d9298b3f09a.css" integrity="sha256-pbS5VWJ0b7tJfz6unHJqJpbKvfbbU/x6RU+Nkpiz8Jo=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://huanglei.rocks">Tokamako</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://huanglei.rocks/posts/">Posts</a>
+				<a href="https://huanglei.rocks/gallery/">Gallery</a>
+				<a href="https://huanglei.rocks/about-me/">About Me</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="toc-btn" class="hdr-btn desktop-only-ib" title="Table of Contents"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="https://twitter.com/MrSatangel" target="_blank" rel="noopener me" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a><a href="https://www.instagram.com/tokamako/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/RayneHwang" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://huanglei.rocks/posts/">Posts</a></li>
+			<li><a href="https://huanglei.rocks/gallery/">Gallery</a></li>
+			<li><a href="https://huanglei.rocks/about-me/">About Me</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Mar 5, 2022</span></div>
+				<h1>Apache Parquet 格式简介</h1>
+			</header>
+
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/database">Database</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>436 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-03-05 15:44 &#43;0800</p>
+			</footer>
+		</br>
+
+			<div class="content">
+				<h2 id="简介">简介<a href="#简介" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。</p>
+<h2 id="数据-layout">数据 layout<a href="#数据-layout" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。</p>
+<p><img src="https://raw.githubusercontent.com/apache/parquet-format/master/doc/images/FileLayout.gif#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=gFbsV&amp;originHeight=478&amp;originWidth=601&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<div style="text-align: center;">
+<i>
+ 官方的格式图  
+</i>
+</div>
+<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/parquet-original-light.svg" alt=""></p>
+<div style="text-align: center;">
+<i>
+ 原始行格式的数据  
+</i>
+</div>
+<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/parquet-iteration-order-light.svg" alt=""></p>
+<div style="text-align: center;">
+<i>
+ Parquet 数据的遍历顺序 
+</i>
+</div>
+<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/parquet-physical-light.svg" alt=""></p>
+<div style="text-align: center;">
+<i>
+ 使用 Parquet 转换之后的格式 
+</i>
+</div>
+<p>在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。</p>
+<h2 id="元数据">元数据<a href="#元数据" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><img src="https://raw.github.com/apache/parquet-format/master/doc/images/FileLayout.gif" alt="image.png"></p>
+<p>从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。</p>
+<h3 id="footer">Footer<a href="#footer" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。</p>
+<p>Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 8 到倒数第 4 字节，作为 footer 的长度，从而得到 footer 区的起始 offset。</p>
+<p>Footer 区数据遵循特定的编码格式（ThriftCompactProtocol），因此可以方便地反序列化。</p>
+<p>Footer 区还包含了 row group 和 row group 中的列的信息。</p>
+<h3 id="列的元数据">列的元数据<a href="#列的元数据" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/20220305160426.png" alt=""></p>
+<div style="text-align: center;">
+<i>
+  列的元数据位置  
+</i>
+</div>
+<p>在 footer 中，每一列的信息也被记录，包括：</p>
+<ul>
+<li>列的类型、编码；</li>
+<li>列值的数量；</li>
+<li>第一个数据页的 offset；</li>
+<li>第一个索引页的 offset；</li>
+<li>压测/解压缩的大小；</li>
+<li>以及一些额外的键值对。</li>
+</ul>
+<p>根据 footer 中的这些列的信息就可以快速找到 Parquet 文件中的数据地址和索引地址、以及如何解析这些数据。</p>
+<h3 id="文件内索列">文件内索列<a href="#文件内索列" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p><a href="https://issues.apache.org/jira/browse/PARQUET-1201">Parquet 2.5 版本</a>支持了列值索引功能，具体的功能介绍可以参考 <a href="https://github.com/apache/parquet-format/blob/master/PageIndex.md">ColumnIndex Layout to Support Page Skipping</a>.</p>
+<p>在之前的版本中，统计数据（min、max）只在 column 的 metadata 和 page header 当中，当读取 page 的时候，可以根据 page header 中的统计数据决定是否需要跳过这一页，但这样还是需要遍历文件中的每一页。</p>
+<p>目标：通过 minmax 可以直接定位到 page 的方式提高范围查询和点查的 IO 效率。具体来说针对 row group 排序列的单行查询，每一列只需要读取一页数据。排序列的范围查询只读取范围所涉及的数据页；如果其他的查询具有高选择性，即使查询条件不是排序列，也要能够按需读取数据页。</p>
+<p>为了实现这样的目标，Parquet 在 row group 的元数据上增加了如下两个针对列的数据结构（即在一个 row group 中的每一个列都有下面的两个索引来描述它们）：</p>
+<ul>
+<li>ColumnIndex：针对 scan predicate，支持通过列值找到列的数据所在的页；</li>
+<li>OffsetIndex：通过 ColumnIndex 找到 match 的 row 之后，OffsetIndex 支持按 row index 去获取相应的值。一个 row group 的所有 column 的 OffsetIndex 都是存储在一起的。</li>
+</ul>
+<p>索引的地址在 footer 区之前的地方，footer 里面有一个字段指明了其 offset。</p>
+<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/parquet-index-page-location-light.svg#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=KmMZf&amp;originHeight=202&amp;originWidth=382&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<div style="text-align: center;">
+<i>
+ Index page 的位置 
+</i>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="cl"><span class="sd">/// Description for ColumnIndex.
+</span></span></span><span class="line"><span class="cl"><span class="sd">/// Each &lt;array-field&gt;[i] refers to the page at OffsetIndex.page_locations[i]
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="cp">#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">ColumnIndex</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="sd">/// A list of Boolean values to determine the validity of the corresponding
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// min and max values. If true, a page contains only null values, and writers
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// have to set the corresponding entries in min_values and max_values to
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// byte[0], so that all lists have the same length. If false, the
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// corresponding entries in min_values and max_values must be valid.
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="n">null_pages</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="sd">/// Two lists containing lower and upper bounds for the values of each page.
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// These may be the actual minimum and maximum values found on a page, but
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// can also be (more compact) values that do not exist on a page. For
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// example, instead of storing &#34;&#34;Blart Versenwald III&#34;, a writer may set
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// min_values[i]=&#34;B&#34;, max_values[i]=&#34;C&#34;. Such more compact values must still
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// be valid values within the column&#39;s logical type. Readers must make sure
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// that list entries are populated before using them by inspecting null_pages.
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="n">min_values</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="n">max_values</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="sd">/// Stores whether both min_values and max_values are orderd and if so, in
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// which direction. This allows readers to perform binary searches in both
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// lists. Readers cannot assume that max_values[i] &lt;= min_values[i+1], even
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// if the lists are ordered.
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="n">boundary_order</span>: <span class="nc">BoundaryOrder</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="sd">/// A list containing the number of null values for each page *
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="n">null_counts</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">i64</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="cp">#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">OffsetIndex</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="sd">/// PageLocations, ordered by increasing PageLocation.offset. It is required
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="sd">/// that page_locations[i].first_row_index &lt; page_locations[i+1].first_row_index.
+</span></span></span><span class="line"><span class="cl"><span class="sd"></span><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="n">page_locations</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">PageLocation</span><span class="o">&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h2 id="parquet-的优势">Parquet 的优势<a href="#parquet-的优势" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li>按需读取列的值，比如在 OLAP 场景下，大宽表往往最终只有少量的列会被读取到；</li>
+<li>自描述，自带 schema，支持数据结构嵌套；</li>
+<li>由于列保存在一起，因此可以提高压缩和编码的效率（比如 RLE、字典压、Bit Packing 等等）;</li>
+<li>文件自带索引，支持快速检索 data page。</li>
+</ul>
+
+			</div>
+		</article>
+		<aside id="toc">
+			<div class="toc-title">Table of Contents</div>
+			<nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#数据-layout">数据 layout</a></li>
+    <li><a href="#元数据">元数据</a>
+      <ul>
+        <li><a href="#footer">Footer</a></li>
+        <li><a href="#列的元数据">列的元数据</a></li>
+        <li><a href="#文件内索列">文件内索列</a></li>
+      </ul>
+    </li>
+    <li><a href="#parquet-的优势">Parquet 的优势</a></li>
+  </ul>
+</nav>
+		</aside>
+		<div class="post-nav thin">
+			<a class="prev-post" href="https://huanglei.rocks/posts/bookkeeper-note/">
+				<span class="post-nav-label">Older&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>BookKeeper 笔记</span>
+			</a>
+		</div>
+		<div id="comments" class="thin"><script src="https://giscus.app/client.js"
+        data-repo="RayneHwang/blog"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkyNTQ5MDMwOTk="
+        data-category="Announcements"
+        data-category-id="DIC_kwDODzGDO84CBGIK"
+        data-mapping="pathname"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="dark_dimmed"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script></div>
+	</main>
+
+		<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2022 <a href="https://huanglei.rocks">Lei, HUANG</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a> &#183; <a href="https://huanglei.rocks/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+		</p>
+	</footer>
+
+
+	
+
+	
+
+
+	<script src="https://huanglei.rocks/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>
