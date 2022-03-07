@@ -107,19 +107,19 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
  官方的格式图  
 </i>
 </div>
-<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/parquet-original-light.svg" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-original-light.svg" alt=""></p>
 <div style="text-align: center;">
 <i>
  原始行格式的数据  
 </i>
 </div>
-<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/parquet-iteration-order-light.svg" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-iteration-order-light.svg" alt=""></p>
 <div style="text-align: center;">
 <i>
  Parquet 数据的遍历顺序 
 </i>
 </div>
-<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/parquet-physical-light.svg" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-physical-light.svg" alt=""></p>
 <div style="text-align: center;">
 <i>
  使用 Parquet 转换之后的格式 
@@ -135,7 +135,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
 <p>Footer 区数据遵循特定的编码格式（ThriftCompactProtocol），因此可以方便地反序列化。</p>
 <p>Footer 区还包含了 row group 和 row group 中的列的信息。</p>
 <h3 id="列的元数据">列的元数据<a href="#列的元数据" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
-<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/20220305160426.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/20220305160426.png" alt=""></p>
 <div style="text-align: center;">
 <i>
   列的元数据位置  
@@ -161,7 +161,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
 <li>OffsetIndex：通过 ColumnIndex 找到 match 的 row 之后，OffsetIndex 支持按 row index 去获取相应的值。一个 row group 的所有 column 的 OffsetIndex 都是存储在一起的。</li>
 </ul>
 <p>索引的地址在 footer 区之前的地方，footer 里面有一个字段指明了其 offset。</p>
-<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/parquet-index-page-location-light.svg#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=KmMZf&amp;originHeight=202&amp;originWidth=382&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-index-page-location-light.svg#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=KmMZf&amp;originHeight=202&amp;originWidth=382&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
 <div style="text-align: center;">
 <i>
  Index page 的位置 
