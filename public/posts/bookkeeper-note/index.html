@@ -175,7 +175,7 @@
 <h3 id="从一个-open-状态的-ledger-读取数据">从一个 open 状态的 ledger 读取数据<a href="#从一个-open-状态的-ledger-读取数据" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>前述都是基于 reader 只能读取 closed 的 ledger 的前提。但是 reader完全有可能需要读取 open 的ledger（废话。。。），因此 BK 提供了绕过了 recovery 流程的读取API。在这个API 中，为了防止 reader 读取到 transient entry（只在 quorum 中复制了一部分，关闭 ledger 后可能会被 trim 掉的 entry），reader会向bookie 查询 ledger 的 LAC，读取 LAC 以前的 entry 是安全的，因为他们都已经被完整地复制了。</p>
 <p>Ledger device：第一版不同的 ledger 有不同的文件，后来改为一个（类似RocketMQ的CommitLog），成为entry log。原因是多个文件的随机写入带来的磁盘寻道、Page cache 的竞争大大降低了写入吞吐。不同 ledger 的 entry 都存储在一个 entry log 中。</p>
-<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/bookkeeper-write.svg?" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/bookkeeper-write.svg?" alt=""></p>
 <div style="text-align: center;">
 <i>
  Journal to Ledger Log 
@@ -201,7 +201,7 @@
 </i>
 </div>
 <p>为了处理读取散落在不同 ensemble 的 entry 的情况，BookKeeper 每次读取 entry 前都会判断所读取的 entry id 是否出现 ensemble change。</p>
-<p><img src="https://raw.githubusercontent.com/RayneHwang/img-repo/main/Bookkeeper.drawio.svg?" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/Bookkeeper.drawio.svg?" alt=""></p>
 <div style="text-align: center;">
 <i>
  Entry 读取的主流程代码 

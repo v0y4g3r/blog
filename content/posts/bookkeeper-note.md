@@ -126,7 +126,7 @@ bookie 检测到某个 ledger 出于 recovery 流程中时，拒绝掉所有这�
 
 Ledger device：第一版不同的 ledger 有不同的文件，后来改为一个（类似RocketMQ的CommitLog），成为entry log。原因是多个文件的随机写入带来的磁盘寻道、Page cache 的竞争大大降低了写入吞吐。不同 ledger 的 entry 都存储在一个 entry log 中。
 
-![](https://raw.githubusercontent.com/RayneHwang/img-repo/main/bookkeeper-write.svg?)
+![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/bookkeeper-write.svg?)
 
 {{% center_italic %}} Journal to Ledger Log {{% /center_italic %}}
 
@@ -160,7 +160,7 @@ Entry 读取的时候可能存在一种特殊情况：读取的 entry 范围一j
 
 为了处理读取散落在不同 ensemble 的 entry 的情况，BookKeeper 每次读取 entry 前都会判断所读取的 entry id 是否出现 ensemble change。
 
-![](https://raw.githubusercontent.com/RayneHwang/img-repo/main/Bookkeeper.drawio.svg?)
+![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/Bookkeeper.drawio.svg?)
 
 {{% center_italic %}} Entry 读取的主流程代码 {{% /center_italic %}}
 
