@@ -7,21 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Wed, 09 Feb 2022 21:57:33 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/untagged/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 12 Mar 2022 17:42:25 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/untagged/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Object Safety</title>
-      <link>https://huanglei.rocks/posts/object-safety/</link>
-      <pubDate>Wed, 09 Feb 2022 21:57:33 +0800</pubDate>
+      <title>Notes on Influxdb Storage</title>
+      <link>https://huanglei.rocks/posts/notes-on-influxdb-storage/</link>
+      <pubDate>Sat, 12 Mar 2022 17:42:25 +0800</pubDate>
       
-      <guid>https://huanglei.rocks/posts/object-safety/</guid>
-      <description>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety。下面就尝试解释一下。 ​
-为什么需要 object safety？ ​
-Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 本质是为了保证 Rust 编译器能够为某个 trait 生成自动实现。 ​
-Trait object 的内存布局 ​
-  Where Self Meets Sized: Revisiting Object Safety   ​
-首先是关于 trait object 的，一个 trait 是对象安全的，当且仅当它满足一下所有条件：
- trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣。  ​
-接下来是关于方法的 一个方法是对象安全的，当且仅当这个方法满足下面任意一条特性：</description>
+      <guid>https://huanglei.rocks/posts/notes-on-influxdb-storage/</guid>
+      <description>InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。
+  InfluxDB 的存储系统   InfluxDB 的存储层有三个子系统：
+ TSM：数据点的存储，可以高效地提供 SeriesKey 到时序数据值的插入和检索； TSI：时序数据的倒排索引，提供查询某个 measurement 下某个 tag 包含特定值的 SeriesID 的接口；  TSI 是 InfluxDB 查询引擎的核心，所谓的基数膨胀带来的问题也是出现在这一层。 为了降低 TSI 的内存占用，InfluxDB 引入了一个额外的 SeriesID。   Series 索引：提供根据 SeriesID 查找 SeriesKey 的接口等  SeriesFile.CreateSeriesListIfNotExists：创建 SeriesKey-&amp;gt;SeriesID 的映射 SeriesFile.SeriesKey：根据 SeriesID 查找 SeriesKey    应该说 TSI 加上 SeriesIndex 才是 InfluxDB 完整的索引部分，但是这两者各自是一个类 LSMT 的数据结构，也有自己的 WAL、compaction/recover 策略等等，因此 InfluxDB 做了区分。</description>
     </item>
     
   </channel>

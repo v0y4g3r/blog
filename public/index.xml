@@ -7,7 +7,18 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sat, 05 Mar 2022 15:44:33 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 12 Mar 2022 17:42:25 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Notes on Influxdb Storage</title>
+      <link>https://huanglei.rocks/posts/notes-on-influxdb-storage/</link>
+      <pubDate>Sat, 12 Mar 2022 17:42:25 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/notes-on-influxdb-storage/</guid>
+      <description>InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。
+  InfluxDB 的存储系统   InfluxDB 的存储层有三个子系统：
+ TSM：数据点的存储，可以高效地提供 SeriesKey 到时序数据值的插入和检索； TSI：时序数据的倒排索引，提供查询某个 measurement 下某个 tag 包含特定值的 SeriesID 的接口；  TSI 是 InfluxDB 查询引擎的核心，所谓的基数膨胀带来的问题也是出现在这一层。 为了降低 TSI 的内存占用，InfluxDB 引入了一个额外的 SeriesID。   Series 索引：提供根据 SeriesID 查找 SeriesKey 的接口等  SeriesFile.CreateSeriesListIfNotExists：创建 SeriesKey-&amp;gt;SeriesID 的映射 SeriesFile.SeriesKey：根据 SeriesID 查找 SeriesKey    应该说 TSI 加上 SeriesIndex 才是 InfluxDB 完整的索引部分，但是这两者各自是一个类 LSMT 的数据结构，也有自己的 WAL、compaction/recover 策略等等，因此 InfluxDB 做了区分。</description>
+    </item>
+    
     <item>
       <title>Apache Parquet 格式简介</title>
       <link>https://huanglei.rocks/posts/parquet/</link>
@@ -116,15 +127,6 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
       <description> River Drina, border between Bosnia-Herzegovina and Serbia
  Full-time coder, part-time photographer @HANGZHOU.
  PEK/PVG/SHA/SZX/HGH/NKG NRT SIN SGN CDG/ORY MAD/BCN SVO/LED KBP/ODS BEG REP  </description>
-    </item>
-    
-    <item>
-      <title>Graphviz and mathjax demo</title>
-      <link>https://huanglei.rocks/posts/math-and-dot-demo/</link>
-      <pubDate>Sat, 11 Apr 2020 23:26:41 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/posts/math-and-dot-demo/</guid>
-      <description>digraph g{ rankdir=LR; node [shape=record,width=01,height=.1]; a[label=&amp;#34;&amp;lt;1&amp;gt;Hash Table|&amp;lt;2&amp;gt;Node|&amp;lt;3&amp;gt;Node|...|&amp;lt;4&amp;gt;TreeNode&amp;#34;]; { // graph[rankdir=LR] node1[label=&amp;#34;{&amp;lt;1&amp;gt;A1|&amp;lt;2&amp;gt;A2|...|An}&amp;#34;] node2[label=&amp;#34;{&amp;lt;1&amp;gt;B1|&amp;lt;2&amp;gt;B2|...|Bn}&amp;#34;] // node3[label=&amp;#34;{&amp;lt;1&amp;gt;C1|&amp;lt;2&amp;gt;C2}&amp;#34;] subgraph cluster_treenode{ penwidth=0; node[shape=circle]; root[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2]; n1[label=&amp;#34;&amp;#34;, style=filled,fillcolor=red,width=.2] n2[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2] n3[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2] n4[label=&amp;#34;&amp;#34;, style=filled,fillcolor=red,width=.2] n5[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2] n6[label=&amp;#34;&amp;#34;, style=filled,fillcolor=black,width=.2] root-&amp;gt;n1; n1-&amp;gt;n2; n1-&amp;gt;n3; root-&amp;gt;n4; n4-&amp;gt;n5; n4-&amp;gt;n6; } } a:2:e-&amp;gt;node1:1 [style=dashed]; a:3:e-&amp;gt;node2:1; a:4:e-&amp;gt;root; // node3:d-&amp;gt;node3:sa2; } $$f(a) = \frac{1}{2\pi i} \oint\frac{f(z)}{z-a}dz$$</description>
     </item>
     
   </channel>
