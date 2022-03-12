@@ -5,7 +5,7 @@ draft: false
 toc: false
 images:
 tags: 
-  - untagged
+  - Database
 ---
 
 > InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 `adf29dfedfc785620db0e104652544ce9f67cb6e` 版本。当前版本已经支持 TSI 索引结构。
