@@ -237,19 +237,19 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
  官方的格式图  
 </i>
 </div>
-<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-original-light.svg" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-original.svg" alt="parquet-original.svg"></p>
 <div style="text-align: center;">
 <i>
  原始行格式的数据  
 </i>
 </div>
-<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-iteration-order-light.svg" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-travel.svg" alt="parquet-travel.svg"></p>
 <div style="text-align: center;">
 <i>
  Parquet 数据的遍历顺序 
 </i>
 </div>
-<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-physical-light.svg" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-layout.svg" alt="parquet-layout.svg"></p>
 <div style="text-align: center;">
 <i>
  使用 Parquet 转换之后的格式 
@@ -257,7 +257,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
 </div>
 <p>在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。</p>
 <h2 id="元数据">元数据</h2>
-<p><img src="https://raw.github.com/apache/parquet-format/master/doc/images/FileLayout.gif" alt="image.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/apache/parquet-format/doc/images/FileLayout.gif" alt="image.png"></p>
 <p>从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。</p>
 <h3 id="footer">Footer</h3>
 <p>Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。</p>
@@ -291,7 +291,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
 <li>OffsetIndex：通过 ColumnIndex 找到 match 的 row 之后，OffsetIndex 支持按 row index 去获取相应的值。一个 row group 的所有 column 的 OffsetIndex 都是存储在一起的。</li>
 </ul>
 <p>索引的地址在 footer 区之前的地方，footer 里面有一个字段指明了其 offset。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-index-page-location-light.svg#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=KmMZf&amp;originHeight=202&amp;originWidth=382&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-file-format.svg" alt=""></p>
 <div style="text-align: center;">
 <i>
  Index page 的位置 
