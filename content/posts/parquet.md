@@ -23,16 +23,16 @@ Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广�
 {{% center_italic %}} 官方的格式图  {{% /center_italic %}} 
 
 
-![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-original-light.svg)
+![parquet-original.svg](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-original.svg)
 {{% center_italic %}} 原始行格式的数据  {{% /center_italic %}} 
 
 
-![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-iteration-order-light.svg)
+![parquet-travel.svg](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-travel.svg)
 
 
 {{% center_italic %}} Parquet 数据的遍历顺序 {{% /center_italic %}} 
 
-![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-physical-light.svg)
+![parquet-layout.svg](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-layout.svg)
 
 {{% center_italic %}} 使用 Parquet 转换之后的格式 {{% /center_italic %}} 
 
@@ -41,7 +41,8 @@ Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广�
 
 
 ## 元数据
-![image.png](https://raw.github.com/apache/parquet-format/master/doc/images/FileLayout.gif)
+
+![image.png](https://cdn.jsdelivr.net/gh/apache/parquet-format/doc/images/FileLayout.gif)
 
 从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。
 
@@ -102,7 +103,7 @@ Footer 区还包含了 row group 和 row group 中的列的信息。
 
 索引的地址在 footer 区之前的地方，footer 里面有一个字段指明了其 offset。
 
-![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-index-page-location-light.svg#crop=0&crop=0&crop=1&crop=1&id=KmMZf&originHeight=202&originWidth=382&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=)
+![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-file-format.svg)
 {{% center_italic %}} Index page 的位置 {{% /center_italic %}} 
 
 
