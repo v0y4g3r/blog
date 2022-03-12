@@ -2,6 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://huanglei.rocks/tags/database/</loc>
+    <lastmod>2022-03-12T17:42:25+08:00</lastmod>
+  </url><url>
     <loc>https://huanglei.rocks/posts/notes-on-influxdb-storage/</loc>
     <lastmod>2022-03-12T17:42:25+08:00</lastmod>
   </url><url>
@@ -14,13 +17,7 @@
     <loc>https://huanglei.rocks/</loc>
     <lastmod>2022-03-12T17:42:25+08:00</lastmod>
   </url><url>
-    <loc>https://huanglei.rocks/tags/untagged/</loc>
-    <lastmod>2022-03-12T17:42:25+08:00</lastmod>
-  </url><url>
     <loc>https://huanglei.rocks/posts/parquet/</loc>
-    <lastmod>2022-03-05T15:44:33+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/tags/database/</loc>
     <lastmod>2022-03-05T15:44:33+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/posts/bookkeeper-note/</loc>
