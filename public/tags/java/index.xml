@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java on Tokamako</title>
+    <link>https://huanglei.rocks/tags/java/</link>
+    <description>Recent content in Java on Tokamako</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
+    <lastBuildDate>Fri, 12 Feb 2021 22:01:27 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>现代 Java 捉虫指南</title>
+      <link>https://huanglei.rocks/posts/java-debug-manual/</link>
+      <pubDate>Fri, 12 Feb 2021 22:01:27 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/java-debug-manual/</guid>
+      <description>gnu.hl@antgroup.com    2020-12-01
+    本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。
+ 当我们排查问题的时候，我们关注什么？ 横向来看:
+ context/critical path/caller/callee (tracing) statistics/metrics (profiling)  纵向来看:
+ application runtime kernel   Arthas  Arthas 是基于字节码增强的调试工具.
+ 功能:
+ 观察方法的入参/返回值/异常等数据 观察内存对象的值 跟踪方法的耗时和调用栈 查看类加载来源/热更新类定义  安装 curl -L http://start.alibaba-inc.com/install.sh | sh  Arthas 使用方法  观察方法入参、返回值、异常  watch &amp;lt;class_fqcn&amp;gt; &amp;lt;method_name&amp;gt; &amp;#34;{params,returnObj,throwExp}&amp;#34; [condition] [-f] [-b] [-xN]  拦截指定线程执行的方法  watch &amp;lt;class_fqcn&amp;gt; &amp;lt;method_name&amp;gt; &amp;#34;{params,returnObj,throwExp}&amp;#34; \ &amp;#34;@java.</description>
+    </item>
+    
+  </channel>
+</rss>

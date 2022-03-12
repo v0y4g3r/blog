@@ -1,8 +1,8 @@
 ---
-title: "Notes on Influxdb Storage"
+title: "Notes on InfluxDB Storage Engine"
 date: 2022-03-12T17:42:25+08:00
 draft: false
-toc: false
+toc: true
 images:
 tags: 
   - Database

@@ -9,7 +9,7 @@
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
     <lastBuildDate>Sat, 12 Mar 2022 17:42:25 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Notes on Influxdb Storage</title>
+      <title>Notes on InfluxDB Storage Engine</title>
       <link>https://huanglei.rocks/posts/notes-on-influxdb-storage/</link>
       <pubDate>Sat, 12 Mar 2022 17:42:25 +0800</pubDate>
       
@@ -107,6 +107,21 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
     </item>
     
     <item>
+      <title>现代 Java 捉虫指南</title>
+      <link>https://huanglei.rocks/posts/java-debug-manual/</link>
+      <pubDate>Fri, 12 Feb 2021 22:01:27 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/java-debug-manual/</guid>
+      <description>gnu.hl@antgroup.com    2020-12-01
+    本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。
+ 当我们排查问题的时候，我们关注什么？ 横向来看:
+ context/critical path/caller/callee (tracing) statistics/metrics (profiling)  纵向来看:
+ application runtime kernel   Arthas  Arthas 是基于字节码增强的调试工具.
+ 功能:
+ 观察方法的入参/返回值/异常等数据 观察内存对象的值 跟踪方法的耗时和调用栈 查看类加载来源/热更新类定义  安装 curl -L http://start.alibaba-inc.com/install.sh | sh  Arthas 使用方法  观察方法入参、返回值、异常  watch &amp;lt;class_fqcn&amp;gt; &amp;lt;method_name&amp;gt; &amp;#34;{params,returnObj,throwExp}&amp;#34; [condition] [-f] [-b] [-xN]  拦截指定线程执行的方法  watch &amp;lt;class_fqcn&amp;gt; &amp;lt;method_name&amp;gt; &amp;#34;{params,returnObj,throwExp}&amp;#34; \ &amp;#34;@java.</description>
+    </item>
+    
+    <item>
       <title>Add MathJax and Graphviz support for HUGO</title>
       <link>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</link>
       <pubDate>Sun, 12 Apr 2020 14:22:22 +0800</pubDate>
@@ -116,17 +131,6 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
   Find some directory named layouts/posts/single.html
   Inside the {{ define main }} block, paste following snippets
   {{ if .Params.viz }} &amp;lt;script type=&amp;#34;text/javascript&amp;#34; src=&amp;#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&amp;#34;&amp;gt; &amp;lt;/script&amp;gt; &amp;lt;script type=&amp;#34;text/javascript&amp;#34;&amp;gt; (function(){ var vizPrefix = &amp;#34;language-viz-&amp;#34;; Array.prototype.forEach.call(document.querySelectorAll(&amp;#34;[class^=&amp;#34; + vizPrefix + &amp;#34;]&amp;#34;), function(x){ var engine; x.getAttribute(&amp;#34;class&amp;#34;).split(&amp;#34; &amp;#34;).forEach(function(cls){ if (cls.startsWith(vizPrefix)) { engine = cls.substr(vizPrefix.length); } }); var image = new DOMParser().parseFromString(Viz(x.innerText, {format:&amp;#34;svg&amp;#34;, engine:engine}), &amp;#34;image/svg+xml&amp;#34;); x.parentNode.insertBefore(image.documentElement, x); x.</description>
-    </item>
-    
-    <item>
-      <title>About Me</title>
-      <link>https://huanglei.rocks/about-me/</link>
-      <pubDate>Sun, 12 Apr 2020 11:37:42 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/about-me/</guid>
-      <description> River Drina, border between Bosnia-Herzegovina and Serbia
- Full-time coder, part-time photographer @HANGZHOU.
- PEK/PVG/SHA/SZX/HGH/NKG NRT SIN SGN CDG/ORY MAD/BCN SVO/LED KBP/ODS BEG REP  </description>
     </item>
     
   </channel>
