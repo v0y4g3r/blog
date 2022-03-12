@@ -10,7 +10,7 @@
 		<atom:link href="https://huanglei.rocks/posts/index.xml" rel="self" type="application/rss+xml" />
 		
 		<item>
-			<title>Notes on Influxdb Storage</title>
+			<title>Notes on InfluxDB Storage Engine</title>
 			<link>https://huanglei.rocks/posts/notes-on-influxdb-storage/</link>
 			<pubDate>Sat, 12 Mar 2022 17:42:25 +0800</pubDate>
 			
@@ -775,6 +775,691 @@ P2c 约束了 proposer 每次提案之前先要知道 majority 的情况，由�
 <blockquote>
 <p>Learning about proposals already accepted is easy enough; predicting future acceptances is hard. Instead of trying to predict the future, the proposer controls it by extracting a promise that there won’t be any such acceptances.</p>
 </blockquote>
+]]></content>
+		</item>
+		
+		<item>
+			<title>现代 Java 捉虫指南</title>
+			<link>https://huanglei.rocks/posts/java-debug-manual/</link>
+			<pubDate>Fri, 12 Feb 2021 22:01:27 +0800</pubDate>
+			
+			<guid>https://huanglei.rocks/posts/java-debug-manual/</guid>
+			<description>gnu.hl@antgroup.com    2020-12-01
+    本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。
+ 当我们排查问题的时候，我们关注什么？ 横向来看:
+ context/critical path/caller/callee (tracing) statistics/metrics (profiling)  纵向来看:
+ application runtime kernel   Arthas  Arthas 是基于字节码增强的调试工具.
+ 功能:
+ 观察方法的入参/返回值/异常等数据 观察内存对象的值 跟踪方法的耗时和调用栈 查看类加载来源/热更新类定义  安装 curl -L http://start.alibaba-inc.com/install.sh | sh  Arthas 使用方法  观察方法入参、返回值、异常  watch &amp;lt;class_fqcn&amp;gt; &amp;lt;method_name&amp;gt; &amp;#34;{params,returnObj,throwExp}&amp;#34; [condition] [-f] [-b] [-xN]  拦截指定线程执行的方法  watch &amp;lt;class_fqcn&amp;gt; &amp;lt;method_name&amp;gt; &amp;#34;{params,returnObj,throwExp}&amp;#34; \ &amp;#34;@java.</description>
+			<content type="html"><![CDATA[<p><img src="https://gw.alipayobjects.com/zos/antfincdn/Se%26jyp0zs1/fe9fd884-3cb2-4cf7-b060-cd8d704cb03e.png#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=HK8X9&amp;originHeight=1634&amp;originWidth=2419&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<div style="text-align: center;">
+<i>
+ <a href="mailto:gnu.hl@antgroup.com">gnu.hl@antgroup.com</a>  
+</i>
+</div>
+<div style="text-align: center;">
+<i>
+<p><strong>2020-12-01</strong></p>
+</i>
+</div>
+<hr>
+<blockquote>
+<p>本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。</p>
+</blockquote>
+<h2 id="当我们排查问题的时候我们关注什么">当我们排查问题的时候，我们关注什么？</h2>
+<p>横向来看:</p>
+<ul>
+<li>context/critical path/caller/callee (tracing)</li>
+<li>statistics/metrics (profiling)</li>
+</ul>
+<p>纵向来看:</p>
+<ul>
+<li>application</li>
+<li>runtime</li>
+<li>kernel</li>
+</ul>
+<hr>
+<h2 id="arthas">Arthas</h2>
+<blockquote>
+<p>Arthas 是基于字节码增强的调试工具.</p>
+</blockquote>
+<p>功能:</p>
+<ul>
+<li>观察方法的入参/返回值/异常等数据</li>
+<li>观察内存对象的值</li>
+<li>跟踪方法的耗时和调用栈</li>
+<li>查看类加载来源/热更新类定义</li>
+</ul>
+<h3 id="安装">安装</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -L http://start.alibaba-inc.com/install.sh <span class="p">|</span> sh
+</span></span></code></pre></div><hr>
+<h3 id="arthas-使用方法">Arthas 使用方法</h3>
+<ul>
+<li>观察方法入参、返回值、异常</li>
+</ul>
+<pre tabindex="0"><code>watch &lt;class_fqcn&gt; &lt;method_name&gt; &#34;{params,returnObj,throwExp}&#34; [condition] [-f] [-b] [-xN]
+</code></pre><ul>
+<li>拦截指定线程执行的方法</li>
+</ul>
+<pre tabindex="0"><code>watch &lt;class_fqcn&gt; &lt;method_name&gt; &#34;{params,returnObj,throwExp}&#34; \
+  &#34;@java.lang.Thread@currentThread().getName()==&#39;&lt;thread_name&gt;&#39;&#34; [-f] [-b] [-xN]
+</code></pre><ul>
+<li>在观察入参同时打印方法栈</li>
+</ul>
+<pre tabindex="0"><code>watch &lt;class_fqcn&gt; &lt;method_name&gt; &#34;{params,returnObj,throwExp, \
+@java.lang.Thread@currentThread().getStackTrace()}&#34; [condition] [-f] [-b] [-xN]
+</code></pre><hr>
+<h3 id="arthas-使用方法cont">Arthas 使用方法(cont.)</h3>
+<ul>
+<li>耗时较长的方法</li>
+</ul>
+<pre tabindex="0"><code>watch &lt;class_fqcn&gt; &lt;method_name&gt; &#34;{params,returnObj,throwExp, @java.lang.Thread@currentThread().getStackTrace()}&#34; \
+&#39;#cost&gt;100 [&amp;&amp; other_cond]&#39; [-f] [-b] [-xN]
+</code></pre><ul>
+<li>classloading 问题</li>
+</ul>
+<pre tabindex="0"><code>sc -d &#39;&lt;class_name&gt;&#39;
+</code></pre><ul>
+<li>构造对象</li>
+</ul>
+<pre tabindex="0"><code>watch com.alipay.antq.broker.processor.SendMessageProcessor sendMessage \
+&#34;{new java.lang.String(params[1].body)}&#34; -x2 -n10
+</code></pre><hr>
+<h3 id="arthas-使用方法cont-1">Arthas 使用方法(cont.)</h3>
+<ul>
+<li>Projection &amp; filtering</li>
+</ul>
+<pre tabindex="0"><code>watch com.alipay.antqnamesrv.core.service.broker.BrokerFileService getBrokerFiles \
+    &#34;{returnObj[&#39;FILE_CLUSTER&#39;][&#39;antq-eu95-3.gz00b.stable.alipay.net&#39;]\
+    .topicQueues.values().{ #this.{? #this.queueId==32 } }.{? #this.size()!=0 }}&#34; -x3
+</code></pre><ul>
+<li>观察方法执行路径</li>
+</ul>
+<pre tabindex="0"><code>trace [--skipJDKMethod true|false] &lt;class_fqcn&gt; &lt;method_name&gt;
+</code></pre><blockquote>
+<p>N/A</p>
+</blockquote>
+<hr>
+<h3 id="arthas-使用方法cont-2">Arthas 使用方法(cont.)</h3>
+<ul>
+<li>制作火焰图</li>
+</ul>
+<pre tabindex="0"><code># list all events
+profiler list
+# profile object allocation
+profiler start --event alloc -d 10
+# profile lock acquire
+profiler start --event lock -d 10
+</code></pre><ul>
+<li>热更新代码</li>
+</ul>
+<pre tabindex="0"><code>mc/redefine
+</code></pre><p>N/A</p>
+<hr>
+<h3 id="arthas-的缺陷">Arthas 的缺陷</h3>
+<ul>
+<li>启动期观测 -&gt; <code>jdb</code> / <a href="https://github.com/btraceio/btrace">btrace</a></li>
+<li>测量引入 overhead</li>
+<li>注意内存问题</li>
+</ul>
+<hr>
+<h2 id="eclipse-mat--zprofiler">Eclipse MAT / zprofiler</h2>
+<ul>
+<li><a href="https://lark-assets-prod-aliyun.oss-accelerate.aliyuncs.com/lark/0/2020/png/122844/1595069971931-7bb33b65-cb9e-41a0-b1b4-8547b2c1708b.png?OSSAccessKeyId=LTAI4GGhPJmQ4HWCmhDAn4F5&amp;Expires=1607186074&amp;Signature=LF4bn%2FxILpoIgYCGtFBWyEjDIXE%3D&amp;response-content-disposition=inline">OQL</a>
+<code>select * from io.netty.channel.AbstractChannelhandlerContext$11</code></li>
+</ul>
+<h3 id="native-memory-issues">Native memory issues</h3>
+<p>RSS = xmx +  MaxDirectMemory + N * xss [ + gc + code cache + metaspace ]</p>
+<ul>
+<li>case1) DirectByteBuffer 未释放-&gt;通过观察堆内的DirectMemory</li>
+<li>case2) <code>[G]ZIPInput[/Output]Stream</code>/<code>De[/In]flater</code> <a href="https://www.evanjones.ca/java-native-leak-bug.html">native memory leak</a></li>
+<li>case3) Netty&lt;= 4.0.24 <a href="https://github.com/netty/netty/pull/3844">epoll native memory leak</a></li>
+<li>case4) <a href="https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8164293">JDK-8164293:HotSpot leaking memory</a> (fixed <a href="/8u152">@8u152) </a> )</li>
+</ul>
+<hr>
+<h2 id="sa-jdi--clhsdb">sa-jdi / clhsdb</h2>
+<blockquote>
+<p>Off-process vs. in-process instrumentation</p>
+</blockquote>
+<ul>
+<li>sa: serviceability agent</li>
+<li>clhsdb: command-line hotspot debugger</li>
+<li>sa-jdi 提供了获取 JVM 内部数据结构的编程接口</li>
+<li>sa-jdi 不仅可以 attach 活着的进程, 也可以分析 coredump</li>
+<li><code>jstack</code>/<code>jstat</code>等工具均提供了基于 attach api(tools.jar) 和 sa-jdi(sa-jdi.jar)的实现</li>
+<li><a href="https://www.iteye.com/blog/rednaxelafx-1847971">借HSDB来探索HotSpot VM的运行时数据</a></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ls <span class="nv">$JAVA_HOME</span>/lib
+</span></span><span class="line"><span class="cl">java -cp <span class="nv">$JAVA_HOME</span>/lib/sa-jdi.jar sun.jvm.hotspot.CLHSDB
+</span></span></code></pre></div><hr>
+<h2 id="sa-jdi--clhsdbcont">sa-jdi / clhsdb(cont.)</h2>
+<h5 id="使用-sa-jdi-分析反射生成的类">使用 sa-jdi 分析反射生成的类</h5>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sun.jvm.hotspot.oops.InstanceKlass</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sun.jvm.hotspot.tools.jcore.ClassFilter</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MethodAccessorFilter</span> <span class="kd">implements</span> <span class="n">ClassFilter</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">canInclude</span><span class="o">(</span><span class="n">InstanceKlass</span> <span class="n">instanceKlass</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">instanceKlass</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">asString</span><span class="o">().</span><span class="na">startsWith</span><span class="o">(</span><span class="s">&#34;sun/reflect/Generated&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">java -classpath <span class="s2">&#34;.:</span><span class="nv">$JAVA_HOME</span><span class="s2">/lib/sa-jdi.jar&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-Dsun.jvm.hotspot.tools.jcore.filter<span class="o">=</span>MethodAccessorFilter sun.jvm.hotspot.tools.jcore.ClassDump &lt;pid&gt;
+</span></span></code></pre></div><blockquote>
+<p>SA-JDI is deprecated since Java9 &ndash; <a href="https://bugs.openjdk.java.net/browse/JDK-8158050">JDK-8158050</a></p>
+</blockquote>
+<hr>
+<h2 id="jfr">JFR</h2>
+<ul>
+<li>域内要求 JVM 版本 <code>^ajdk-8_5_10_fp2-b9</code></li>
+<li><code>-XX:+EnableJFR -XX:+FlightRecorder -XX:FlightRecorderOptions=&lt;opt&gt;=&lt;val&gt; -XX:StartFlightRecording=&lt;opt&gt;=&lt;val&gt;</code></li>
+<li>可分析的事件类型:
+<ul>
+<li>Lock contention</li>
+<li>Memory allocation</li>
+<li>IO performance (Network/File)</li>
+<li>Code execution performance</li>
+<li>Garbage Collector</li>
+<li>JIT performance</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="jfr-cont">JFR (cont.)</h2>
+<p>使用步骤</p>
+<ul>
+<li>启动进程时增加开启 JFR 的参数</li>
+<li>开始 JFR 记录 <code>jcmd &lt;pid&gt; JFR.start settings=profile name=&lt;record_name&gt;</code></li>
+<li>dumpJFR 记录 <code>jcmd &lt;pid&gt; JFR.dump filename=jfr.output name=&lt;record_name&gt;</code></li>
+<li>使用 <a href="https://www.oracle.com/java/technologies/jdk-mission-control.html">JDK Mission Control</a> 分析 JFR dump</li>
+</ul>
+<hr>
+<h2 id="jfr-cont-1">JFR (cont.)</h2>
+<p>参考资料</p>
+<ul>
+<li><a href="http://hirt.se/blog/">Continuous Production Profiling and Diagnostics</a></li>
+<li><a href="https://www.javacodegeeks.com/2015/03/oracle-java-mission-control-the-ultimate-guide.html">Oracle Java Mission Control: The Ultimate Guide</a></li>
+</ul>
+<hr>
+<h2 id="interesting-cases">Interesting Cases</h2>
+<ul>
+<li>N/A</li>
+<li>N/A</li>
+<li>N/A</li>
+</ul>
+<hr>
+<h2 id="one-more-thing">One more thing</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Tool</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application on runtime(Java/Node/Ruby/PHP)</td>
+<td>Runtime debugger,eBPF</td>
+</tr>
+<tr>
+<td>Application (native code)</td>
+<td>System debugger,eBPF</td>
+</tr>
+<tr>
+<td>System libraries: /lib/*</td>
+<td>ltrace(1),eBPF</td>
+</tr>
+<tr>
+<td>System call interface</td>
+<td>strace(1), perf(1),eBPF</td>
+</tr>
+<tr>
+<td>Network Traffic</td>
+<td>tcpdump(8),eBPF</td>
+</tr>
+<tr>
+<td>Kernel: Scheduler, file systems, TCP, IP, etc</td>
+<td>ftrace(1), perf(1),eBPF</td>
+</tr>
+<tr>
+<td>Hardware: CPU internals, devicec</td>
+<td>perf, sar, eBPF</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="perf">Perf</h2>
+<ul>
+<li>Why is the kernel on-CPU so much? What code-paths?</li>
+<li>Which code-paths are causing CPU level 2 cache misses?</li>
+<li>Are the CPUs stalled on memory I/O?</li>
+<li>Which code-paths are allocating memory, and how much?</li>
+<li>What is triggering TCP retransmits?</li>
+<li>Is a certain kernel function being called, and how often?</li>
+<li>What reasons are threads leaving the CPU?</li>
+</ul>
+<p>&ndash; Brendan Greg</p>
+<hr>
+<h2 id="perf-cont">Perf (cont.)</h2>
+<p><code>perf_event</code>:</p>
+<ul>
+<li>Software events</li>
+<li>Hardware events</li>
+<li>Kernel static tracepoint events</li>
+<li>USDT</li>
+</ul>
+<p><img src="https://intranetproxy.alipay.com/skylark/lark/0/2020/png/122844/1606655883925-873a4d92-9d1b-4d7d-8e24-31cd567ebd1f.png?x-oss-process=image%2Fresize%2Cw_1412#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=oFLoJ&amp;originHeight=988&amp;originWidth=1412&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<p><code>sudo perf list</code> to list all available events.</p>
+<hr>
+<pre tabindex="0"><code># sudo perf record -e block:block_rq_issue -e block:block_rq_complete -a sleep 10
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.428 MB perf.data (~18687 samples) ]
+# sudo perf script
+        run 30339 [000] 2083345.722767: block:block_rq_complete: 202,1 W () 12984648 + 8 [0]
+        run 30339 [000] 2083345.722857: block:block_rq_complete: 202,1 W () 12986336 + 8 [0]
+        run 30339 [000] 2083345.723180: block:block_rq_complete: 202,1 W () 12986528 + 8 [0]
+    swapper     0 [000] 2083345.723489: block:block_rq_complete: 202,1 W () 12986496 + 8 [0]
+    swapper     0 [000] 2083346.745840: block:block_rq_complete: 202,1 WS () 1052984 + 144 [0]
+  supervise 30342 [000] 2083346.746571: block:block_rq_complete: 202,1 WS () 1053128 + 8 [0]
+  supervise 30342 [000] 2083346.746663: block:block_rq_complete: 202,1 W () 12986608 + 8 [0]
+        run 30342 [000] 2083346.747003: block:block_rq_complete: 202,1 W () 12986832 + 8 [0]
+
+                                                                            
+              /---------------------------------------- #1  supervise: on-CPU cmd                                                             
+             /       /--------------------------------- #2  30342: on-CPU cmd tid                                                       
+            /       /     /---------------------------- #3  [000]: CPU running cmd                                                 
+           /       /     /          /------------------ #4  2083346.746571: reltime                                        
+          /       /     /          /                /-- #5  block:block_rq_complete: tracepoint  
+         /       /     /          /                /                  /------------- #6  202,1 : storage major,minor number, ref lsblk
+        /       /     /          /                /                  /    /--------- #7  IO type: W-Write,R-Read,A-ReadAheader,O-Sync,WS-Sync Write   
+       /       /     /          /                /                  /    /  /------- #8  (): Block command details
+      /       /     /          /                /                  /    /  /     /-- #9  12986336: storage device offset
+     /       /     /          /                /                  /    /  /     /     /---- #10 +8: size of IO (in sectors)
+    /       /     /          /                /                  /    /  /     /     /  /-- #11 [0]: if errors happened
+supervise 30342 [000] 2083346.746571: block:block_rq_complete: 202,1 WS () 1053128 + 8 [0]
+# how can I get this format?  cat /sys/kernel/debug/tracing/events/{event_cat}/{event_name}/format
+
+perf script | awk &#39;{ gsub(/:/, &#34;&#34;) } $5 ~ /issue/ { ts[$6, $10] = $4 }
+    $5 ~ /complete/ { if (l = ts[$6, $9]) { printf &#34;%.f %.f\n&#34;, $4 * 1000000,
+    ($4 - l) * 1000000; ts[$6, $10] = 0 } }&#39;
+</code></pre><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo yum install -y kernel-devels
+</span></span><span class="line"><span class="cl">sudo yum install -y kernel-headers
+</span></span><span class="line"><span class="cl">sudo mount -t debugfs debugfs /sys/kernel/debug
+</span></span></code></pre></div><hr>
+<h2 id="using-perf-trace-java-io-issues">Using perf trace Java IO issues</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo perf record -e block:block_rq_issue  -a -g  -p &lt;pid&gt; sleep <span class="m">10</span>
+</span></span><span class="line"><span class="cl">sudo perf report -G <span class="c1"># No java stack info ?</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sudo yum install -y gcc-c++ cmake
+</span></span><span class="line"><span class="cl">git clone https://github.com/jvm-profiling-tools/perf-map-agent
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> perf-map-agent <span class="o">&amp;&amp;</span> cmake . <span class="o">&amp;&amp;</span> make -j8
+</span></span><span class="line"><span class="cl">./bin/create-java-perf-map.sh &lt;pid&gt;
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> -
+</span></span><span class="line"><span class="cl">perf report -G <span class="c1"># gotcha!</span>
+</span></span></code></pre></div><hr>
+<h2 id="flame-graph">Flame Graph</h2>
+<pre tabindex="0"><code>git clone https://github.com/brendangregg/FlameGraph
+sudo perf script | \
+    &lt;path-to&gt;/stackcollapse-perf.pl | \
+    &lt;path-to&gt;/flamegraph.pl &gt; perf-kernel.svg
+</code></pre><h2 id="reference">Reference</h2>
+<ul>
+<li><a href="http://www.brendangregg.com/perf.html#OneLiners">perf one-liners</a></li>
+<li><a href="http://www.brendangregg.com/blog/2015-02-26/linux-perf-off-cpu-flame-graph.html">Off-CPU Analysis</a></li>
+</ul>
+<hr>
+<h2 id="内存增长的另外一种思路">内存增长的另外一种思路</h2>
+<ul>
+<li>通过<code>LD_PRELOAD</code>替换分配器为 jemalloc</li>
+<li>开启 jemalloc 的泄漏分析</li>
+<li>启动进程, 找到泄漏的 native 栈</li>
+<li>用 <code>perf record -e &lt;tp&gt; -ag</code> 抓取分配的事件</li>
+<li><code>create-java-perf-map.sh</code> 生成符号表</li>
+<li><code>perf report/script</code> 查看访问线程</li>
+</ul>
+<hr>
+<h2 id="ebpfxdp">eBPF/XDP</h2>
+<blockquote>
+<p>eBPF does to Linux what JavaScript does to HTML. &ndash; Brendan Gregg</p>
+</blockquote>
+<p><img src="https://gw.alipayobjects.com/zos/antfincdn/px8%24TS%2457N/5324708e-a7f5-44d7-963b-a569fd0b6d08.png#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=RJ0w2&amp;originHeight=818&amp;originWidth=1132&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<hr>
+<h2 id="ebpf-probes">eBPF probes</h2>
+<ul>
+<li>Probes (Dynamic, Using <code>trap</code>)
+<ul>
+<li><a href="https://www.kernel.org/doc/Documentation/kprobes.txt">k{,ret}probes</a></li>
+<li><a href="https://lwn.net/Articles/499190/">u{,ret}probes</a></li>
+</ul>
+</li>
+<li>Tracepoints (Static, predefined)
+<ul>
+<li><a href="https://static.lwn.net/kerneldoc/trace/tracepoints.html">Kernel tracepoints</a>
+<ul>
+<li><code>cat /sys/kernel/debug/tracing/available_events</code></li>
+</ul>
+</li>
+<li><a href="https://lwn.net/Articles/753601/">USDT</a>
+<ul>
+<li><code>readelf -n X.so | grep -A4 NT_STAPSDT</code></li>
+<li><code>tplist.py -p &lt;running_process&gt;</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="ebpf-vs-perf">eBPF vs. Perf</h2>
+<p><img src="https://gw.alipayobjects.com/zos/antfincdn/d9OtRCINlq/4f7646df-bab8-4fe7-8bd8-5e7ba7005996.png#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=swEsD&amp;originHeight=964&amp;originWidth=1424&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<hr>
+<h2 id="ebpf-hello-world">eBPF Hello world</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="ch">#!/usr/bin/python</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">bcc</span> <span class="kn">import</span> <span class="n">BPF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">prog</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">int hello(void *ctx) {
+</span></span></span><span class="line"><span class="cl"><span class="s2">    bpf_trace_printk(&#34;Hello world</span><span class="se">\\</span><span class="s2">n&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="s2">    return 0;
+</span></span></span><span class="line"><span class="cl"><span class="s2">}
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">BPF</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">prog</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#print(b.get_syscall_fnname(&#34;clone&#34;)) # platform-dependent syscall kprobe name</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span><span class="o">.</span><span class="n">attach_kprobe</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&#34;__x64_sys_clone&#34;</span><span class="p">,</span> <span class="n">fn_name</span><span class="o">=</span><span class="s2">&#34;hello&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#        ^~~~~~ this is a kprobe </span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span><span class="o">.</span><span class="n">trace_print</span><span class="p">()</span>
+</span></span></code></pre></div><hr>
+<h2 id="bcc-bpf-compiler-collection">BCC (BPF Compiler Collection)</h2>
+<blockquote>
+<p>&mdash;eBPF made simple</p>
+</blockquote>
+<p><img src="https://gw.alipayobjects.com/zos/antfincdn/ZknkdEV%24hu/68c407a8-8ce3-4fba-a037-f96f09e1fd27.png#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=oh5dT&amp;originHeight=649&amp;originWidth=872&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<hr>
+<h2 id="use-bcc-to-explore-jvm-usdt">Use BCC to explore JVM USDT</h2>
+<pre tabindex="0"><code>readelf -n $JAVA_HOME/jre/lib/amd64/server/libjvm.so | grep -A4 NT_STAPSDT
+sudo &lt;path-to&gt;/trace.py -p &lt;java_pid&gt; &#39;u::thread__sleep__begin&#39;
+</code></pre><hr>
+<h2 id="bpftrace"><code>bpftrace</code></h2>
+<blockquote>
+<p>one-liner eBPF tools</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># list tracepoints</span>
+</span></span><span class="line"><span class="cl">bpftrace -l <span class="s1">&#39;tracepoint:syscalls:sys_enter_*&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># trace file open</span>
+</span></span><span class="line"><span class="cl">bpftrace -e <span class="s1">&#39;tracepoint:syscalls:sys_enter_openat { printf(&#34;%s %s\n&#34;, comm, str(args-&gt;filename)); }&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># bio size dist</span>
+</span></span><span class="line"><span class="cl">bpftrace -e <span class="s1">&#39;tracepoint:block:block_rq_issue { @ = hist(args-&gt;bytes); }&#39;</span>
+</span></span></code></pre></div><p><a href="https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md#bpftrace-reference-guide">bpftrace Reference Guide</a></p>
+<hr>
+<h2 id="using-ebpf-to-debug-hotspot-jvmhttpsgithubcomadoptopenjdkopenjdk-buildissues1173"><a href="https://github.com/AdoptOpenJDK/openjdk-build/issues/1173">Using eBPF to debug Hotspot JVM</a></h2>
+<ul>
+<li>Compile OpenJDK with tracepoints enabled</li>
+<li>Use BCC trace tools to trace JVM methods</li>
+<li>More Info ref - <a href="https://web.archive.org/web/20161006014657/http://blogs.microsoft.co.il/sasha/2016/03/31/probing-the-jvm-with-bpfbcc/">Probing the JVM with BPF/BCC</a>/[Enable USDT probes for eBPF tracing on Linux #1173</li>
+</ul>
+<p>](<a href="https://github.com/AdoptOpenJDK/openjdk-build/issues/1173">https://github.com/AdoptOpenJDK/openjdk-build/issues/1173</a>)</p>
+<h2 id="ebpf-caveats-and-limitations">eBPF caveats and limitations</h2>
+<ul>
+<li>Kernel requirement: <code>^4.4</code></li>
+<li>Byte code instruction size &lt; 4096</li>
+<li>No control loop</li>
+</ul>
+<hr>
+<h2 id="ebpf--xdpexpress-data-path">eBPF &amp; XDP(eXpress Data Path)</h2>
+<p>Two ways toward kernel bypass</p>
+<ul>
+<li>kernel in userspace
+<ul>
+<li><a href="https://www.dpdk.org/">DPDK</a></li>
+<li><a href="https://github.com/luigirizzo/netmap">Netmap</a></li>
+</ul>
+</li>
+<li>user code in kernel
+<ul>
+<li>XDP</li>
+</ul>
+</li>
+</ul>
+<p>XDP Operating modes</p>
+<ul>
+<li>Native mode
+<ul>
+<li>Play with DMA buffer</li>
+<li>NO SKB ALLOCATON</li>
+<li>Least overhead</li>
+<li>Need driver modification</li>
+</ul>
+</li>
+<li>SKB mode
+<ul>
+<li>From <code>netif_receive_skb()</code></li>
+<li>After SKB and DMA allocation</li>
+<li>More instructions</li>
+<li>Driver-Indepent</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="xdpcont">XDP(cont.)</h2>
+<ul>
+<li>Flannel: L2(IP Overlay)</li>
+<li>Calico: L3(BGP)</li>
+<li>Cilium: L3/4/7 (eBPF/XDP)
+<ul>
+<li><a href="https://cloud.google.com/blog/products/containers-kubernetes/bringing-ebpf-and-cilium-to-google-kubernetes-engine">GKE2 data plane</a></li>
+</ul>
+</li>
+</ul>
+<p><img src="https://gw.alipayobjects.com/zos/antfincdn/SaD3%26t15mG/ab6b1bf1-eacf-49d5-9193-e1adf70c19a7.png#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=iqOuc&amp;originHeight=1694&amp;originWidth=3248&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<p>     Container Network
+   </p>
+<hr>
+<h2 id="cilium-ebpf--xdp-based-cni-plugin">Cilium: eBPF &amp; XDP based CNI plugin</h2>
+<p><img src="https://gw.alipayobjects.com/zos/antfincdn/iSIr4xVnkO/73cddcf9-6e5b-4a3f-8fa9-3d8e65b8f056.png#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=abFHP&amp;originHeight=912&amp;originWidth=1600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<hr>
+<h2 id="总结">总结</h2>
+<ul>
+<li>勇于尝试新 kernel/runtime 和它们的新 feature .</li>
+<li>工具可以快速验证思路, 过度依赖工具可能导致一叶障目不见泰山, <strong>核心还是建立对系统的理解</strong>.</li>
+</ul>
+<p><img src="https://gw.alipayobjects.com/zos/antfincdn/zHvsBUAZw3/f52a93d6-2263-4a2d-bd63-059266789f24.png#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=ZEv9O&amp;originHeight=310&amp;originWidth=325&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""><img src="https://gw.alipayobjects.com/zos/antfincdn/HFPHA448hX/85db3710-1a5e-426e-96db-91c514a19cfc.png#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=UjanH&amp;originHeight=324&amp;originWidth=300&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
+<hr>
+<h2 id="reference-1">Reference</h2>
+<ul>
+<li>
+<ol>
+<li><a href="https://web.archive.org/web/20161006014657/http://blogs.microsoft.co.il/sasha/2016/03/31/probing-the-jvm-with-bpfbcc/">Probing the JVM with BPF/BCC</a></li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li><a href="https://www.evanjones.ca/java-native-leak-bug.html">Debugging Java Native Memory Leaks</a></li>
+</ol>
+</li>
+<li>
+<ol start="3">
+<li><a href="https://www.usenix.org/sites/default/files/conference/protected-files/srecon18americas_slides_goldshtein.pdf">Goldshtein - Profiling JVM Applications in Production</a></li>
+</ol>
+</li>
+<li>
+<ol start="4">
+<li><a href="https://lwn.net/Articles/708087/">Debating the value of XDP</a></li>
+</ol>
+</li>
+<li>
+<ol start="5">
+<li><a href="https://yuque.antfin.com/docs/share/ed2a2941-b51a-497f-b9a1-f393002d0473?#MevjG">OSDI 2020 Summary</a></li>
+</ol>
+</li>
+<li>
+<ol start="6">
+<li><a href="https://www.usenix.org/conference/osdi20/presentation/brunella">hXDP: Efficient Software Packet Processing on FPGA NICs</a></li>
+</ol>
+</li>
+<li>
+<ol start="7">
+<li><a href="http://vger.kernel.org/lpc_net2018_talks/presentation-lpc2018-xdp-future.pdf">XDP - challenges and future work</a></li>
+</ol>
+</li>
+<li>
+<ol start="8">
+<li><a href="https://www.linuxplumbersconf.org/event/2/contributions/71/attachments/17/9/presentation-lpc2018-xdp-tutorial.pdf">A practical introduction to XDP</a></li>
+</ol>
+</li>
+<li>
+<ol start="9">
+<li><a href="https://docs.cilium.io/en/v1.9/bpf/">BPF and XDP Reference Guide — Cilium 1.9.0 documentation</a></li>
+</ol>
+</li>
+<li>
+<ol start="10">
+<li><a href="https://www.evanjones.ca/java-native-leak-bug.html">native memory leak</a></li>
+</ol>
+</li>
+<li>
+<ol start="11">
+<li><a href="https://github.com/netty/netty/pull/3844">epoll native memory leak</a></li>
+</ol>
+</li>
+<li>
+<ol start="12">
+<li><a href="https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8164293">JDK-8164293:HotSpot leaking memory</a></li>
+</ol>
+</li>
+<li>
+<ol start="13">
+<li><a href="https://www.iteye.com/blog/rednaxelafx-1847971">借HSDB来探索HotSpot VM的运行时数据</a></li>
+</ol>
+</li>
+<li>
+<ol start="14">
+<li><a href="https://bugs.openjdk.java.net/browse/JDK-8158050">JDK-8158050</a></li>
+</ol>
+</li>
+<li>
+<ol start="15">
+<li><a href="https://yuque.antfin-inc.com/aone355606/gfqllg/xgllfm">JVM团队-JFR使用帮助</a></li>
+</ol>
+</li>
+<li>
+<ol start="16">
+<li><a href="https://yuque.antfin.com/office/lark/0/2020/pdf/122844/1606645147060-bef1c539-8c2a-4b7e-af40-4a8a5b8cc316.pdf?from=https%3A%2F%2Fyuque.antfin.com%2Fgnu.hl%2Fgnu%2Fxpdq41">JDK Mission Control Tutorial</a></li>
+</ol>
+</li>
+<li>
+<ol start="17">
+<li><a href="http://hirt.se/blog/">Continuous Production Profiling and Diagnostics</a></li>
+</ol>
+</li>
+<li>
+<ol start="18">
+<li><a href="https://www.javacodegeeks.com/2015/03/oracle-java-mission-control-the-ultimate-guide.html">Oracle Java Mission Control: The Ultimate Guide</a></li>
+</ol>
+</li>
+<li>
+<ol start="19">
+<li><a href="http://www.brendangregg.com/perf.html#OneLiners">perf one-liners</a></li>
+</ol>
+</li>
+<li>
+<ol start="20">
+<li><a href="http://www.brendangregg.com/blog/2015-02-26/linux-perf-off-cpu-flame-graph.html">Off-CPU Analysis</a></li>
+</ol>
+</li>
+<li>
+<ol start="21">
+<li><a href="http://www.brendangregg.com/perf.html#JIT_Symbols">Bredan Gregg&rsquo;s perf examples</a></li>
+</ol>
+</li>
+<li>
+<ol start="22">
+<li><a href="https://www.kernel.org/doc/Documentation/kprobes.txt">k{,ret}probes</a></li>
+</ol>
+</li>
+<li>
+<ol start="23">
+<li><a href="https://lwn.net/Articles/499190/">u{,ret}probes</a></li>
+</ol>
+</li>
+<li>
+<ol start="24">
+<li><a href="https://static.lwn.net/kerneldoc/trace/tracepoints.html">Kernel tracepoints</a></li>
+</ol>
+</li>
+<li>
+<ol start="25">
+<li><a href="https://lwn.net/Articles/753601/">USDT</a></li>
+</ol>
+</li>
+<li>
+<ol start="26">
+<li><a href="https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md#bpftrace-reference-guide">bpftrace Reference Guide</a></li>
+</ol>
+</li>
+<li>
+<ol start="27">
+<li><a href="https://github.com/AdoptOpenJDK/openjdk-build/issues/1173">Use eBPF to debug Hotspot JVM</a></li>
+</ol>
+</li>
+<li>
+<ol start="28">
+<li><a href="https://github.com/AdoptOpenJDK/openjdk-build/issues/1173">Enable USDT probes for eBPF tracing on Linux #1173</a></li>
+</ol>
+</li>
+<li>
+<ol start="29">
+<li><a href="https://web.archive.org/web/20161006014657/http://blogs.microsoft.co.il/sasha/2016/03/31/probing-the-jvm-with-bpfbcc/">Probing the JVM with BPF/BCC</a></li>
+</ol>
+</li>
+<li>
+<ol start="30">
+<li><a href="https://www.evanjones.ca/java-native-leak-bug.html">Debugging Java Native Memory Leaks</a></li>
+</ol>
+</li>
+<li>
+<ol start="31">
+<li><a href="https://www.usenix.org/sites/default/files/conference/protected-files/srecon18americas_slides_goldshtein.pdf">Goldshtein - Profiling JVM Applications in Production</a></li>
+</ol>
+</li>
+<li>
+<ol start="32">
+<li><a href="https://lwn.net/Articles/708087/">Debating the value of XDP</a></li>
+</ol>
+</li>
+<li>
+<ol start="33">
+<li><a href="https://yuque.antfin.com/docs/share/ed2a2941-b51a-497f-b9a1-f393002d0473?#MevjG">OSDI 2020 Summary</a></li>
+</ol>
+</li>
+<li>
+<ol start="34">
+<li><a href="https://www.usenix.org/conference/osdi20/presentation/brunella">hXDP: Efficient Software Packet Processing on FPGA NICs</a></li>
+</ol>
+</li>
+<li>
+<ol start="35">
+<li><a href="http://vger.kernel.org/lpc_net2018_talks/presentation-lpc2018-xdp-future.pdf">XDP - challenges and future work</a></li>
+</ol>
+</li>
+<li>
+<ol start="36">
+<li><a href="https://www.linuxplumbersconf.org/event/2/contributions/71/attachments/17/9/presentation-lpc2018-xdp-tutorial.pdf">A practical introduction to XDP</a></li>
+</ol>
+</li>
+<li>
+<ol start="37">
+<li><a href="https://docs.cilium.io/en/v1.9/bpf/">BPF and XDP Reference Guide — Cilium 1.9.0 documentation</a></li>
+</ol>
+</li>
+</ul>
+<hr>
+<h1 id="tribute-to">Tribute To</h1>
+<ul>
+<li><a href="http://brendangregg.com/">Brendan Gregg</a></li>
+<li><a href="https://github.com/goldshtn">Sasha Goldshtein</a></li>
+<li><a href="https://jvns.ca/">Julia Evans</a></li>
+<li><a href="https://www.iteye.com/blog/user/rednaxelafx">Rednaxelafx</a></li>
+</ul>
 ]]></content>
 		</item>
 		
