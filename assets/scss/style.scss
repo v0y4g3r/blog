@@ -679,11 +679,21 @@ a.footnote-ref {
   }
 }
 
+@media(max-width: 1300px) {
+#toc {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  display: none;
+}
+}
+@media(min-width: 1300px) {
 #toc {
   position: fixed;
   left: 50%;
   top: 0;
   display: block;
+}
 }
 
 .toc-title {
