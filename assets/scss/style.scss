@@ -239,6 +239,7 @@ table {
   align-items: center;
   padding: .5em 0;
   font-size: 1.2rem;
+  font-family: $home-fonts;
 
   .site-branding {
     display: inline-block;
@@ -332,6 +333,7 @@ table {
   min-height: 100vh;
   flex-direction: column;
   align-items: center;
+  font-family: $home-fonts;
   justify-content: center;
   max-width: 93%;
   margin: auto;
