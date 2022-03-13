@@ -14,10 +14,7 @@
       <pubDate>Thu, 10 Feb 2022 15:07:10 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</guid>
-      <description>安装 Octomments 按照 Octomments 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。
-配置 GitHub issue 在配置文件中增加配置项：
- comment.owner：Issue repo 的拥有者 comment.repo：Issue repo 的名字  配置 Comment 组件 在您的博客站点根目录下的layouts/partials/comments.html 模板中增加：
-{{ if .Params.issueNumber -}} &amp;lt;link href=&amp;#34;https://unpkg.com/octomments/build/ocs-ui.min.css&amp;#34; rel=&amp;#34;stylesheet&amp;#34;&amp;gt; &amp;lt;div id=&amp;#34;comments&amp;#34;&amp;gt;&amp;lt;/div&amp;gt; &amp;lt;script src=&amp;#34;https://unpkg.com/octomments/build/ocs.min.js&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;script&amp;gt; Octomments({ github: { owner: &amp;#39;{{ $.Site.Params.comment.owner }}&amp;#39;, repo: &amp;#39;{{ $.Site.Params.comment.repo }}&amp;#39;, }, issueNumber: {{ .Params.issueNumber }}, renderer: [OctommentsRenderer, &amp;#39;#comments&amp;#39;] }).init(); &amp;lt;/script&amp;gt; {{ end }} 配置需要评论的文章 在文章的 metadata 章节加入创建的 issue 的 issue number，如本文的 metadata：</description>
+      <description>安装 Octomments 按照 Octomments 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。 配置 GitHub issue 在配置文件中增加配置项： comment.owner：I</description>
     </item>
     
   </channel>

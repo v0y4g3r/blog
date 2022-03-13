@@ -248,7 +248,7 @@ table {
 
   .site-nav {
     display: inline-block;
-    font-size: 1.1em;
+    font-size: 1.3em;
     opacity: .8;
 
     .has-children {
@@ -262,6 +262,7 @@ table {
 
     a {
       margin-left: .8em;
+      font-style:bold;
     }
   }
 }
@@ -334,7 +335,7 @@ table {
   justify-content: center;
   max-width: 93%;
   margin: auto;
-  font-size: 1.5rem;
+  font-size: 2rem;
 
   &.error-404 {
     flex-direction: row;
@@ -406,18 +407,18 @@ p.img-404 {
   margin-bottom: 1.5em;
   text-align: center;
   line-height: normal;
-  font-size: .7em;
-  font-style: italic;
-  opacity: .9;
+  font-size: .6em;
+  font-style: bold italic;
+  opacity: .6;
 }
 
 #home-social {
-  font-size: 1.4em;
+  font-size: 1.2em;
   text-align: center;
   opacity: .8;
 
   a {
-    margin: 0 .2em;
+    margin: 0 .3em;
   }
 }
 
