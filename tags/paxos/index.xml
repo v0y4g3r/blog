@@ -14,8 +14,7 @@
       <pubDate>Mon, 14 Jun 2021 11:24:18 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/notes-on-paxos-made-simple/</guid>
-      <description>关于 P2c P2c 是 P2b 的充分不必要条件，why？
-  P2b: If a proposal with value v is chosen, then every higher-numbered proposal issued by any proposer has value v. P2c: For any v and n, if a proposal with value v and number n is issued, then there is a set S consisting of a majority of acceptors such that either  (a) no acceptor in S has accepted any proposal numbered less than n, or (b) v is the value of the highest-numbered proposal among all proposals numbered less than n accepted by the acceptors in S.</description>
+      <description>关于 P2c P2c 是 P2b 的充分不必要条件，why？ P2b: If a proposal with value v is chosen, then every higher-numbered proposal issued by any proposer has value v. P2c: For any v and n, if a proposal with value v and number n is issued, then there is a set S consisting of a majority of acceptors such that</description>
     </item>
     
   </channel>

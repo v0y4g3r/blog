@@ -8,15 +8,11 @@
 	<meta name="theme-color" content="#282c34">
 	<meta name="msapplication-TileColor" content="#282c34">
 <meta itemprop="name" content="Notes on InfluxDB Storage Engine">
-<meta itemprop="description" content="InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。
-  InfluxDB 的存储系统   InfluxDB 的存储层有三个子系统：
- TSM：数据点的存储，可以高效地提供 SeriesKey 到时序数据值的插入和检索； TSI：时序数据的倒排索引，提供查询某个 measurement 下某个 tag 包含特定值的 SeriesID 的接口；  TSI 是 InfluxDB 查询引擎的核心，所谓的基数膨胀带来的问题也是出现在这一层。 为了降低 TSI 的内存占用，InfluxDB 引入了一个额外的 SeriesID。   Series 索引：提供根据 SeriesID 查找 SeriesKey 的接口等  SeriesFile.CreateSeriesListIfNotExists：创建 SeriesKey-&gt;SeriesID 的映射 SeriesFile.SeriesKey：根据 SeriesID 查找 SeriesKey    应该说 TSI 加上 SeriesIndex 才是 InfluxDB 完整的索引部分，但是这两者各自是一个类 LSMT 的数据结构，也有自己的 WAL、compaction/recover 策略等等，因此 InfluxDB 做了区分。"><meta itemprop="datePublished" content="2022-03-12T17:42:25+08:00" />
+<meta itemprop="description" content="InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。 InfluxDB 的存储系统 InfluxDB 的存储层有三个子系统： TSM：数"><meta itemprop="datePublished" content="2022-03-12T17:42:25+08:00" />
 <meta itemprop="dateModified" content="2022-03-12T17:42:25+08:00" />
-<meta itemprop="wordCount" content="875">
+<meta itemprop="wordCount" content="4368">
 <meta itemprop="keywords" content="Database," /><meta property="og:title" content="Notes on InfluxDB Storage Engine" />
-<meta property="og:description" content="InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。
-  InfluxDB 的存储系统   InfluxDB 的存储层有三个子系统：
- TSM：数据点的存储，可以高效地提供 SeriesKey 到时序数据值的插入和检索； TSI：时序数据的倒排索引，提供查询某个 measurement 下某个 tag 包含特定值的 SeriesID 的接口；  TSI 是 InfluxDB 查询引擎的核心，所谓的基数膨胀带来的问题也是出现在这一层。 为了降低 TSI 的内存占用，InfluxDB 引入了一个额外的 SeriesID。   Series 索引：提供根据 SeriesID 查找 SeriesKey 的接口等  SeriesFile.CreateSeriesListIfNotExists：创建 SeriesKey-&gt;SeriesID 的映射 SeriesFile.SeriesKey：根据 SeriesID 查找 SeriesKey    应该说 TSI 加上 SeriesIndex 才是 InfluxDB 完整的索引部分，但是这两者各自是一个类 LSMT 的数据结构，也有自己的 WAL、compaction/recover 策略等等，因此 InfluxDB 做了区分。" />
+<meta property="og:description" content="InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。 InfluxDB 的存储系统 InfluxDB 的存储层有三个子系统： TSM：数" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huanglei.rocks/posts/notes-on-influxdb-storage/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-03-12T17:42:25+08:00" />
@@ -24,9 +20,7 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Notes on InfluxDB Storage Engine"/>
-<meta name="twitter:description" content="InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。
-  InfluxDB 的存储系统   InfluxDB 的存储层有三个子系统：
- TSM：数据点的存储，可以高效地提供 SeriesKey 到时序数据值的插入和检索； TSI：时序数据的倒排索引，提供查询某个 measurement 下某个 tag 包含特定值的 SeriesID 的接口；  TSI 是 InfluxDB 查询引擎的核心，所谓的基数膨胀带来的问题也是出现在这一层。 为了降低 TSI 的内存占用，InfluxDB 引入了一个额外的 SeriesID。   Series 索引：提供根据 SeriesID 查找 SeriesKey 的接口等  SeriesFile.CreateSeriesListIfNotExists：创建 SeriesKey-&gt;SeriesID 的映射 SeriesFile.SeriesKey：根据 SeriesID 查找 SeriesKey    应该说 TSI 加上 SeriesIndex 才是 InfluxDB 完整的索引部分，但是这两者各自是一个类 LSMT 的数据结构，也有自己的 WAL、compaction/recover 策略等等，因此 InfluxDB 做了区分。"/>
+<meta name="twitter:description" content="InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。 InfluxDB 的存储系统 InfluxDB 的存储层有三个子系统： TSM：数"/>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -36,7 +30,7 @@
 	<link rel="shortcut icon" href="/favicon.ico">
 
 	<title>Notes on InfluxDB Storage Engine</title>
-	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.1aba4886f9f7da5e4a6ac5f4276a3e76fda42c4c16d137738779bded171f837c.css" integrity="sha256-GrpIhvn32l5KasX0J2o+dv2kLEwW0Tdzh3m97Rcfg3w=" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.51e153e0110664fdd543254132fb040d84d3ab352e116b554e7b0af92ca4ef8c.css" integrity="sha256-UeFT4BEGZP3VQyVBMvsEDYTTqzUuEWtVTnsK+Syk74w=" crossorigin="anonymous">
 	
 </head>
 
@@ -82,7 +76,7 @@
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/database">Database</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>875 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>4368 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-03-12 17:42 &#43;0800</p>
 			</footer>
 		</br>
@@ -284,6 +278,18 @@ SeriesIndex 的数据组成
 <p>目前可以想到的一个简单的缓解办法是现在 RP 维度的 Series 索引变成 RP 下面的 Shard 维度的，当 Shard 过期之后会自动把相应的 Series 索引过期。</p>
 
 			</div>
+
+<div class="related-posts thin">
+	<h2>See Also</h2>
+	<ul>
+	
+	<li><a href="/posts/parquet/">Apache Parquet 格式简介</a></li>
+	
+	<li><a href="/posts/note-on-lsmt/">LSM Tree 笔记</a></li>
+	
+	</ul>
+</div>
+
 		</article>
 		<aside id="toc">
 			<div class="toc-title">Table of Contents</div>

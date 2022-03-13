@@ -8,21 +8,11 @@
 	<meta name="theme-color" content="#282c34">
 	<meta name="msapplication-TileColor" content="#282c34">
 <meta itemprop="name" content="Apache Parquet 格式简介">
-<meta itemprop="description" content="简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。
-数据 layout 一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。
- 官方的格式图    原始行格式的数据    Parquet 数据的遍历顺序    使用 Parquet 转换之后的格式   在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。
-元数据 从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。
-Footer Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。
-Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 8 到倒数第 4 字节，作为 footer 的长度，从而得到 footer 区的起始 offset。"><meta itemprop="datePublished" content="2022-03-05T15:44:33+08:00" />
+<meta itemprop="description" content="简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。 数据 layout 一个 Parquet 文件的数"><meta itemprop="datePublished" content="2022-03-05T15:44:33+08:00" />
 <meta itemprop="dateModified" content="2022-03-05T15:44:33+08:00" />
-<meta itemprop="wordCount" content="436">
+<meta itemprop="wordCount" content="1436">
 <meta itemprop="keywords" content="Database," /><meta property="og:title" content="Apache Parquet 格式简介" />
-<meta property="og:description" content="简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。
-数据 layout 一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。
- 官方的格式图    原始行格式的数据    Parquet 数据的遍历顺序    使用 Parquet 转换之后的格式   在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。
-元数据 从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。
-Footer Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。
-Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 8 到倒数第 4 字节，作为 footer 的长度，从而得到 footer 区的起始 offset。" />
+<meta property="og:description" content="简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。 数据 layout 一个 Parquet 文件的数" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huanglei.rocks/posts/parquet/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-03-05T15:44:33+08:00" />
@@ -30,12 +20,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Apache Parquet 格式简介"/>
-<meta name="twitter:description" content="简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。
-数据 layout 一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。
- 官方的格式图    原始行格式的数据    Parquet 数据的遍历顺序    使用 Parquet 转换之后的格式   在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。
-元数据 从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。
-Footer Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。
-Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 8 到倒数第 4 字节，作为 footer 的长度，从而得到 footer 区的起始 offset。"/>
+<meta name="twitter:description" content="简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。 数据 layout 一个 Parquet 文件的数"/>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -45,7 +30,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
 	<link rel="shortcut icon" href="/favicon.ico">
 
 	<title>Apache Parquet 格式简介</title>
-	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.1aba4886f9f7da5e4a6ac5f4276a3e76fda42c4c16d137738779bded171f837c.css" integrity="sha256-GrpIhvn32l5KasX0J2o+dv2kLEwW0Tdzh3m97Rcfg3w=" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.51e153e0110664fdd543254132fb040d84d3ab352e116b554e7b0af92ca4ef8c.css" integrity="sha256-UeFT4BEGZP3VQyVBMvsEDYTTqzUuEWtVTnsK+Syk74w=" crossorigin="anonymous">
 	
 </head>
 
@@ -91,7 +76,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/database">Database</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>436 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1436 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-03-05 15:44 &#43;0800</p>
 			</footer>
 		</br>
@@ -211,6 +196,16 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
 </ul>
 
 			</div>
+
+<div class="related-posts thin">
+	<h2>See Also</h2>
+	<ul>
+	
+	<li><a href="/posts/note-on-lsmt/">LSM Tree 笔记</a></li>
+	
+	</ul>
+</div>
+
 		</article>
 		<aside id="toc">
 			<div class="toc-title">Table of Contents</div>

@@ -14,9 +14,7 @@
       <pubDate>Sat, 12 Mar 2022 17:42:25 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/notes-on-influxdb-storage/</guid>
-      <description>InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。
-  InfluxDB 的存储系统   InfluxDB 的存储层有三个子系统：
- TSM：数据点的存储，可以高效地提供 SeriesKey 到时序数据值的插入和检索； TSI：时序数据的倒排索引，提供查询某个 measurement 下某个 tag 包含特定值的 SeriesID 的接口；  TSI 是 InfluxDB 查询引擎的核心，所谓的基数膨胀带来的问题也是出现在这一层。 为了降低 TSI 的内存占用，InfluxDB 引入了一个额外的 SeriesID。   Series 索引：提供根据 SeriesID 查找 SeriesKey 的接口等  SeriesFile.CreateSeriesListIfNotExists：创建 SeriesKey-&amp;gt;SeriesID 的映射 SeriesFile.SeriesKey：根据 SeriesID 查找 SeriesKey    应该说 TSI 加上 SeriesIndex 才是 InfluxDB 完整的索引部分，但是这两者各自是一个类 LSMT 的数据结构，也有自己的 WAL、compaction/recover 策略等等，因此 InfluxDB 做了区分。</description>
+      <description>InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。 InfluxDB 的存储系统 InfluxDB 的存储层有三个子系统： TSM：数</description>
     </item>
     
     <item>
@@ -25,12 +23,7 @@
       <pubDate>Sat, 05 Mar 2022 15:44:33 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/parquet/</guid>
-      <description>简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。
-数据 layout 一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。
- 官方的格式图    原始行格式的数据    Parquet 数据的遍历顺序    使用 Parquet 转换之后的格式   在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。
-元数据 从如上的 Parquet 格式可以看出来，一个 Parquet 文件是包含了一些元数据的，比如 footer、page header 等等，这些元数据可以在读取 parquet 文件的时候提供相关信息来加速遍历。
-Footer Footer 是整个 Parquet 文件的元数据，从 footer 可以得到文件的版本、数据 schema、row group 的元数据、row group 中的每一列的元数据等等。
-Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 8 到倒数第 4 字节，作为 footer 的长度，从而得到 footer 区的起始 offset。</description>
+      <description>简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。 数据 layout 一个 Parquet 文件的数</description>
     </item>
     
     <item>
@@ -39,7 +32,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
       <pubDate>Thu, 24 Feb 2022 01:18:35 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/bookkeeper-note/</guid>
-      <description>BookKeeper 的使用场景  WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等  核心理念  通过条带化写（Data Striping）实现数据的多副本，所有存储节点角色对等； 通过其他的存储组件（ZooKeeper）实现元数据高可靠，故障恢复（recover）流程强依赖 ZK 的元数据；  也可以选用其他的存储服务，要求 1. CP 系统；2. 提供 CAS 原语   基于 RocksDB 提供 (ledger, sequence) -&amp;gt; (file, physicalOffset) 的索引（SingleDirectoryDbLedgerStorage#ledgerIndex）； 同一时刻只有一个 writer 和多个 reader，通过 fencing 机制避免出现多 writer，避免 sequence 乱序； 读写分离，冷热分离（tailing read/catch-up read）提高吞吐；  BookKeeper 的术语  ledger：一写多读的 append-only 文件，ledger 的最小数据单元是 fragment； bookie：存储 ledger 的节点； ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger + seq 来读取一部分 entry。 quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。 data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。   BookKeeper 的 quorum write 机制   Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了 ZK 去保存元数据，并且通过 triming 机制（BK 称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。</description>
+      <description>BookKeeper 的使用场景 WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等 核心理念 通过条带化写（</description>
     </item>
     
     <item>
@@ -48,14 +41,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
       <pubDate>Thu, 10 Feb 2022 22:34:39 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/note-on-lsmt/</guid>
-      <description>写入（Write path）   先从磁盘（HDD）写入的特性引入 append-only 的 WAL。
-  对于 KV 结构，如果写入是 append only的，那么就需要合并，不然读取性能太差。
-  单文件合并性能差，因此需要按阈值切分为多个小文件，通过归并排序的思路优化合并的效率。
-  多路归并要求每个文件有序，为了保证每个文件有序，就需要，数据写入的时候，不直接把 operation 直接写入到磁盘，而是先在内存缓存一段时间，并且在内存排好序，然后再一次把整个文件 flush 到磁盘。
- 内存有序的数据结构：跳表、红黑树、B+ 树 buffer 在内存的数据丢了怎么办？先写 redo log    有序数据结构  RocksDB 的数据结构比较：选择跳表的原因是跳表支持并发插入。
- LSMT 的数据分类
- 内存数据：MemTable 磁盘数据：SSTable（Sorted Sequence Table） 日志：redo log  内存数据组织 内存的数据需要保证有序，同时支持高性能的插入和查找。
- ART：自适应基树（比如 Bitcask 采用）； SkipList：LevelDB、RocksDB 等。  SSTable 文件格式 按 Block 进行存储，可以参考 LevelDB 和 RocksDB 的 SST 文件的格式。</description>
+      <description>写入（Write path） 先从磁盘（HDD）写入的特性引入 append-only 的 WAL。 对于 KV 结构，如果写入是 append only的，那么就需要合并，不然读取性能太差。</description>
     </item>
     
     <item>
@@ -64,10 +50,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
       <pubDate>Thu, 10 Feb 2022 15:07:10 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</guid>
-      <description>安装 Octomments 按照 Octomments 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。
-配置 GitHub issue 在配置文件中增加配置项：
- comment.owner：Issue repo 的拥有者 comment.repo：Issue repo 的名字  配置 Comment 组件 在您的博客站点根目录下的layouts/partials/comments.html 模板中增加：
-{{ if .Params.issueNumber -}} &amp;lt;link href=&amp;#34;https://unpkg.com/octomments/build/ocs-ui.min.css&amp;#34; rel=&amp;#34;stylesheet&amp;#34;&amp;gt; &amp;lt;div id=&amp;#34;comments&amp;#34;&amp;gt;&amp;lt;/div&amp;gt; &amp;lt;script src=&amp;#34;https://unpkg.com/octomments/build/ocs.min.js&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;script&amp;gt; Octomments({ github: { owner: &amp;#39;{{ $.Site.Params.comment.owner }}&amp;#39;, repo: &amp;#39;{{ $.Site.Params.comment.repo }}&amp;#39;, }, issueNumber: {{ .Params.issueNumber }}, renderer: [OctommentsRenderer, &amp;#39;#comments&amp;#39;] }).init(); &amp;lt;/script&amp;gt; {{ end }} 配置需要评论的文章 在文章的 metadata 章节加入创建的 issue 的 issue number，如本文的 metadata：</description>
+      <description>安装 Octomments 按照 Octomments 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。 配置 GitHub issue 在配置文件中增加配置项： comment.owner：I</description>
     </item>
     
     <item>
@@ -76,12 +59,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
       <pubDate>Thu, 09 Dec 2021 21:57:33 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/object-safety/</guid>
-      <description>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety，这反而是初学者最为困惑的点。
-为什么需要 object safety？ Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。 Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。Object-safety 就是为了保证 Rust 编译器能够为某个 trait 生成合法自动实现。
- Trait object 的内存布局    Where Self Meets Sized: Revisiting Object Safety
- 首先是关于 trait 的 object safety，一个 trait 是对象安全的，当且仅当它满足以下所有条件：
- trait 的类型不能限定为 Self: Sized1️⃣； trait 中所定义的所有方法都是 object-safe 的2️⃣；  接下来是关于方法的 object safety：一个方法是对象安全的，当且仅当这个方法满足下面任意一个特性：
- 方法 receiver 的类型限定是 Self: Sized3️⃣ ；或者 满足以下所有条件：  方法不能有泛型参数4️⃣；且 receiver 类型必须是 Self 或者可以解引用为 Self 的引用类型5️⃣ 。目前只包括self/ &amp;amp;self / &amp;amp;mut self/ self: Box&amp;lt;Self&amp;gt;。以后可能也会扩展到 Rc&amp;lt;Self&amp;gt;等等。 Self类型只能用作 receiver 6️⃣     1️⃣ 也就是说，如下的 trait 是不能用作 trait object 的。</description>
+      <description>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety，这反而是初学者最为困惑的点。 为什么需要</description>
     </item>
     
     <item>
@@ -102,8 +80,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
       <pubDate>Mon, 14 Jun 2021 11:24:18 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/notes-on-paxos-made-simple/</guid>
-      <description>关于 P2c P2c 是 P2b 的充分不必要条件，why？
-  P2b: If a proposal with value v is chosen, then every higher-numbered proposal issued by any proposer has value v. P2c: For any v and n, if a proposal with value v and number n is issued, then there is a set S consisting of a majority of acceptors such that either  (a) no acceptor in S has accepted any proposal numbered less than n, or (b) v is the value of the highest-numbered proposal among all proposals numbered less than n accepted by the acceptors in S.</description>
+      <description>关于 P2c P2c 是 P2b 的充分不必要条件，why？ P2b: If a proposal with value v is chosen, then every higher-numbered proposal issued by any proposer has value v. P2c: For any v and n, if a proposal with value v and number n is issued, then there is a set S consisting of a majority of acceptors such that</description>
     </item>
     
     <item>
@@ -112,13 +89,7 @@ Footer 位于 Parquet 的末尾，因此可以从文件结尾 seek 到倒数第 
       <pubDate>Fri, 12 Feb 2021 22:01:27 +0800</pubDate>
       
       <guid>https://huanglei.rocks/posts/java-debug-manual/</guid>
-      <description>gnu.hl@antgroup.com    2020-12-01
-    本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。
- 当我们排查问题的时候，我们关注什么？ 横向来看:
- context/critical path/caller/callee (tracing) statistics/metrics (profiling)  纵向来看:
- application runtime kernel   Arthas  Arthas 是基于字节码增强的调试工具.
- 功能:
- 观察方法的入参/返回值/异常等数据 观察内存对象的值 跟踪方法的耗时和调用栈 查看类加载来源/热更新类定义  安装 curl -L http://start.alibaba-inc.com/install.sh | sh  Arthas 使用方法  观察方法入参、返回值、异常  watch &amp;lt;class_fqcn&amp;gt; &amp;lt;method_name&amp;gt; &amp;#34;{params,returnObj,throwExp}&amp;#34; [condition] [-f] [-b] [-xN]  拦截指定线程执行的方法  watch &amp;lt;class_fqcn&amp;gt; &amp;lt;method_name&amp;gt; &amp;#34;{params,returnObj,throwExp}&amp;#34; \ &amp;#34;@java.</description>
+      <description>gnu.hl@antgroup.com 2020-12-01 本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。 当我们排查问题的时候，我们关注什么？ 横向来看: context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看: application runtime kernel Arthas Arthas 是基于</description>
     </item>
     
     <item>
