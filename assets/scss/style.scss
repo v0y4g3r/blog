@@ -683,7 +683,7 @@ a.footnote-ref {
   position: fixed;
   left: 50%;
   top: 0;
-  display: none;
+  display: block;
 }
 
 .toc-title {
@@ -782,7 +782,7 @@ a.footnote-ref {
 
   .desktop-only,
   #toc.show-toc {
-    display: block;
+    display: none;
   }
 
   .desktop-only-ib {
