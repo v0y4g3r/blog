@@ -244,12 +244,15 @@ table {
   .site-branding {
     display: inline-block;
     margin-right: .8em;
-    font-size: 1.2em;
+    font-size: 1.3em;
+    font-weight: bold;
+    font-style: italic;
   }
 
   .site-nav {
     display: inline-block;
     font-size: 1.3em;
+    font-style: italic;
     opacity: .8;
 
     .has-children {
@@ -317,12 +320,14 @@ table {
 
 #site-footer {
   text-align: center;
+  font-family: Futura;
   font-size: .9em;
   margin-bottom: 96px;
   margin-top: 64px;
 
   p {
     margin: 0;
+    opacity: .6;
   }
 }
 
@@ -397,6 +402,11 @@ p.img-404 {
   flex-grow: 1;
   flex-direction: column;
   justify-content: center;
+  
+  .site-nav {
+    font-weight: bold;
+    font-style: italic;
+  }
 }
 
 #home-title {
@@ -410,7 +420,7 @@ p.img-404 {
   text-align: center;
   line-height: normal;
   font-size: .6em;
-  font-style: bold italic;
+  font-style: italic;
   opacity: .6;
 }
 
@@ -436,7 +446,7 @@ p.img-404 {
 
 #home-footer {
   text-align: center;
-  font-size: .6em;
+  font-size: .4em;
   line-height: normal;
   @include dimmed;
 

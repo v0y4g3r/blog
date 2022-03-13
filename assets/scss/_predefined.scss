@@ -10,7 +10,7 @@ $midnightblue: #282c34; // 代码背景色
 // Fonts
 //
 $fonts: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif;
-$home-fonts: "Futura","Lucida Grande",;
+$home-fonts: "Futura", "Lucida Grande",;
 $code-fonts: Monaco, "Andale Mono WT", "Andale Mono", Menlo, Monaco, "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", "Courier New", Courier, "YaHei Consolas Hybrid", monospace, "Segoe UI Emoji", "PingFang SC", "Microsoft YaHei";
 
 // Mixins
@@ -32,4 +32,32 @@ $code-fonts: Monaco, "Andale Mono WT", "Andale Mono", Menlo, Monaco, "Lucida Con
       box-shadow: inset 0 1em 0 $theme;
     }
   }
+}
+
+@font-face {
+  font-family: "Futura";
+  font-style: bold;
+  src: url("/fonts/Futura-Bold-03.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Futura";
+  src: url("/fonts/Futura-CondensedExtraBold-05.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Futura";
+  src: url("/fonts/Futura-CondensedMedium-04.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Futura";
+  font-style: normal;
+  src: url("/fonts/Futura-Medium-01.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Futura";
+  font-style: italic;
+  src: url("/fonts/Futura-MediumItalic-02.woff2") format("woff2");
 }
