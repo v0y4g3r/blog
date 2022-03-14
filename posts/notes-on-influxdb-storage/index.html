@@ -10,7 +10,7 @@
 <meta itemprop="name" content="Notes on InfluxDB Storage Engine">
 <meta itemprop="description" content="InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。 InfluxDB 的存储系统 InfluxDB 的存储层有三个子系统： TSM：数"><meta itemprop="datePublished" content="2022-03-12T17:42:25+08:00" />
 <meta itemprop="dateModified" content="2022-03-12T17:42:25+08:00" />
-<meta itemprop="wordCount" content="4368">
+<meta itemprop="wordCount" content="4369">
 <meta itemprop="keywords" content="Database," /><meta property="og:title" content="Notes on InfluxDB Storage Engine" />
 <meta property="og:description" content="InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。 InfluxDB 的存储系统 InfluxDB 的存储层有三个子系统： TSM：数" />
 <meta property="og:type" content="article" />
@@ -30,7 +30,7 @@
 	<link rel="shortcut icon" href="/favicon.ico">
 
 	<title>Notes on InfluxDB Storage Engine</title>
-	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.c0ea4fce337fbec0241ed0a0f951bd8ffd8cccf69d72fef7900b5317d1575a12.css" integrity="sha256-wOpPzjN/vsAkHtCg+VG9j/2MzPadcv73kAtTF9FXWhI=" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.8f0bdc1058e5c5c0e301a5af5acc53cba619bfe3e6771d74fe5e9d627fbbacda.css" integrity="sha256-jwvcEFjlxcDjAaWvWsxTy6YZv+Pmdx10/l6dYn+7rNo=" crossorigin="anonymous">
 	
 </head>
 
@@ -76,7 +76,7 @@
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/database">Database</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>4368 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>4369 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-03-12 17:42 &#43;0800</p>
 			</footer>
 		</br>
@@ -201,12 +201,12 @@ Tag block 存储格式
 </ul>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-tag-lookup.png" alt="influxdb-tsi-tag-lookup.png"></p>
 <h4 id="根据-tag-key-和-tag-value-查找">根据 Tag key 和 Tag value 查找<a href="#根据-tag-key-和-tag-value-查找" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-latex" data-lang="latex"><span class="line"><span class="cl">Index.TagValueSeriesIDIterator 						@tsdb/index/tsi1/index.go:999
-</span></span><span class="line"><span class="cl"><span class="k">\-</span>-- Partition.TagValueSeriesIDIterator 	@tsdb/index/tsi1/index.go:1010
-</span></span><span class="line"><span class="cl">    <span class="k">\-</span>-- IndexFile.TagValueSeriesIDSet 		@tsdb/index/tsi1/partition.go:805
-</span></span><span class="line"><span class="cl">        <span class="k">\-</span>-- TagBlock.DecodeTagValueElem	@tsdb/index/tsi1/index<span class="nb">_</span>file.go:335
-</span></span><span class="line"><span class="cl">              <span class="nb">^</span>~ 这里的 tagblocks 在启动的时候就会从磁盘上的 IndexFile 读取到IndexFile.tblks 中来，
-</span></span><span class="line"><span class="cl">                  而 IndexFile 之外的变更保留在 LogFile 的内存索引中
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-latex" data-lang="latex"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl">Index.TagValueSeriesIDIterator 						@tsdb/index/tsi1/index.go:999
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl"><span class="k">\-</span>-- Partition.TagValueSeriesIDIterator 	@tsdb/index/tsi1/index.go:1010
+</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl">    <span class="k">\-</span>-- IndexFile.TagValueSeriesIDSet 		@tsdb/index/tsi1/partition.go:805
+</span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span><span class="cl">        <span class="k">\-</span>-- TagBlock.DecodeTagValueElem	@tsdb/index/tsi1/index<span class="nb">_</span>file.go:335
+</span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span><span class="cl">              <span class="nb">^</span>~ 这里的 tagblocks 在启动的时候就会从磁盘上的 IndexFile 读取到IndexFile.tblks 中来，
+</span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span><span class="cl">                  而 IndexFile 之外的变更保留在 LogFile 的内存索引中
 </span></span></code></pre></div><h4 id="index-compaction">Index Compaction<a href="#index-compaction" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>TSI 索引的 compaction 有两类：</p>
 <ul>
@@ -298,8 +298,28 @@ SeriesIndex 的数据组成
     <li><a href="#tsm">TSM</a></li>
     <li><a href="#tsi">TSI</a>
       <ul>
-        <li><a href="#index-部分">Index 部分</a></li>
-        <li><a href="#series-索引">Series 索引</a></li>
+        <li><a href="#index-部分">Index 部分</a>
+          <ul>
+            <li><a href="#tsl-文件的格式">TSL 文件的格式</a></li>
+            <li><a href="#tsi-文件的格式">TSI 文件的格式</a>
+              <ul>
+                <li><a href="#indexfiletailer">IndexFileTailer</a></li>
+                <li><a href="#measurementblocks">MeasurementBlocks</a></li>
+                <li><a href="#tagblocks">TagBlocks</a></li>
+              </ul>
+            </li>
+            <li><a href="#根据-tag-key-和-tag-value-查找">根据 Tag key 和 Tag value 查找</a></li>
+            <li><a href="#index-compaction">Index Compaction</a></li>
+          </ul>
+        </li>
+        <li><a href="#series-索引">Series 索引</a>
+          <ul>
+            <li><a href="#seriesindex">SeriesIndex</a></li>
+            <li><a href="#seriessegment">SeriesSegment</a></li>
+            <li><a href="#seriesoffset">SeriesOffset</a></li>
+            <li><a href="#查找路径">查找路径</a></li>
+          </ul>
+        </li>
         <li><a href="#high-cardinality-问题是如何出现的">High Cardinality 问题是如何出现的</a></li>
       </ul>
     </li>
