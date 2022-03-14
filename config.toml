@@ -4,9 +4,11 @@ hasCJKLanguage=true
 defaultContentLanguage = "en"
 title = "Tokamako"
 theme = "hermit"
+
 # enableGitInfo = true
 pygmentsCodefences  = true
 pygmentsUseClasses  = true
+
 rssLimit = 10  # Maximum number of items in the RSS feed.
 copyright = "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License." # This message is only used by the RSS template.
 enableEmoji = true  # Shorthand emojis in content files - https://gohugo.io/functions/emojify/
@@ -73,6 +75,17 @@ enableEmoji = true  # Shorthand emojis in content files - https://gohugo.io/func
     url = "https://github.com/RayneHwang"
 
 [markup]
+  [markup.highlight]
+    anchorLineNos = true
+    linenos = true
+    lineNoStart = 1
+    codeFences = true
+    lineanchors = 'code-sec'
+    lineNumbersInTable = false
+    style = "dracula"
+  [markup.tableOfContents]
+     endLevel = 5
+     ordered = false
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true

@@ -109,7 +109,7 @@ Footer 区还包含了 row group 和 row group 中的列的信息。
 
 
 
-```rust
+```rust {hl_lines=[10,18,19,24,26]}
 /// Description for ColumnIndex.
 /// Each <array-field>[i] refers to the page at OffsetIndex.page_locations[i]
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]

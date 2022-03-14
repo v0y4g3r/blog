@@ -164,6 +164,18 @@ table {
     padding-right: 75px;
 }
 
+.highlight .chroma a {
+  box-shadow: none;
+
+  &:hover{
+    box-shadow: none;
+  }
+}
+
+.chroma .hl {
+  background: #558776;
+}
+
 .highlight-copy-btn {
     position: absolute;
     bottom: 7px;
