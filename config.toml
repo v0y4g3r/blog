@@ -5,6 +5,8 @@ defaultContentLanguage = "en"
 title = "Tokamako"
 theme = "hermit"
 
+pluralizelisttitles = false
+
 # enableGitInfo = true
 pygmentsCodefences  = true
 pygmentsUseClasses  = true
@@ -101,6 +103,10 @@ enableEmoji = true  # Shorthand emojis in content files - https://gohugo.io/func
     name = "Gallery"
     url = "gallery/"
     weight = 15
+  [[menu.main]]
+    name = "Tags"
+    url = "tags/"
+    weight = 16
 
   [[menu.main]]
     name = "About Me"
