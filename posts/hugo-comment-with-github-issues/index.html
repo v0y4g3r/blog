@@ -10,7 +10,7 @@
 <meta itemprop="name" content="使用 GitHub Issue 作为 Hugo 的评论系统">
 <meta itemprop="description" content="安装 Octomments 按照 Octomments 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。 配置 GitHub issue 在配置文件中增加配置项： comment.owner：I"><meta itemprop="datePublished" content="2022-02-10T15:07:10+08:00" />
 <meta itemprop="dateModified" content="2022-02-10T15:07:10+08:00" />
-<meta itemprop="wordCount" content="397">
+<meta itemprop="wordCount" content="407">
 <meta itemprop="keywords" content="Hugo,Github," /><meta property="og:title" content="使用 GitHub Issue 作为 Hugo 的评论系统" />
 <meta property="og:description" content="安装 Octomments 按照 Octomments 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。 配置 GitHub issue 在配置文件中增加配置项： comment.owner：I" />
 <meta property="og:type" content="article" />
@@ -46,6 +46,7 @@
 					
 				<a href="https://huanglei.rocks/posts/">Posts</a>
 				<a href="https://huanglei.rocks/gallery/">Gallery</a>
+				<a href="https://huanglei.rocks/tags/">Tags</a>
 				<a href="https://huanglei.rocks/about-me/">About Me</a>
 
 				</nav>
@@ -59,6 +60,7 @@
 		<ul>
 			<li><a href="https://huanglei.rocks/posts/">Posts</a></li>
 			<li><a href="https://huanglei.rocks/gallery/">Gallery</a></li>
+			<li><a href="https://huanglei.rocks/tags/">Tags</a></li>
 			<li><a href="https://huanglei.rocks/about-me/">About Me</a></li>
 		</ul>
 	</div>
@@ -76,7 +78,7 @@
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/hugo">Hugo</a></span><span class="tag"><a href="https://huanglei.rocks/tags/github">Github</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>397 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>407 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-02-10 15:07 &#43;0800</p>
 			</footer>
 		</br>
@@ -92,37 +94,37 @@
 </ul>
 <h1 id="配置-comment-组件">配置 Comment 组件<a href="#配置-comment-组件" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
 <p>在您的博客站点根目录下的<code>layouts/partials/comments.html</code> 模板中增加：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1"> 1</a></span><span class="cl">{{ if .Params.issueNumber -}}
-</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2"> 2</a></span><span class="cl"><span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/octomments/build/ocs-ui.min.css&#34;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;stylesheet&#34;</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3"> 3</a></span><span class="cl"><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;comments&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4"> 4</a></span><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/octomments/build/ocs.min.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5"> 5</a></span><span class="cl">
-</span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6"> 6</a></span><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7"> 7</a></span><span class="cl">  <span class="nx">Octomments</span><span class="p">({</span>
-</span></span><span class="line"><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8"> 8</a></span><span class="cl">    <span class="nx">github</span><span class="o">:</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9"> 9</a></span><span class="cl">      <span class="nx">owner</span><span class="o">:</span> <span class="s1">&#39;{{ $.Site.Params.comment.owner }}&#39;</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln" id="code-sec-10"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-10">10</a></span><span class="cl">      <span class="nx">repo</span><span class="o">:</span> <span class="s1">&#39;{{ $.Site.Params.comment.repo }}&#39;</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln" id="code-sec-11"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-11">11</a></span><span class="cl">    <span class="p">},</span>
-</span></span><span class="line"><span class="ln" id="code-sec-12"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-12">12</a></span><span class="cl">    <span class="nx">issueNumber</span><span class="o">:</span> <span class="p">{{</span> <span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">issueNumber</span> <span class="p">}},</span>
-</span></span><span class="line"><span class="ln" id="code-sec-13"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-13">13</a></span><span class="cl">    <span class="nx">renderer</span><span class="o">:</span> <span class="p">[</span><span class="nx">OctommentsRenderer</span><span class="p">,</span> <span class="s1">&#39;#comments&#39;</span><span class="p">]</span>
-</span></span><span class="line"><span class="ln" id="code-sec-14"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-14">14</a></span><span class="cl">  <span class="p">}).</span><span class="nx">init</span><span class="p">();</span>
-</span></span><span class="line"><span class="ln" id="code-sec-15"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-15">15</a></span><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="ln" id="code-sec-16"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-16">16</a></span><span class="cl">
-</span></span><span class="line"><span class="ln" id="code-sec-17"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-17">17</a></span><span class="cl">{{ end }}
-</span></span></code></pre></div><h1 id="配置需要评论的文章">配置需要评论的文章<a href="#配置需要评论的文章" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1"> 1</a></span>{{ if .Params.issueNumber -}}
+<span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2"> 2</a></span><span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/octomments/build/ocs-ui.min.css&#34;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;stylesheet&#34;</span><span class="p">&gt;</span>
+<span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3"> 3</a></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;comments&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4"> 4</a></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/octomments/build/ocs.min.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5"> 5</a></span>
+<span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6"> 6</a></span><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7"> 7</a></span>  <span class="nx">Octomments</span><span class="p">({</span>
+<span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8"> 8</a></span>    <span class="nx">github</span><span class="o">:</span> <span class="p">{</span>
+<span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9"> 9</a></span>      <span class="nx">owner</span><span class="o">:</span> <span class="s1">&#39;{{ $.Site.Params.comment.owner }}&#39;</span><span class="p">,</span>
+<span class="ln" id="code-sec-10"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-10">10</a></span>      <span class="nx">repo</span><span class="o">:</span> <span class="s1">&#39;{{ $.Site.Params.comment.repo }}&#39;</span><span class="p">,</span>
+<span class="ln" id="code-sec-11"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-11">11</a></span>    <span class="p">},</span>
+<span class="ln" id="code-sec-12"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-12">12</a></span>    <span class="nx">issueNumber</span><span class="o">:</span> <span class="p">{{</span> <span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">issueNumber</span> <span class="p">}},</span>
+<span class="ln" id="code-sec-13"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-13">13</a></span>    <span class="nx">renderer</span><span class="o">:</span> <span class="p">[</span><span class="nx">OctommentsRenderer</span><span class="p">,</span> <span class="s1">&#39;#comments&#39;</span><span class="p">]</span>
+<span class="ln" id="code-sec-14"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-14">14</a></span>  <span class="p">}).</span><span class="nx">init</span><span class="p">();</span>
+<span class="ln" id="code-sec-15"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-15">15</a></span><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="ln" id="code-sec-16"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-16">16</a></span>
+<span class="ln" id="code-sec-17"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-17">17</a></span>{{ end }}
+</code></pre></div><h1 id="配置需要评论的文章">配置需要评论的文章<a href="#配置需要评论的文章" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
 <p>在文章的 metadata 章节加入创建的 issue 的 issue number，如本文的 metadata：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1"> 1</a></span><span class="cl"><span class="nn">---</span><span class="w">
-</span></span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2"> 2</a></span><span class="cl"><span class="w"></span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;使用 GitHub Issue 作为 Hugo 的评论系统&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3"> 3</a></span><span class="cl"><span class="w"></span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="ld">2022-02-10T15:07:10</span><span class="m">+08</span><span class="p">:</span><span class="m">00</span><span class="w">
-</span></span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4"> 4</a></span><span class="cl"><span class="w"></span><span class="nt">draft</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
-</span></span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5"> 5</a></span><span class="cl"><span class="w"></span><span class="nt">toc</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
-</span></span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6"> 6</a></span><span class="cl"><span class="w"></span><span class="nt">issueNumber</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
-</span></span></span><span class="line"><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7"> 7</a></span><span class="cl"><span class="w"></span><span class="nt">images</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8"> 8</a></span><span class="cl"><span class="w"></span><span class="nt">tags</span><span class="p">:</span><span class="w"> 
-</span></span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9"> 9</a></span><span class="cl"><span class="w">  </span>- <span class="l">Hugo</span><span class="w">
-</span></span></span><span class="line"><span class="ln" id="code-sec-10"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-10">10</a></span><span class="cl"><span class="w">  </span>- <span class="l">Github</span><span class="w">
-</span></span></span><span class="line"><span class="ln" id="code-sec-11"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-11">11</a></span><span class="cl"><span class="w"></span><span class="nn">---</span><span class="w">
-</span></span></span></code></pre></div><p>这样本文的末尾就会出现一个评论栏啦，所有对本文的评论都会同步到 GitHub 的 issue 中。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1"> 1</a></span><span class="nn">---</span><span class="w">
+</span><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2"> 2</a></span><span class="w"></span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;使用 GitHub Issue 作为 Hugo 的评论系统&#34;</span><span class="w">
+</span><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3"> 3</a></span><span class="w"></span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="ld">2022-02-10T15:07:10</span><span class="m">+08</span><span class="p">:</span><span class="m">00</span><span class="w">
+</span><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4"> 4</a></span><span class="w"></span><span class="nt">draft</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5"> 5</a></span><span class="w"></span><span class="nt">toc</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6"> 6</a></span><span class="w"></span><span class="nt">issueNumber</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7"> 7</a></span><span class="w"></span><span class="nt">images</span><span class="p">:</span><span class="w">
+</span><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8"> 8</a></span><span class="w"></span><span class="nt">tags</span><span class="p">:</span><span class="w"> 
+</span><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9"> 9</a></span><span class="w">  </span>- <span class="l">Hugo</span><span class="w">
+</span><span class="ln" id="code-sec-10"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-10">10</a></span><span class="w">  </span>- <span class="l">Github</span><span class="w">
+</span><span class="ln" id="code-sec-11"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-11">11</a></span><span class="w"></span><span class="nn">---</span><span class="w">
+</span></code></pre></div><p>这样本文的末尾就会出现一个评论栏啦，所有对本文的评论都会同步到 GitHub 的 issue 中。</p>
 
 			</div>
 
@@ -166,7 +168,7 @@
 	
 
 
-	<script src="https://huanglei.rocks/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
+	<script src="https://huanglei.rocks/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
 	
 
 </body>
