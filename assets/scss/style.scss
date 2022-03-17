@@ -277,7 +277,7 @@ table {
     }
 
     a {
-      margin-left: .8em;
+      margin-left: 1em;
       font-style:bold;
     }
   }
@@ -327,6 +327,9 @@ table {
     padding: 0;
     line-height: 2;
     font-size: 1.2em;
+    font-family: $home-fonts;
+    font-weight: bold;
+    font-style: italic;
   }
 }
 
