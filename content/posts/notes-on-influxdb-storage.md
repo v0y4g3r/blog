@@ -3,6 +3,7 @@ title: "Notes on InfluxDB Storage Engine"
 date: 2022-03-12T17:42:25+08:00
 draft: false
 toc: true
+math: true
 images:
 tags: 
   - Database
@@ -205,7 +206,7 @@ SeriesOffset 指向的是一个 series entry 在 series segments 中的地址，
 
 InfluxDB 最为人诟病的问题就是所谓的 high cardinality 问题，即当 InfluxDB 实例写入大量的不同 tag value 的时候，时间线数量会大幅膨胀。
 
-考虑某个 measurement 有三个 tag: HostName, AZ, Region，分别代表一个服务器的机器名、可用区和 region。其中 HostName 可能出现 100 个值，AZ 可能 出现 20 个值，Region 可能出现 10 个值，那么这个 measurement 可能出现的总时间线数量（即所谓的 cardinality）为 100*20*10=20000，即所有 tag 值空间大小的笛卡尔积。
+考虑某个 measurement 有三个 tag: HostName, AZ, Region，分别代表一个服务器的机器名、可用区和 region。其中 HostName 可能出现 100 个值，AZ 可能 出现 20 个值，Region 可能出现 10 个值，那么这个 measurement 可能出现的总时间线数量（即所谓的 cardinality）为 $100 \times 20 \times 10=20000$，即所有 tag 值空间大小的笛卡尔积。
 
 当时序数据的 cardinality 增长的时候，InfluxDB 内部的倒排索引会大幅膨胀。InfluxDB 历史上为了解决倒排索引膨胀的问题采取了多种策略，比如通过 SeriesID 降低倒排索引的大小，将[纯内存存储的倒排索引优化为内存+磁盘的索引](https://github.com/influxdata/influxdb/issues/7151)（即本文的 TSI 引擎）等等。但是这些手段都是延缓倒排出现性能瓶颈的时间。除此之外，Series Index 部分（即 SeriesID 到 SeriesKey 的正排索引）在大量时间线的情况下也会出现性能瓶颈。比如 Series 索引在做 compaction 的时候（`SeriesPartitionCompactor.Compact`）一方面会遍历 SeriesSegment 文件中的所有 entry 去 apply 到内存的 hashmap，再把内存中的数据写入到磁盘上的 SeriesIndex 文件中。假设 Series 数量很大，那么这个 compact 过程很有可能出现 OOM。
 
