@@ -93,15 +93,12 @@
     </item>
     
     <item>
-      <title>Add MathJax and Graphviz support for HUGO</title>
-      <link>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</link>
-      <pubDate>Sun, 12 Apr 2020 14:22:22 +0800</pubDate>
+      <title>历史的循环</title>
+      <link>https://huanglei.rocks/scribbles/repeating-history/</link>
+      <pubDate>Tue, 04 Aug 2020 05:58:37 +0800</pubDate>
       
-      <guid>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</guid>
-      <description>Get into your theme folder
-  Find some directory named layouts/posts/single.html
-  Inside the {{ define main }} block, paste following snippets
-  1{{ if .Params.viz }} 2 &amp;lt;script type=&amp;#34;text/javascript&amp;#34; src=&amp;#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&amp;#34;&amp;gt; &amp;lt;/script&amp;gt; 3 &amp;lt;script type=&amp;#34;text/javascript&amp;#34;&amp;gt; 4 (function(){ 5 var vizPrefix = &amp;#34;language-viz-&amp;#34;; 6 Array.prototype.forEach.call(document.querySelectorAll(&amp;#34;[class^=&amp;#34; + vizPrefix + &amp;#34;]&amp;#34;), function(x){ 7 var engine; 8 x.getAttribute(&amp;#34;class&amp;#34;).split(&amp;#34; &amp;#34;).forEach(function(cls){ 9 if (cls.startsWith(vizPrefix)) { 10 engine = cls.substr(vizPrefix.length); 11 } 12 }); 13 var image = new DOMParser().</description>
+      <guid>https://huanglei.rocks/scribbles/repeating-history/</guid>
+      <description>继续说 1986 年，挑战者号航天飞机失事之后，里根发表的悼念演讲中提到挑战者号上罹难的七名航天员的贡献像德雷克一样毫无保留: &amp;ldquo;Their (the Challenger crew) dedication was, like Drake&amp;rsquo;s, complete.&amp;rdquo; 看过海</description>
     </item>
     
   </channel>

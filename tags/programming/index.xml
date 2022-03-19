@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Java on Tokamako</title>
-    <link>https://huanglei.rocks/tags/java/</link>
-    <description>Recent content in Java on Tokamako</description>
+    <title>Programming on Tokamako</title>
+    <link>https://huanglei.rocks/tags/programming/</link>
+    <description>Recent content in Programming on Tokamako</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Fri, 12 Feb 2021 22:01:27 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 12 Feb 2021 22:01:27 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/programming/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>现代 Java 捉虫指南</title>
       <link>https://huanglei.rocks/posts/java-debug-manual/</link>
@@ -24,6 +24,15 @@
       
       <guid>https://huanglei.rocks/posts/why-netty-not-responding/</guid>
       <description>最终问题的根本原因还是没有深入理解 Netty 的线程模型。 想法就是等服务器端启动， bind成功后再启动client。要想监听server端bind成功</description>
+    </item>
+    
+    <item>
+      <title>同步/异步和阻塞/非阻塞</title>
+      <link>https://huanglei.rocks/posts/synchronicity-and-blocking/</link>
+      <pubDate>Tue, 19 Mar 2019 22:41:37 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/synchronicity-and-blocking/</guid>
+      <description>同步/异步以及阻塞/非阻塞这几个概念网络上的解释很多，不少解释试图通过举拿快递/去书店买书等例子来解释这些概念。乍一看非常通俗易懂，但是任何</description>
     </item>
     
   </channel>

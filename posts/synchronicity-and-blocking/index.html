@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#282c34">
+	<meta name="msapplication-TileColor" content="#282c34">
+<meta itemprop="name" content="同步/异步和阻塞/非阻塞">
+<meta itemprop="description" content="同步/异步以及阻塞/非阻塞这几个概念网络上的解释很多，不少解释试图通过举拿快递/去书店买书等例子来解释这些概念。乍一看非常通俗易懂，但是任何"><meta itemprop="datePublished" content="2019-03-19T22:41:37+08:00" />
+<meta itemprop="dateModified" content="2019-03-19T22:41:37+08:00" />
+<meta itemprop="wordCount" content="3265">
+<meta itemprop="keywords" content="Programming," /><meta property="og:title" content="同步/异步和阻塞/非阻塞" />
+<meta property="og:description" content="同步/异步以及阻塞/非阻塞这几个概念网络上的解释很多，不少解释试图通过举拿快递/去书店买书等例子来解释这些概念。乍一看非常通俗易懂，但是任何" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huanglei.rocks/posts/synchronicity-and-blocking/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-03-19T22:41:37+08:00" />
+<meta property="article:modified_time" content="2019-03-19T22:41:37+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="同步/异步和阻塞/非阻塞"/>
+<meta name="twitter:description" content="同步/异步以及阻塞/非阻塞这几个概念网络上的解释很多，不少解释试图通过举拿快递/去书店买书等例子来解释这些概念。乍一看非常通俗易懂，但是任何"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>同步/异步和阻塞/非阻塞</title>
+	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.be8f977ef56a7e3c668915620f88ee56dadb56855f31275aaacf18f5bce36826.css" integrity="sha256-vo+XfvVqfjxmiRViD4juVtrbVoVfMSdaqs8Y9bzjaCY=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://huanglei.rocks">Tokamako</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://huanglei.rocks/posts/">Posts</a>
+				<a href="https://huanglei.rocks/gallery/">Gallery</a>
+				<a href="https://huanglei.rocks/scribbles/">Scribbles</a>
+				<a href="https://huanglei.rocks/tags/">Tags</a>
+				<a href="https://huanglei.rocks/about-me/">About Me</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<span class="hdr-social hide-in-mobile"><a href="https://twitter.com/huangleirocks" target="_blank" rel="noopener me" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a><a href="https://www.instagram.com/tokamako/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/RayneHwang" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://huanglei.rocks/posts/">Posts</a></li>
+			<li><a href="https://huanglei.rocks/gallery/">Gallery</a></li>
+			<li><a href="https://huanglei.rocks/scribbles/">Scribbles</a></li>
+			<li><a href="https://huanglei.rocks/tags/">Tags</a></li>
+			<li><a href="https://huanglei.rocks/about-me/">About Me</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Mar 19, 2019</span></div>
+				<h1>同步/异步和阻塞/非阻塞</h1>
+			</header>
+
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/programming">Programming</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>3265 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2019-03-19 22:41 &#43;0800</p>
+			</footer>
+		</br>
+
+			<div class="content">
+				<p>同步/异步以及阻塞/非阻塞这几个概念网络上的解释很多，不少解释试图通过举拿快递/去书店买书等例子来解释这些概念。乍一看非常通俗易懂，但是任何一个概念，它的信息量是一定的，如果举例子能够让人更加容易明白，那么一定损失了相当程度的信息量。</p>
+<blockquote>
+<p>“薛定谔的猫”可以帮助人们更好地理解不确定性原理，但是不确定性原理远不只是一个思想实验的内涵。</p>
+</blockquote>
+<h2 id="模型">模型<a href="#模型" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>所有的 IO 都可以抽象成请求方（client）和资源提供方（server）两方的交互。从client来看:</p>
+<ul>
+<li>如果请求发起之后，client总是等到收到响应再继续执行接下来的任务，则称为阻塞(blocking)</li>
+<li>如果client发出请求之后，不等到响应就直接继续其他任务，则成为非阻塞(non-blocking)</li>
+<li>如果client需要自己去从server处以某种方式主动获取结果，则称为同步(synchronous)</li>
+<li>如果client发起请求时指定了某种通知机制，server回复响应时直接将结果通过这个通知机制通知client处理，则称为异步(asynchronous)</li>
+</ul>
+<blockquote>
+<p>阻塞和非阻塞关心的是请求发起者在发起请求后的行为，而同步异步关心的是对响应的控制权和主动权。异步相比同步方式而言是对控制权的反转，请求方被动地获取结果。</p>
+</blockquote>
+<p>将同步/异步和阻塞/非阻塞两两组合可以得到四种IO模型:</p>
+<ul>
+<li>同步阻塞: 最经典的编程模型</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="n">response</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="s2">&#34;127.0.0.1&#34;</span><span class="p">,</span><span class="mi">8080</span><span class="p">))</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">))</span>
+</span></span></code></pre></div><p>上面的代码一旦连接到server后，python解释器会一直阻塞直到接收到结果，然后再把结果打印出来。这个过程当中系统会在阻塞的地方进行上下文切换，等到数据就绪内核将唤醒python线程，由python将kernel buffer当中的数据复制到用户空间的buffer。在互联网的早期，CGI（Common Gateway Interface）往往就是采用这种IO模型，当然程序员不会蠢到让请求按先来后到的顺序排队一个一个处理，而是通过多进程的方式解决IO阻塞的问题。但是进程切换会导致CPU的缓存以及页表的TLB(Translation Lookaside Table)失效，导致一段时间内的访存非常低效，因此开销很大。逐步地多线程代替了多进程称为同步编程。创建/切换线程的代价虽然比进程小但是一旦并发量上升仍然是很大的开销，因此出现了线程池，通过缓存已经使用过的线程来降低创建线程的开销。</p>
+<ul>
+<li>同步非阻塞 Client 发起请求后立刻返回，并且获取到一个关于已经发出的这个请求的句柄(文件描述符等抽象形式)，然后继续处理其他事务，并且通过查询这个句柄的状态（<code>select</code>）决定是否对事件(可读/出错)做出相应处理。如果 client 发现句柄可读了，那么这个时候再去调用<code>read()</code>方法一定不会阻塞。同步非阻塞通常又称为 IO 复用(IO Multiplexing)，因为在这种模型下，client 可以同事对多个 IO 进行监视，然后把事件分发给相应IO的处理程序。</li>
+<li>异步阻塞 效果等同于同步阻塞。 因为 client 都已经阻塞了，同步或者异步的信号通知机制并没有区别。大部分情况下不作讨论。</li>
+<li>异步非阻塞 client 发起的请求为 server 指明了回调机制(系统级的signal又或者是应用程序级别的HTTP回调URL)，然后client去继续处理其他事务。等待server有消息返回时，server完成消息的打包，对齐等操作，通过client指明的通知机制通知client。Windows提供的系统级异步IO是IOCP，而Linux提供的接口为AIO(非常难用)。</li>
+</ul>
+<blockquote>
+<p>除了这四种模型，Linux还实现了<a href="http://davmac.org/davpage/linux/async-io.html#sigio">边缘触发的信号驱动式的IO模型——SIGIO</a>，但是这种模型不能用于文件的读写。</p>
+</blockquote>
+<h2 id="三层抽象">三层抽象<a href="#三层抽象" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>为什么上文要把IO模型抽象在C/S模型的基础上描述?因为<strong>同样的一个系统调用，从体系结构的不同层面去看，它的IO模型不总是一致的</strong>。 当用户的程序发起一个IO请求(比如写socket)，首先是该语言的运行时环境向操作系统发起系统调用(比如Linux下是<code>send</code>)，操作系统将需要发送的缓冲区复制到网卡的FIFO，网卡会自行选择合适的时间把包发送出去。在这个过程当中，需要仔细分析用户代码和语言runtime，runtime和操作系统，CPU和网卡这三层的调用情况。</p>
+<h3 id="硬件">硬件<a href="#硬件" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>首先看最底层的CPU和网卡。 显然除了高速总线上的等待之外，CPU不存在同步IO的情况，大批量的数据发送和接收总是由DMA处理，DMA完成后通过硬件中断通知CPU，这是最典型的异步非阻塞的模式。</p>
+<h3 id="os与runtime">OS与runtime<a href="#os与runtime" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>其次是runtime和OS的交互。大部分对IO性能优化的努力都集中在这个层面。OS提供的IO一般都是通过系统调用(syscall)实现的，几乎所有系统的syscall默认都是同步阻塞，但是可以手动配置成同步非阻塞的。 由于同步非阻塞需要轮询句柄的状态，因此轮询的算法决定了IO以及事件分发的效率。 Linux系统下的Poll模型时间复杂度为O(n)，为了改善Poll的效率出现了Epoll，其时间复杂度为O(1)。 除此之外，现代操作系统一般还支持内核级别的异步IO，比如Linux下的AIO以及Windows下的IOCP（IO完成端口）。以AIO为例，需要为每一个IO创建异步IO控制块（aiocb），aiocb是一个结构体:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="k">struct</span> <span class="n">aiocb</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl">         <span class="kt">int</span> <span class="n">aio_fildes</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl">         <span class="kt">int</span> <span class="n">aio_lio_opcode</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span><span class="cl">         <span class="k">volatile</span> <span class="kt">void</span> <span class="o">*</span><span class="n">aio_buf</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span><span class="cl">         <span class="n">size_t</span> <span class="n">aio_nbytes</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span><span class="cl">         <span class="k">struct</span> <span class="n">sigevent</span> <span class="n">aio_sigevent</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7">7</a></span><span class="cl">         <span class="p">...</span>
+</span></span><span class="line"><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8">8</a></span><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>可以很明显看到，有一个<code>aio_buf</code>字段用于向内核指明一旦IO完成就将数据复制到<code>aio_buf</code>这个地址。 Linux AIO和Epoll相比仍然不够成熟。 除了系统层面的努力，还有各种实现了AIO的库：<a href="https://www.gnu.org/software/libc/manual/html_node/Asynchronous-I_002fO.html">glibc AIO</a>、<a href="http://software.schmorp.de/pkg/libeio.html">libeio</a>，但是和Windows的IOCP相比，差距依然很大。</p>
+<h3 id="语言的编程风格">语言的编程风格<a href="#语言的编程风格" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>最后看编程语言所提供的IO模型。 通常我们所说的异步编程范式, 往往指的是这个层面的IO模型, 比如Node.js的error-first callback:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="nx">request</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">){</span>
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl">    <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl">    <span class="nx">process</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span><span class="cl"><span class="p">});</span>
+</span></span></code></pre></div><p>在用户的function里面所处理的<code>data</code>既不是socket的字节流，又不是HTTP报文，而是转换为JS对象的HTTP报文体。 这是因为Node.js的runtime为我们做好了data的处理和对齐, 把处理好的数据丢给用户的程序, 因此对于用户而言这样的<strong>编程风格</strong>是异步的。 callback是最直观的异步编程范式，但是并不是最好的。一旦多个IO请求存在依赖关系，就容易出现（也是Node.js刚出来时最让人诟病的一点）callback hell:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1"> 1</a></span><span class="cl"><span class="nx">request</span><span class="p">(</span><span class="s1">&#39;url1&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data1</span><span class="p">){</span>
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2"> 2</a></span><span class="cl">    <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3"> 3</a></span><span class="cl">    <span class="nx">request</span><span class="p">(</span><span class="nx">data1</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data2</span><span class="p">){</span>
+</span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4"> 4</a></span><span class="cl">        <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5"> 5</a></span><span class="cl">        <span class="nx">request</span><span class="p">(</span><span class="nx">data2</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data3</span><span class="p">){</span>
+</span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6"> 6</a></span><span class="cl">            <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7"> 7</a></span><span class="cl">            <span class="nx">process</span><span class="p">(</span><span class="nx">data3</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8"> 8</a></span><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9"> 9</a></span><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="ln" id="code-sec-10"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-10">10</a></span><span class="cl"><span class="p">});</span>
+</span></span></code></pre></div><p>相互依赖的IO请求使回调出现嵌套，不仅使代码横向增长，而且让异常除了变得非常艰难。 为了解决这个问题，Javascript社区开发出了很多替代方案，比如ES6的<code>Promise</code>和ES7的<code>async/await</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1"> 1</a></span><span class="cl"><span class="nx">request</span><span class="p">(</span><span class="nx">url1</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2"> 2</a></span><span class="cl">    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data1</span><span class="p">=&gt;{</span>
+</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3"> 3</a></span><span class="cl">        <span class="k">return</span> <span class="nx">request</span><span class="p">(</span><span class="nx">data1</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span>    
+</span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4"> 4</a></span><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5"> 5</a></span><span class="cl">    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data2</span><span class="p">=&gt;{</span>
+</span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6"> 6</a></span><span class="cl">        <span class="k">return</span> <span class="nx">request</span><span class="p">(</span><span class="nx">data2</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span>    
+</span></span><span class="line"><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7"> 7</a></span><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8"> 8</a></span><span class="cl">    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data3</span><span class="p">=&gt;{</span>
+</span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9"> 9</a></span><span class="cl">        <span class="nx">process</span><span class="p">(</span><span class="nx">data3</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln" id="code-sec-10"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-10">10</a></span><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="ln" id="code-sec-11"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-11">11</a></span><span class="cl">    <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">=&gt;{</span>
+</span></span><span class="line"><span class="ln" id="code-sec-12"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-12">12</a></span><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln" id="code-sec-13"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-13">13</a></span><span class="cl">    <span class="p">})</span>
+</span></span></code></pre></div><p><code>Promise</code>将回调转换成了链式调用的API，但是JS社区仍不满意，因为Promise最大的问题在于它具有传染性，如果函数2依赖于函数1的结果，而函数1是回调式的，那么必须将函数1转换为Promise的才行。这就是为什么几乎所有的JS Promise库都自带了<code>promisify</code>功能。因此又开发出了<code>async/await</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="p">(</span><span class="kr">async</span><span class="p">()=&gt;{</span>
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl">    <span class="kd">let</span> <span class="nx">data1</span> <span class="o">=</span> <span class="kr">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">url1</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl">    <span class="kd">let</span> <span class="nx">data2</span> <span class="o">=</span> <span class="kr">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">data1</span><span class="p">.</span><span class="nx">url</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span><span class="cl">    <span class="kd">let</span> <span class="nx">data3</span> <span class="o">=</span> <span class="kr">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">data2</span><span class="p">.</span><span class="nx">url</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span><span class="cl">    <span class="nx">process</span><span class="p">(</span><span class="nx">data3</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span><span class="cl"><span class="p">})();</span>
+</span></span></code></pre></div><p>JavaScript的<code>async/await</code>是基于<code>generator</code>的，有兴趣的可以自己去研究。 同理，Python的<code>asyncio</code>也是基于协程和<code>generator</code>的。</p>
+<h2 id="常见问题">常见问题<a href="#常见问题" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>Q: Node.js是异步IO吗? A: 系统级别的异步性取决于Node.js的实现。Node.js底层所依赖的<code>libuv</code>(从Node.js 0.9.0开始)在Linux上基于Epoll,在Windows上基于<code>IOCP</code>.Epoll属于同步非阻塞IO(然而epoll暴露出来的接口是阻塞的, 因为<code>epoll_wait()</code>方法会等待一个事件的发生然后再分发事件), IOCP属于异步非阻塞IO. Node.js的<code>libuv</code>封装了这些底层的差异性, 提供了一个通用的事件循环。 Node.js在libuv的基础上提供了一套异步的编程接口(注意区别于异步IO)。 Q: Linux如何实现内核层面IO? A: 使用Linux AIO</p>
+<h2 id="参考链接">参考链接<a href="#参考链接" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ol>
+<li><a href="https://chamibuddhika.wordpress.com/2012/08/11/io-demystified/">IO Demystified</a></li>
+<li><a href="https://www.zhihu.com/question/19732473">怎样理解阻塞非阻塞与同步异步的区别？</a></li>
+</ol>
+
+			</div>
+
+<div class="related-posts thin">
+	<h2>See Also</h2>
+	<ul>
+	
+	<li><a href="/posts/why-netty-not-responding/">为什么我的 Netty 应用没有响应？</a></li>
+	
+	</ul>
+</div>
+
+		</article>
+		<div class="post-nav thin">
+			<a class="next-post" href="https://huanglei.rocks/posts/why-netty-not-responding/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;Newer</span><br><span>为什么我的 Netty 应用没有响应？</span>
+			</a>
+		</div>
+		<div id="comments" class="thin"><script src="https://giscus.app/client.js"
+        data-repo="RayneHwang/blog"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkyNTQ5MDMwOTk="
+        data-category="Announcements"
+        data-category-id="DIC_kwDODzGDO84CBGIK"
+        data-mapping="pathname"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="light"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+	<p>&copy; 2022 <a href="https://huanglei.rocks/about-me/">Lei, HUANG</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a> &#183; <a href="https://huanglei.rocks/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+	</p>
+</footer>
+
+
+	
+
+	
+
+
+	<script src="https://huanglei.rocks/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>

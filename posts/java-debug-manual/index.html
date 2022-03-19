@@ -10,8 +10,8 @@
 <meta itemprop="name" content="现代 Java 捉虫指南">
 <meta itemprop="description" content="gnu.hl@antgroup.com 2020-12-01 本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。 当我们排查问题的时候，我们关注什么？ 横向来看: context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看: application runtime kernel Arthas Arthas 是基于"><meta itemprop="datePublished" content="2021-02-12T22:01:27+08:00" />
 <meta itemprop="dateModified" content="2021-02-12T22:01:27+08:00" />
-<meta itemprop="wordCount" content="1881">
-<meta itemprop="keywords" content="Java," /><meta property="og:title" content="现代 Java 捉虫指南" />
+<meta itemprop="wordCount" content="1873">
+<meta itemprop="keywords" content="Java,Programming," /><meta property="og:title" content="现代 Java 捉虫指南" />
 <meta property="og:description" content="gnu.hl@antgroup.com 2020-12-01 本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。 当我们排查问题的时候，我们关注什么？ 横向来看: context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看: application runtime kernel Arthas Arthas 是基于" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huanglei.rocks/posts/java-debug-manual/" /><meta property="article:section" content="posts" />
@@ -46,6 +46,7 @@
 					
 				<a href="https://huanglei.rocks/posts/">Posts</a>
 				<a href="https://huanglei.rocks/gallery/">Gallery</a>
+				<a href="https://huanglei.rocks/scribbles/">Scribbles</a>
 				<a href="https://huanglei.rocks/tags/">Tags</a>
 				<a href="https://huanglei.rocks/about-me/">About Me</a>
 
@@ -60,6 +61,7 @@
 		<ul>
 			<li><a href="https://huanglei.rocks/posts/">Posts</a></li>
 			<li><a href="https://huanglei.rocks/gallery/">Gallery</a></li>
+			<li><a href="https://huanglei.rocks/scribbles/">Scribbles</a></li>
 			<li><a href="https://huanglei.rocks/tags/">Tags</a></li>
 			<li><a href="https://huanglei.rocks/about-me/">About Me</a></li>
 		</ul>
@@ -76,9 +78,9 @@
 			<hr class="post-end">
 			<footer class="post-info">
 				<p>
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/java">Java</a></span>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/java">Java</a></span><span class="tag"><a href="https://huanglei.rocks/tags/programming">Programming</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1881 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1873 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-02-12 22:01 &#43;0800</p>
 			</footer>
 		</br>
@@ -124,47 +126,47 @@
 <li>查看类加载来源/热更新类定义</li>
 </ul>
 <h3 id="安装">安装<a href="#安装" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span>curl -L http://start.alibaba-inc.com/install.sh <span class="p">|</span> sh
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl">curl -L http://start.alibaba-inc.com/install.sh <span class="p">|</span> sh
+</span></span></code></pre></div><hr>
 <h3 id="arthas-使用方法">Arthas 使用方法<a href="#arthas-使用方法" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <ul>
 <li>观察方法入参、返回值、异常</li>
 </ul>
-<pre tabindex="0"><code>watch &lt;class_fqcn&gt; &lt;method_name&gt; &quot;{params,returnObj,throwExp}&quot; [condition] [-f] [-b] [-xN]
+<pre tabindex="0"><code>watch &lt;class_fqcn&gt; &lt;method_name&gt; &#34;{params,returnObj,throwExp}&#34; [condition] [-f] [-b] [-xN]
 </code></pre><ul>
 <li>拦截指定线程执行的方法</li>
 </ul>
-<pre tabindex="0"><code>watch &lt;class_fqcn&gt; &lt;method_name&gt; &quot;{params,returnObj,throwExp}&quot; \
-  &quot;@java.lang.Thread@currentThread().getName()=='&lt;thread_name&gt;'&quot; [-f] [-b] [-xN]
+<pre tabindex="0"><code>watch &lt;class_fqcn&gt; &lt;method_name&gt; &#34;{params,returnObj,throwExp}&#34; \
+  &#34;@java.lang.Thread@currentThread().getName()==&#39;&lt;thread_name&gt;&#39;&#34; [-f] [-b] [-xN]
 </code></pre><ul>
 <li>在观察入参同时打印方法栈</li>
 </ul>
-<pre tabindex="0"><code>watch &lt;class_fqcn&gt; &lt;method_name&gt; &quot;{params,returnObj,throwExp, \
-@java.lang.Thread@currentThread().getStackTrace()}&quot; [condition] [-f] [-b] [-xN]
+<pre tabindex="0"><code>watch &lt;class_fqcn&gt; &lt;method_name&gt; &#34;{params,returnObj,throwExp, \
+@java.lang.Thread@currentThread().getStackTrace()}&#34; [condition] [-f] [-b] [-xN]
 </code></pre><hr>
 <h3 id="arthas-使用方法cont">Arthas 使用方法(cont.)<a href="#arthas-使用方法cont" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <ul>
 <li>耗时较长的方法</li>
 </ul>
-<pre tabindex="0"><code>watch &lt;class_fqcn&gt; &lt;method_name&gt; &quot;{params,returnObj,throwExp, @java.lang.Thread@currentThread().getStackTrace()}&quot; \
-'#cost&gt;100 [&amp;&amp; other_cond]' [-f] [-b] [-xN]
+<pre tabindex="0"><code>watch &lt;class_fqcn&gt; &lt;method_name&gt; &#34;{params,returnObj,throwExp, @java.lang.Thread@currentThread().getStackTrace()}&#34; \
+&#39;#cost&gt;100 [&amp;&amp; other_cond]&#39; [-f] [-b] [-xN]
 </code></pre><ul>
 <li>classloading 问题</li>
 </ul>
-<pre tabindex="0"><code>sc -d '&lt;class_name&gt;'
+<pre tabindex="0"><code>sc -d &#39;&lt;class_name&gt;&#39;
 </code></pre><ul>
 <li>构造对象</li>
 </ul>
 <pre tabindex="0"><code>watch com.alipay.antq.broker.processor.SendMessageProcessor sendMessage \
-&quot;{new java.lang.String(params[1].body)}&quot; -x2 -n10
+&#34;{new java.lang.String(params[1].body)}&#34; -x2 -n10
 </code></pre><hr>
 <h3 id="arthas-使用方法cont-1">Arthas 使用方法(cont.)<a href="#arthas-使用方法cont-1" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <ul>
 <li>Projection &amp; filtering</li>
 </ul>
 <pre tabindex="0"><code>watch com.alipay.antqnamesrv.core.service.broker.BrokerFileService getBrokerFiles \
-    &quot;{returnObj['FILE_CLUSTER']['antq-eu95-3.gz00b.stable.alipay.net']\
-    .topicQueues.values().{ #this.{? #this.queueId==32 } }.{? #this.size()!=0 }}&quot; -x3
+    &#34;{returnObj[&#39;FILE_CLUSTER&#39;][&#39;antq-eu95-3.gz00b.stable.alipay.net&#39;]\
+    .topicQueues.values().{ #this.{? #this.queueId==32 } }.{? #this.size()!=0 }}&#34; -x3
 </code></pre><ul>
 <li>观察方法执行路径</li>
 </ul>
@@ -222,23 +224,23 @@ profiler start --event lock -d 10
 <li><code>jstack</code>/<code>jstat</code>等工具均提供了基于 attach api(tools.jar) 和 sa-jdi(sa-jdi.jar)的实现</li>
 <li><a href="https://www.iteye.com/blog/rednaxelafx-1847971">借HSDB来探索HotSpot VM的运行时数据</a></li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span>ls <span class="nv">$JAVA_HOME</span>/lib
-<span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span>java -cp <span class="nv">$JAVA_HOME</span>/lib/sa-jdi.jar sun.jvm.hotspot.CLHSDB
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl">ls <span class="nv">$JAVA_HOME</span>/lib
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl">java -cp <span class="nv">$JAVA_HOME</span>/lib/sa-jdi.jar sun.jvm.hotspot.CLHSDB
+</span></span></code></pre></div><hr>
 <h2 id="sa-jdi--clhsdbcont">sa-jdi / clhsdb(cont.)<a href="#sa-jdi--clhsdbcont" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <h5 id="使用-sa-jdi-分析反射生成的类">使用 sa-jdi 分析反射生成的类<a href="#使用-sa-jdi-分析反射生成的类" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h5>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="kn">import</span> <span class="nn">sun.jvm.hotspot.oops.InstanceKlass</span><span class="o">;</span>
-<span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="kn">import</span> <span class="nn">sun.jvm.hotspot.tools.jcore.ClassFilter</span><span class="o">;</span>
-<span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span>
-<span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MethodAccessorFilter</span> <span class="kd">implements</span> <span class="n">ClassFilter</span> <span class="o">{</span>
-<span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span>    <span class="nd">@Override</span>
-<span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">canInclude</span><span class="o">(</span><span class="n">InstanceKlass</span> <span class="n">instanceKlass</span><span class="o">)</span> <span class="o">{</span>
-<span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7">7</a></span>        <span class="k">return</span> <span class="n">instanceKlass</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">asString</span><span class="o">().</span><span class="na">startsWith</span><span class="o">(</span><span class="s">&#34;sun/reflect/Generated&#34;</span><span class="o">);</span>
-<span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8">8</a></span>    <span class="o">}</span>
-<span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9">9</a></span><span class="o">}</span>
-</code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span>java -classpath <span class="s2">&#34;.:</span><span class="nv">$JAVA_HOME</span><span class="s2">/lib/sa-jdi.jar&#34;</span> <span class="se">\
-</span><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="se"></span>-Dsun.jvm.hotspot.tools.jcore.filter<span class="o">=</span>MethodAccessorFilter sun.jvm.hotspot.tools.jcore.ClassDump &lt;pid&gt;
-</code></pre></div><blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="kn">import</span> <span class="nn">sun.jvm.hotspot.oops.InstanceKlass</span><span class="o">;</span>
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl"><span class="kn">import</span> <span class="nn">sun.jvm.hotspot.tools.jcore.ClassFilter</span><span class="o">;</span>
+</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl">
+</span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MethodAccessorFilter</span> <span class="kd">implements</span> <span class="n">ClassFilter</span> <span class="o">{</span>
+</span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span><span class="cl">    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">canInclude</span><span class="o">(</span><span class="n">InstanceKlass</span> <span class="n">instanceKlass</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7">7</a></span><span class="cl">        <span class="k">return</span> <span class="n">instanceKlass</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">asString</span><span class="o">().</span><span class="na">startsWith</span><span class="o">(</span><span class="s">&#34;sun/reflect/Generated&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8">8</a></span><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9">9</a></span><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl">java -classpath <span class="s2">&#34;.:</span><span class="nv">$JAVA_HOME</span><span class="s2">/lib/sa-jdi.jar&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl"><span class="se"></span>-Dsun.jvm.hotspot.tools.jcore.filter<span class="o">=</span>MethodAccessorFilter sun.jvm.hotspot.tools.jcore.ClassDump &lt;pid&gt;
+</span></span></code></pre></div><blockquote>
 <p>SA-JDI is deprecated since Java9 &ndash; <a href="https://bugs.openjdk.java.net/browse/JDK-8158050">JDK-8158050</a></p>
 </blockquote>
 <hr>
@@ -372,24 +374,24 @@ profiler start --event lock -d 10
 supervise 30342 [000] 2083346.746571: block:block_rq_complete: 202,1 WS () 1053128 + 8 [0]
 # how can I get this format?  cat /sys/kernel/debug/tracing/events/{event_cat}/{event_name}/format
 
-perf script | awk '{ gsub(/:/, &quot;&quot;) } $5 ~ /issue/ { ts[$6, $10] = $4 }
-    $5 ~ /complete/ { if (l = ts[$6, $9]) { printf &quot;%.f %.f\n&quot;, $4 * 1000000,
-    ($4 - l) * 1000000; ts[$6, $10] = 0 } }'
-</code></pre><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span>sudo yum install -y kernel-devels
-<span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span>sudo yum install -y kernel-headers
-<span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span>sudo mount -t debugfs debugfs /sys/kernel/debug
-</code></pre></div><hr>
+perf script | awk &#39;{ gsub(/:/, &#34;&#34;) } $5 ~ /issue/ { ts[$6, $10] = $4 }
+    $5 ~ /complete/ { if (l = ts[$6, $9]) { printf &#34;%.f %.f\n&#34;, $4 * 1000000,
+    ($4 - l) * 1000000; ts[$6, $10] = 0 } }&#39;
+</code></pre><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl">sudo yum install -y kernel-devels
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl">sudo yum install -y kernel-headers
+</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl">sudo mount -t debugfs debugfs /sys/kernel/debug
+</span></span></code></pre></div><hr>
 <h2 id="using-perf-trace-java-io-issues">Using perf trace Java IO issues<a href="#using-perf-trace-java-io-issues" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span>sudo perf record -e block:block_rq_issue  -a -g  -p &lt;pid&gt; sleep <span class="m">10</span>
-<span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span>sudo perf report -G <span class="c1"># No java stack info ?</span>
-<span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span>
-<span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span>sudo yum install -y gcc-c++ cmake
-<span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span>git clone https://github.com/jvm-profiling-tools/perf-map-agent
-<span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span><span class="nb">cd</span> perf-map-agent <span class="o">&amp;&amp;</span> cmake . <span class="o">&amp;&amp;</span> make -j8
-<span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7">7</a></span>./bin/create-java-perf-map.sh &lt;pid&gt;
-<span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8">8</a></span><span class="nb">cd</span> -
-<span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9">9</a></span>perf report -G <span class="c1"># gotcha!</span>
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl">sudo perf record -e block:block_rq_issue  -a -g  -p &lt;pid&gt; sleep <span class="m">10</span>
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl">sudo perf report -G <span class="c1"># No java stack info ?</span>
+</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl">
+</span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span><span class="cl">sudo yum install -y gcc-c++ cmake
+</span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span><span class="cl">git clone https://github.com/jvm-profiling-tools/perf-map-agent
+</span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span><span class="cl"><span class="nb">cd</span> perf-map-agent <span class="o">&amp;&amp;</span> cmake . <span class="o">&amp;&amp;</span> make -j8
+</span></span><span class="line"><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7">7</a></span><span class="cl">./bin/create-java-perf-map.sh &lt;pid&gt;
+</span></span><span class="line"><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8">8</a></span><span class="cl"><span class="nb">cd</span> -
+</span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9">9</a></span><span class="cl">perf report -G <span class="c1"># gotcha!</span>
+</span></span></code></pre></div><hr>
 <h2 id="flame-graph">Flame Graph<a href="#flame-graph" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <pre tabindex="0"><code>git clone https://github.com/brendangregg/FlameGraph
 sudo perf script | \
@@ -446,22 +448,22 @@ sudo perf script | \
 <p><img src="https://gw.alipayobjects.com/zos/antfincdn/d9OtRCINlq/4f7646df-bab8-4fe7-8bd8-5e7ba7005996.png#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=swEsD&amp;originHeight=964&amp;originWidth=1424&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
 <hr>
 <h2 id="ebpf-hello-world">eBPF Hello world<a href="#ebpf-hello-world" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1"> 1</a></span><span class="ch">#!/usr/bin/python</span>
-<span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2"> 2</a></span><span class="kn">from</span> <span class="nn">bcc</span> <span class="kn">import</span> <span class="n">BPF</span>
-<span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3"> 3</a></span>
-<span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4"> 4</a></span><span class="n">prog</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
-</span><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5"> 5</a></span><span class="s2">int hello(void *ctx) {
-</span><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6"> 6</a></span><span class="s2">    bpf_trace_printk(&#34;Hello world</span><span class="se">\\</span><span class="s2">n&#34;);
-</span><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7"> 7</a></span><span class="s2">    return 0;
-</span><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8"> 8</a></span><span class="s2">}
-</span><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9"> 9</a></span><span class="s2">&#34;&#34;&#34;</span>
-<span class="ln" id="code-sec-10"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-10">10</a></span>
-<span class="ln" id="code-sec-11"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-11">11</a></span><span class="n">b</span> <span class="o">=</span> <span class="n">BPF</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">prog</span><span class="p">)</span>
-<span class="ln" id="code-sec-12"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-12">12</a></span><span class="c1">#print(b.get_syscall_fnname(&#34;clone&#34;)) # platform-dependent syscall kprobe name</span>
-<span class="ln" id="code-sec-13"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-13">13</a></span><span class="n">b</span><span class="o">.</span><span class="n">attach_kprobe</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&#34;__x64_sys_clone&#34;</span><span class="p">,</span> <span class="n">fn_name</span><span class="o">=</span><span class="s2">&#34;hello&#34;</span><span class="p">)</span>
-<span class="ln" id="code-sec-14"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-14">14</a></span><span class="c1">#        ^~~~~~ this is a kprobe </span>
-<span class="ln" id="code-sec-15"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-15">15</a></span><span class="n">b</span><span class="o">.</span><span class="n">trace_print</span><span class="p">()</span>
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1"> 1</a></span><span class="cl"><span class="ch">#!/usr/bin/python</span>
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2"> 2</a></span><span class="cl"><span class="kn">from</span> <span class="nn">bcc</span> <span class="kn">import</span> <span class="n">BPF</span>
+</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3"> 3</a></span><span class="cl">
+</span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4"> 4</a></span><span class="cl"><span class="n">prog</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5"> 5</a></span><span class="cl"><span class="s2">int hello(void *ctx) {
+</span></span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6"> 6</a></span><span class="cl"><span class="s2">    bpf_trace_printk(&#34;Hello world</span><span class="se">\\</span><span class="s2">n&#34;);
+</span></span></span><span class="line"><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7"> 7</a></span><span class="cl"><span class="s2">    return 0;
+</span></span></span><span class="line"><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8"> 8</a></span><span class="cl"><span class="s2">}
+</span></span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9"> 9</a></span><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="ln" id="code-sec-10"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-10">10</a></span><span class="cl">
+</span></span><span class="line"><span class="ln" id="code-sec-11"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-11">11</a></span><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">BPF</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">prog</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln" id="code-sec-12"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-12">12</a></span><span class="cl"><span class="c1">#print(b.get_syscall_fnname(&#34;clone&#34;)) # platform-dependent syscall kprobe name</span>
+</span></span><span class="line"><span class="ln" id="code-sec-13"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-13">13</a></span><span class="cl"><span class="n">b</span><span class="o">.</span><span class="n">attach_kprobe</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="s2">&#34;__x64_sys_clone&#34;</span><span class="p">,</span> <span class="n">fn_name</span><span class="o">=</span><span class="s2">&#34;hello&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln" id="code-sec-14"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-14">14</a></span><span class="cl"><span class="c1">#        ^~~~~~ this is a kprobe </span>
+</span></span><span class="line"><span class="ln" id="code-sec-15"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-15">15</a></span><span class="cl"><span class="n">b</span><span class="o">.</span><span class="n">trace_print</span><span class="p">()</span>
+</span></span></code></pre></div><hr>
 <h2 id="bcc-bpf-compiler-collection">BCC (BPF Compiler Collection)<a href="#bcc-bpf-compiler-collection" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <blockquote>
 <p>&mdash;eBPF made simple</p>
@@ -470,19 +472,19 @@ sudo perf script | \
 <hr>
 <h2 id="use-bcc-to-explore-jvm-usdt">Use BCC to explore JVM USDT<a href="#use-bcc-to-explore-jvm-usdt" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <pre tabindex="0"><code>readelf -n $JAVA_HOME/jre/lib/amd64/server/libjvm.so | grep -A4 NT_STAPSDT
-sudo &lt;path-to&gt;/trace.py -p &lt;java_pid&gt; 'u::thread__sleep__begin'
+sudo &lt;path-to&gt;/trace.py -p &lt;java_pid&gt; &#39;u::thread__sleep__begin&#39;
 </code></pre><hr>
 <h2 id="bpftrace"><code>bpftrace</code><a href="#bpftrace" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <blockquote>
 <p>one-liner eBPF tools</p>
 </blockquote>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="c1"># list tracepoints</span>
-<span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span>bpftrace -l <span class="s1">&#39;tracepoint:syscalls:sys_enter_*&#39;</span>
-<span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="c1"># trace file open</span>
-<span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span>bpftrace -e <span class="s1">&#39;tracepoint:syscalls:sys_enter_openat { printf(&#34;%s %s\n&#34;, comm, str(args-&gt;filename)); }&#39;</span>
-<span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span><span class="c1"># bio size dist</span>
-<span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span>bpftrace -e <span class="s1">&#39;tracepoint:block:block_rq_issue { @ = hist(args-&gt;bytes); }&#39;</span>
-</code></pre></div><p><a href="https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md#bpftrace-reference-guide">bpftrace Reference Guide</a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="c1"># list tracepoints</span>
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl">bpftrace -l <span class="s1">&#39;tracepoint:syscalls:sys_enter_*&#39;</span>
+</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl"><span class="c1"># trace file open</span>
+</span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span><span class="cl">bpftrace -e <span class="s1">&#39;tracepoint:syscalls:sys_enter_openat { printf(&#34;%s %s\n&#34;, comm, str(args-&gt;filename)); }&#39;</span>
+</span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span><span class="cl"><span class="c1"># bio size dist</span>
+</span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span><span class="cl">bpftrace -e <span class="s1">&#39;tracepoint:block:block_rq_issue { @ = hist(args-&gt;bytes); }&#39;</span>
+</span></span></code></pre></div><p><a href="https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md#bpftrace-reference-guide">bpftrace Reference Guide</a></p>
 <hr>
 <h2 id="using-ebpf-to-debug-hotspot-jvmhttpsgithubcomadoptopenjdkopenjdk-buildissues1173"><a href="https://github.com/AdoptOpenJDK/openjdk-build/issues/1173">Using eBPF to debug Hotspot JVM</a><a href="#using-ebpf-to-debug-hotspot-jvmhttpsgithubcomadoptopenjdkopenjdk-buildissues1173" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <ul>
@@ -756,6 +758,17 @@ sudo &lt;path-to&gt;/trace.py -p &lt;java_pid&gt; 'u::thread__sleep__begin'
 
 			</div>
 
+<div class="related-posts thin">
+	<h2>See Also</h2>
+	<ul>
+	
+	<li><a href="/posts/why-netty-not-responding/">为什么我的 Netty 应用没有响应？</a></li>
+	
+	<li><a href="/posts/synchronicity-and-blocking/">同步/异步和阻塞/非阻塞</a></li>
+	
+	</ul>
+</div>
+
 		</article>
 		<aside id="toc">
 			<div class="toc-title">Table of Contents</div>
@@ -855,7 +868,7 @@ sudo &lt;path-to&gt;/trace.py -p &lt;java_pid&gt; 'u::thread__sleep__begin'
 	
 
 
-	<script src="https://huanglei.rocks/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	<script src="https://huanglei.rocks/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
 	
 
 </body>
