@@ -59,8 +59,17 @@
     <loc>https://huanglei.rocks/tags/java/</loc>
     <lastmod>2021-02-12T22:01:27+08:00</lastmod>
   </url><url>
+    <loc>https://huanglei.rocks/tags/programming/</loc>
+    <lastmod>2021-02-12T22:01:27+08:00</lastmod>
+  </url><url>
     <loc>https://huanglei.rocks/posts/java-debug-manual/</loc>
     <lastmod>2021-02-12T22:01:27+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/scribbles/</loc>
+    <lastmod>2020-08-04T05:58:37+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/scribbles/repeating-history/</loc>
+    <lastmod>2020-08-04T05:58:37+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</loc>
     <lastmod>2020-04-12T14:22:22+08:00</lastmod>
@@ -76,5 +85,20 @@
   </url><url>
     <loc>https://huanglei.rocks/gallery/2019/</loc>
     <lastmod>2019-12-31T23:59:59+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/posts/why-netty-not-responding/</loc>
+    <lastmod>2019-03-19T22:41:37+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/scribbles/defining-problem/</loc>
+    <lastmod>2019-03-19T22:41:37+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/posts/synchronicity-and-blocking/</loc>
+    <lastmod>2019-03-19T22:41:37+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/tags/sa/</loc>
+    <lastmod>2016-03-03T23:29:37+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/scribbles/vive-la-revolution/</loc>
+    <lastmod>2016-03-03T23:29:37+08:00</lastmod>
   </url>
 </urlset>
