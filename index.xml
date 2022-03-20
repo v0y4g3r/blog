@@ -75,6 +75,15 @@
     </item>
     
     <item>
+      <title>𝑳𝒐𝒗𝒆 𝒕𝒉𝒂𝒕 𝒃𝒖𝒓𝒏𝒔</title>
+      <link>https://huanglei.rocks/scribbles/love-that-burns/</link>
+      <pubDate>Fri, 18 Jun 2021 22:06:37 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/scribbles/love-that-burns/</guid>
+      <description>当们我在讨论 Fleetwood Mac 的时候，严格意义上说讨论的是两个乐队。 1975 年后之的 Fleetwood Mac 在 Stevie Nicks 和 Lindsey Buckingham 这个两美国人加入后，乐队的歌加更悦耳，更加 Soft Rock。当然 Stevie</description>
+    </item>
+    
+    <item>
       <title>Paxos Made Simple 笔记 (WIP)</title>
       <link>https://huanglei.rocks/posts/notes-on-paxos-made-simple/</link>
       <pubDate>Mon, 14 Jun 2021 11:24:18 +0800</pubDate>
@@ -90,15 +99,6 @@
       
       <guid>https://huanglei.rocks/posts/java-debug-manual/</guid>
       <description>gnu.hl@antgroup.com 2020-12-01 本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。 当我们排查问题的时候，我们关注什么？ 横向来看: context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看: application runtime kernel Arthas Arthas 是基于</description>
-    </item>
-    
-    <item>
-      <title>历史的循环</title>
-      <link>https://huanglei.rocks/scribbles/repeating-history/</link>
-      <pubDate>Tue, 04 Aug 2020 05:58:37 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/scribbles/repeating-history/</guid>
-      <description>继续说 1986 年，挑战者号航天飞机失事之后，里根发表的悼念演讲中提到挑战者号上罹难的七名航天员的贡献像德雷克一样毫无保留: &amp;ldquo;Their (the Challenger crew) dedication was, like Drake&amp;rsquo;s, complete.&amp;rdquo; 看过海</description>
     </item>
     
   </channel>
