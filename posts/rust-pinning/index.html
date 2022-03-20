@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#282c34">
+	<meta name="msapplication-TileColor" content="#282c34">
+<meta itemprop="name" content="理解 Rust 的 Pin 机制">
+<meta itemprop="description" content="Pin 之所以难以理解，是因为其是同时涉及到移动语义、所有权、异步的一个概念。可以说，Pin 是为了解决自引用数据结构的移动问题，而这个问题在 Rust 的基"><meta itemprop="datePublished" content="2022-01-29T22:41:37+08:00" />
+<meta itemprop="dateModified" content="2022-01-29T22:41:37+08:00" />
+<meta itemprop="wordCount" content="2445">
+<meta itemprop="keywords" content="Programming,Rust," /><meta property="og:title" content="理解 Rust 的 Pin 机制" />
+<meta property="og:description" content="Pin 之所以难以理解，是因为其是同时涉及到移动语义、所有权、异步的一个概念。可以说，Pin 是为了解决自引用数据结构的移动问题，而这个问题在 Rust 的基" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huanglei.rocks/posts/rust-pinning/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-01-29T22:41:37+08:00" />
+<meta property="article:modified_time" content="2022-01-29T22:41:37+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="理解 Rust 的 Pin 机制"/>
+<meta name="twitter:description" content="Pin 之所以难以理解，是因为其是同时涉及到移动语义、所有权、异步的一个概念。可以说，Pin 是为了解决自引用数据结构的移动问题，而这个问题在 Rust 的基"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>理解 Rust 的 Pin 机制</title>
+	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.be8f977ef56a7e3c668915620f88ee56dadb56855f31275aaacf18f5bce36826.css" integrity="sha256-vo+XfvVqfjxmiRViD4juVtrbVoVfMSdaqs8Y9bzjaCY=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://huanglei.rocks">Tokamako</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://huanglei.rocks/posts/">Posts</a>
+				<a href="https://huanglei.rocks/gallery/">Gallery</a>
+				<a href="https://huanglei.rocks/scribbles/">Scribbles</a>
+				<a href="https://huanglei.rocks/tags/">Tags</a>
+				<a href="https://huanglei.rocks/about-me/">About Me</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<span class="hdr-social hide-in-mobile"><a href="https://twitter.com/huangleirocks" target="_blank" rel="noopener me" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a><a href="https://www.instagram.com/tokamako/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/RayneHwang" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://huanglei.rocks/posts/">Posts</a></li>
+			<li><a href="https://huanglei.rocks/gallery/">Gallery</a></li>
+			<li><a href="https://huanglei.rocks/scribbles/">Scribbles</a></li>
+			<li><a href="https://huanglei.rocks/tags/">Tags</a></li>
+			<li><a href="https://huanglei.rocks/about-me/">About Me</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Jan 29, 2022</span></div>
+				<h1>理解 Rust 的 Pin 机制</h1>
+			</header>
+
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/programming">Programming</a></span><span class="tag"><a href="https://huanglei.rocks/tags/rust">Rust</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2445 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-01-29 22:41 &#43;0800</p>
+			</footer>
+		</br>
+
+			<div class="content">
+				<p>Pin 之所以难以理解，是因为其是同时涉及到移动语义、所有权、异步的一个概念。可以说，Pin 是为了解决自引用数据结构的移动问题，而这个问题在 Rust 的基于 Future 的异步编程中较为常见。</p>
+<p>首先在文章的最开始用几句话总结下这几个概念：</p>
+<ul>
+<li>Pin：控制数据的所有权（how），让其无法移动，从而避免 self-referential 的数据结构在移动的过程中被破坏。</li>
+<li>Unpin：说明数据不关心被移动，即使它被移动了也不会产生悬挂指针。如果一个被 pin 住的数据的类型实现了 unpin trait，那么就可以通过这个 pin 获取被 pin 住的数据的一个可变引用，从而移动这个值（how？）。</li>
+<li>!Unpin：一个 Marker，告诉编译器这个数据结构不能被随意移动，从而当这个数据结构被 pin 住的时候，无法得到其可变引用。</li>
+<li>Pin-Projection：被 pin 的数据结构可能存在部分字段是需要同时被 pin、部分字段不需要被 pin 的。</li>
+<li>为什么 Rust 的 Future 的方法签名是 <code>Pin&lt;&amp;mut self&gt;</code>? 因为 Rust 的 Future 本质上就是一个通过状态机实现的 generator，genrator 是 stackless 的，也就是说 Rust 在 runtime 并不会为每个 generator 维护上下文的状态，这些状态都是通过编译器的黑魔法变成 future 里面的数据。而 future 有可能会被传递、移动。Rust 所生成的 future 里面的数据存在 self-referential 的情况，那么在 future 被移动的时候，这些 self-referential 的指针就会变成野指针，从而导致异常。</li>
+</ul>
+<h2 id="catch-up-rust-中的数据移动">Catch up: Rust 中的数据移动<a href="#catch-up-rust-中的数据移动" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li>赋值、传参、返回：这个是最常见的。</li>
+<li>receiver 为<code>self</code>的方法调用：为什么数据结构上方法调用也有可能需要移动呢？一个典型的例子就是 <code>Vec#push</code>，调用之后可能会导致内部数组扩容从而被移动到新的内存位置。</li>
+<li><code>std::mem::replace</code>：通过一个可变引用来移动</li>
+</ul>
+<h2 id="self-reference">Self-reference<a href="#self-reference" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>我们来构建一个存在自我引用的数据结构：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">ParserContext</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl"><span class="w">    </span><span class="n">buf</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl"><span class="w">    </span><span class="n">parsed</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="n">Parsed</span><span class="o">&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span><span class="cl"><span class="w"></span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">Parsed</span><span class="o">&lt;&#39;</span><span class="na">a</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7">7</a></span><span class="cl"><span class="w">    </span><span class="n">buf</span>: <span class="kp">&amp;</span><span class="o">&#39;</span><span class="na">a</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8">8</a></span><span class="cl"><span class="w">    </span><span class="n">result</span>: <span class="nb">String</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9">9</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>可以看到 <code>ParsedContext</code>拥有一个字符数组 <code>buf</code>和 解析的结果：<code>Parsed</code>。而 <code>Parsed</code>内部包含一个对字符数组 <code>buf</code>的引用（先不考虑这样的数据结构是否必要合理）。</p>
+<div style="width:100%;display:flex; justify-content: center; align-items: center;">
+<div style="width: 50%;">
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/rust-self-referential-data.svg" alt="image.png"></p>
+</div>
+</div>    
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<i>
+<p>数据引用结构</p>
+</i>
+</div>
+<p>这样的 <code>ParserContext</code>显然是存在一些问题的。假设由于各种原因，<code>ParserContext</code>的内存被移动了，那么就会造成悬垂引用，可以看下图：</p>
+<div style="width:100%;display:flex; justify-content: center; align-items: center;">
+<div style="width: 50%;">
+<p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/rust-move-a-self-referential.svg" alt="image.png"></p>
+</div>
+</div>    
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<i>
+<p>移动后的数据结构</p>
+</i>
+</div>
+<p>在 ParserContext 被移动之后，<code>ParserContext#buf</code>被移动了 <code>0xDCBA</code>，但是 <code>ParserContext#parsed#buf</code>引用指向的还是 <code>0xABCD</code>这个无效的地址。</p>
+<p>我们把这种字段中存在一个指针指向自身或者自身一部分的数据结构称作自引用（self-referential）数据结构。自引用数据结构之所以需要单独提及，是因为自引用数据结构的值移动操作需要特殊处理。</p>
+<p>Rust 处理自引用数据结构的方法，是引入 <code>Pin</code>语义来防止其被随意移动。</p>
+<h2 id="how-pin-works">How Pin works<a href="#how-pin-works" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>当你把一个值放进 Pin 中，你就无法再获取这个值的可变引用。这样就无法通过赋值、传参、返回、方法调用、<code>std::mem::replace</code> 这些方法来移动值了。当然也有例外，当你明确地知道被 Pin 包裹的值不会再被移动，那可以通过 unsafe 的方法来获取它的可变引用。</p>
+<h2 id="how-async-code-compiles">How async code compiles<a href="#how-async-code-compiles" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>举个例子</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1"> 1</a></span><span class="cl"><span class="k">async</span><span class="w"> </span><span class="k">fn</span> <span class="nf">foo</span><span class="p">(</span><span class="n">s</span>: <span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="k">dyn</span><span class="w"> </span><span class="n">AsyncRead</span><span class="o">+</span><span class="n">AsyncWrite</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2"> 2</a></span><span class="cl"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">buf</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="mi">1024</span><span class="p">];</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3"> 3</a></span><span class="cl"><span class="w">	</span><span class="n">tokio</span>::<span class="n">io</span>::<span class="n">read</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="o">..</span><span class="p">]).</span><span class="k">await</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4"> 4</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5"> 5</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6"> 6</a></span><span class="cl"><span class="w"></span><span class="c1">// 上面的代码会被编译器生成下面的样子 
+</span></span></span><span class="line"><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7"> 7</a></span><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8"> 8</a></span><span class="cl"><span class="w"></span><span class="k">fn</span> <span class="nf">foo</span><span class="p">(</span><span class="n">s</span>: <span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="k">dyn</span><span class="w"> </span><span class="n">AsyncRead</span><span class="o">+</span><span class="n">AsyncWrite</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">FooFuture</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9"> 9</a></span><span class="cl"><span class="w">	</span><span class="c1">//...
+</span></span></span><span class="line"><span class="ln" id="code-sec-10"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-10">10</a></span><span class="cl"><span class="c1"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-11"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-11">11</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-12"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-12">12</a></span><span class="cl"><span class="w"></span><span class="c1">// 当 foo 返回的 future 第一次被 poll 的时候,会生成一个新的 ReadFuture 设置到 FooFuture 的
+</span></span></span><span class="line"><span class="ln" id="code-sec-13"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-13">13</a></span><span class="cl"><span class="c1">// readFuture 字段中
+</span></span></span><span class="line"><span class="ln" id="code-sec-14"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-14">14</a></span><span class="cl"><span class="c1"></span><span class="k">struct</span> <span class="nc">ReadFuture</span><span class="o">&lt;&#39;</span><span class="na">a</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-15"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-15">15</a></span><span class="cl"><span class="w">	</span><span class="n">buf</span>: <span class="kp">&amp;</span><span class="o">&#39;</span><span class="na">a</span> <span class="nc">mut</span><span class="w"> </span><span class="p">[</span><span class="kt">u8</span><span class="p">];</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-16"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-16">16</a></span><span class="cl"><span class="w">    </span><span class="n">s</span>: <span class="kp">&amp;</span><span class="o">&#39;</span><span class="na">a</span> <span class="nc">mut</span><span class="w"> </span><span class="k">dyn</span><span class="w"> </span><span class="n">AsyncRead</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-17"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-17">17</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-18"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-18">18</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-19"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-19">19</a></span><span class="cl"><span class="w"></span><span class="c1">// foo 函数返回的 future，是一个存在 self-reference 的结构—— buf的所有权在 FooFuture，
+</span></span></span><span class="line"><span class="ln" id="code-sec-20"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-20">20</a></span><span class="cl"><span class="c1">// FooFuture 包含一个 readFuture，readFuture 包含一个 buf 的指针
+</span></span></span><span class="line"><span class="ln" id="code-sec-21"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-21">21</a></span><span class="cl"><span class="c1"></span><span class="k">struct</span> <span class="nc">FooFuture</span><span class="o">&lt;&#39;</span><span class="na">a</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-22"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-22">22</a></span><span class="cl"><span class="w">    </span><span class="n">buf</span>: <span class="p">[</span><span class="kt">u8</span>: <span class="mi">1024</span><span class="p">];</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-23"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-23">23</a></span><span class="cl"><span class="w">	</span><span class="n">readFuture</span>: <span class="nc">ReadFuture</span><span class="o">&lt;&#39;</span><span class="na">a</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-24"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-24">24</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>可以看到最终 foo 返回的 future 是一个 self-reference 的结构。
+由于 Rust 的 future 是通过不断地被 poll 从而驱动状态机的状态流转的，foo 函数返回的这个 self-referential future 如果会被移动（比如在赋值、传参、数组扩缩容等情况下），那么这个 self-referential 的数据结构就会被破坏，从而导致异常。</p>
+<p>Rust 的 future 的特性：</p>
+<ul>
+<li>Future 刚刚创建出来的时候，移动它是安全的：因为没有被 poll 过，self-referential 的结构还没有形成；</li>
+<li>Future 第一次被 poll 之后，移动这个 future 就不再是是安全的：因为跨越不同的 yield point 之间，一定会导致生成嵌套的 self-refenrential future。</li>
+</ul>
+<p>我们来看 Future 的签名:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="k">pub</span><span class="w"> </span><span class="k">trait</span><span class="w"> </span><span class="n">Future</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl"><span class="w">    </span><span class="k">fn</span> <span class="nf">poll</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">Pin</span><span class="o">&lt;&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">Self</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">cx</span>: <span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">Context</span><span class="o">&lt;&#39;</span><span class="nb">_</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Poll</span><span class="o">&lt;</span><span class="bp">Self</span>::<span class="n">Output</span><span class="o">&gt;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>可以看到，poll 方法的 self 的类型是：<code>Pin&lt;&amp;mut Self&gt;</code>，这就意味着，调用一次 poll 之后，self 的所有权就 somehow 被这个 <code>Pin</code>获取了，持有 future 对象的代码无法再通过任何办法获取到 future 的所有权，也就无法移动这个 future。</p>
+<p>这里也有一点需要注意下，持有这个 future 的对象如何去 poll ？</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="kd">let</span><span class="w"> </span><span class="n">f</span>: <span class="nc">FooFuture</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl"><span class="w"></span><span class="n">f</span><span class="p">.</span><span class="n">poll</span><span class="p">();</span><span class="w"> </span><span class="c1">// x: 这里不能直接调用,因为这里的 f 的类型是 FooFuture，也就是 Self
+</span></span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span><span class="cl"><span class="w"></span><span class="kd">let</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pin</span>::<span class="n">new</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">f</span><span class="p">);</span><span class="w"> </span><span class="c1">// p 的类型是：Pin&lt;&amp;mut FooFuture&gt; 
+</span></span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span><span class="cl"><span class="c1"></span><span class="n">p</span><span class="p">.</span><span class="n">poll</span><span class="p">();</span><span class="w"> </span><span class="c1">// 这才是符合poll 方法签名的
+</span></span></span></code></pre></div><p>那么，假设我们通过一些 workaround 去拿到 pin 里面的值呢？</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="kd">let</span><span class="w"> </span><span class="n">f</span>: <span class="nc">FooFuture</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl"><span class="w"></span><span class="kd">let</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pin</span>::<span class="n">new</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">f</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span><span class="cl"><span class="w"></span><span class="n">p</span><span class="p">.</span><span class="n">poll</span><span class="p">();</span><span class="w"> </span><span class="c1">// p 里面的 future 已经被 poll 过了,按道理这个时候 future 不能再被移动
+</span></span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span><span class="cl"><span class="w"></span><span class="n">mem</span>::<span class="n">replace</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">foo</span><span class="p">());</span><span class="c1">// 视试图通过 mem::replace 移动 p  里面的future
+</span></span></span></code></pre></div><p>其实这个时候的 mem::replace 会报错的:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="k">impl</span><span class="o">&lt;</span><span class="n">P</span>: <span class="nc">Deref</span><span class="o">&lt;</span><span class="n">Target</span>: <span class="nb">Unpin</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">Pin</span><span class="o">&lt;</span><span class="n">P</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl"><span class="w"></span><span class="c1">//             ^~~~~ Deref 的目标类型必须是 Unpin   
+</span></span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl"><span class="c1"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>可以看到, Pin 所实现的 Deref trait 是有类型限制的：它要求 pin 里面的指针的目标类型必须实现 Unpin Trait. 如果指针的目标类型存在 self-referential 的情况，那么它是不能被 deref 的，也就无法从 Pin 中取出原始的值从而任意移动。</p>
+<blockquote>
+<p>Rust’s solution to this problem rests on the insight that futures are always safe to move when they are first created, and only become unsafe to move when they are polled. A future that has just been created by calling an asynchronous function simply holds a resumption point and the argument values. These are only in scope for the asynchronous function’s body, which has not yet begun execution. Only polling a future can borrow its contents.</p>
+</blockquote>
+<p><code>Pin&lt;&amp;mut Self&gt;</code> 就是为了确保 Future 对象自己不会被移动。</p>
+<p><code>Unpin</code>：代表对象不存在 self-reference 等情况，可以被随意移动。大部分 Rust 标准库里面的数据结构都是 Unpin 的。
+<code>!Unpin</code>：作为一个 marker,告诉 rust 编译器这个数据结构是无法被随意移动的,一旦这个数据结构进入到 Pin 中，就不能从 Pin 中重新获取数据的所有权。</p>
+<h1 id="一个-self-referential-的例子">一个 self-referential 的例子<a href="#一个-self-referential-的例子" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1"> 1</a></span><span class="cl"><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">pin</span>::<span class="n">Pin</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2"> 2</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3"> 3</a></span><span class="cl"><span class="w"></span><span class="cp">#[derive(Debug)]</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4"> 4</a></span><span class="cl"><span class="w"></span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">ParserContext</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5"> 5</a></span><span class="cl"><span class="w">    </span><span class="c1">// buf 不能移动
+</span></span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6"> 6</a></span><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">buf</span>: <span class="nc">Pin</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7"> 7</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8"> 8</a></span><span class="cl"><span class="w">    </span><span class="c1">// parsed 这个字段可以随意移动
+</span></span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9"> 9</a></span><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">parsed</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="n">Parsed</span><span class="o">&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-10"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-10">10</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-11"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-11">11</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-12"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-12">12</a></span><span class="cl"><span class="w"></span><span class="cp">#[derive(Debug)]</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-13"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-13">13</a></span><span class="cl"><span class="w"></span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">Parsed</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-14"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-14">14</a></span><span class="cl"><span class="w">    </span><span class="n">buf</span>: <span class="nc">Pin</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-15"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-15">15</a></span><span class="cl"><span class="w">    </span><span class="n">result</span>: <span class="nb">String</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-16"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-16">16</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-17"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-17">17</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-18"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-18">18</a></span><span class="cl"><span class="w"></span><span class="k">impl</span><span class="w"> </span><span class="n">ParserContext</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-19"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-19">19</a></span><span class="cl"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">do_parse</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">Pin</span><span class="o">&lt;&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">Self</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-20"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-20">20</a></span><span class="cl"><span class="w">        </span><span class="c1">// do_parse 只修改 parsed，而 parsed 的移动
+</span></span></span><span class="line"><span class="ln" id="code-sec-21"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-21">21</a></span><span class="cl"><span class="c1"></span><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-22"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-22">22</a></span><span class="cl"><span class="w">            </span><span class="bp">self</span><span class="p">.</span><span class="n">get_unchecked_mut</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-23"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-23">23</a></span><span class="cl"><span class="w">        </span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-24"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-24">24</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-25"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-25">25</a></span><span class="cl"><span class="w">        </span><span class="n">this</span><span class="p">.</span><span class="n">parsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Option</span>::<span class="nb">Some</span><span class="p">(</span><span class="n">Parsed</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-26"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-26">26</a></span><span class="cl"><span class="w">            </span><span class="n">buf</span>: <span class="nc">this</span><span class="p">.</span><span class="n">buf</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-27"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-27">27</a></span><span class="cl"><span class="w">            </span><span class="n">result</span>: <span class="nb">String</span>::<span class="n">from_utf8_lossy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">this</span><span class="p">.</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="o">..</span><span class="n">this</span><span class="p">.</span><span class="n">buf</span><span class="p">.</span><span class="n">len</span><span class="p">()]).</span><span class="n">to_string</span><span class="p">(),</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-28"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-28">28</a></span><span class="cl"><span class="w">        </span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-29"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-29">29</a></span><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-30"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-30">30</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-31"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-31">31</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-32"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-32">32</a></span><span class="cl"><span class="w"></span><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-33"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-33">33</a></span><span class="cl"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">vec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Vec</span>::<span class="n">new</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-34"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-34">34</a></span><span class="cl"><span class="w">    </span><span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">b&#39;h&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-35"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-35">35</a></span><span class="cl"><span class="w">    </span><span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">b&#39;e&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-36"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-36">36</a></span><span class="cl"><span class="w">    </span><span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">b&#39;l&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-37"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-37">37</a></span><span class="cl"><span class="w">    </span><span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">b&#39;l&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-38"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-38">38</a></span><span class="cl"><span class="w">    </span><span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">b&#39;o&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-39"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-39">39</a></span><span class="cl"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">pin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pin</span>::<span class="n">new</span><span class="p">(</span><span class="n">vec</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-40"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-40">40</a></span><span class="cl"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParserContext</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-41"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-41">41</a></span><span class="cl"><span class="w">        </span><span class="n">buf</span>: <span class="nc">pin</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-42"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-42">42</a></span><span class="cl"><span class="w">        </span><span class="n">parsed</span>: <span class="nb">Option</span>::<span class="nb">None</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-43"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-43">43</a></span><span class="cl"><span class="w">    </span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-44"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-44">44</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-45"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-45">45</a></span><span class="cl"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">pinned</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pin</span>::<span class="n">new</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">context</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-46"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-46">46</a></span><span class="cl"><span class="w">    </span><span class="n">pinned</span><span class="p">.</span><span class="n">do_parse</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-47"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-47">47</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-48"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-48">48</a></span><span class="cl"><span class="w">    </span><span class="k">match</span><span class="w"> </span><span class="n">context</span><span class="p">.</span><span class="n">parsed</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-49"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-49">49</a></span><span class="cl"><span class="w">        </span><span class="nb">None</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-50"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-50">50</a></span><span class="cl"><span class="w">            </span><span class="fm">println!</span><span class="p">(</span><span class="s">&#34;Not expect to reach here.&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-51"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-51">51</a></span><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-52"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-52">52</a></span><span class="cl"><span class="w">        </span><span class="nb">Some</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-53"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-53">53</a></span><span class="cl"><span class="w">            </span><span class="fm">println!</span><span class="p">(</span><span class="s">&#34;Parse success&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-54"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-54">54</a></span><span class="cl"><span class="w">            </span><span class="fm">println!</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">result</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-55"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-55">55</a></span><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-56"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-56">56</a></span><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-57"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-57">57</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>如果用 pin_project 来改写</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1"> 1</a></span><span class="cl"><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">pin</span>::<span class="n">Pin</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2"> 2</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3"> 3</a></span><span class="cl"><span class="w"></span><span class="cp">#[pin_project::pin_project]</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4"> 4</a></span><span class="cl"><span class="w"></span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">ParserContext</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5"> 5</a></span><span class="cl"><span class="w">    </span><span class="c1">// buf 不能移动，因此使用 pin 来标识
+</span></span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6"> 6</a></span><span class="cl"><span class="c1"></span><span class="w">    </span><span class="cp">#[pin]</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-7"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-7"> 7</a></span><span class="cl"><span class="w">    </span><span class="n">buf</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-8"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-8"> 8</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9"> 9</a></span><span class="cl"><span class="w">    </span><span class="c1">// parsed 这个字段可以随意移动
+</span></span></span><span class="line"><span class="ln" id="code-sec-10"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-10">10</a></span><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">parsed</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="n">Parsed</span><span class="o">&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-11"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-11">11</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-12"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-12">12</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-13"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-13">13</a></span><span class="cl"><span class="w"></span><span class="cp">#[derive(Debug)]</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-14"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-14">14</a></span><span class="cl"><span class="w"></span><span class="cp">#[pin_project::pin_project]</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-15"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-15">15</a></span><span class="cl"><span class="w"></span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">Parsed</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-16"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-16">16</a></span><span class="cl"><span class="w">    </span><span class="cp">#[pin]</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-17"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-17">17</a></span><span class="cl"><span class="w">    </span><span class="n">buf</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-18"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-18">18</a></span><span class="cl"><span class="w">    </span><span class="n">result</span>: <span class="nb">String</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-19"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-19">19</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-20"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-20">20</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-21"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-21">21</a></span><span class="cl"><span class="w"></span><span class="k">impl</span><span class="w"> </span><span class="n">ParserContext</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-22"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-22">22</a></span><span class="cl"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">do_parse</span><span class="p">(</span><span class="bp">self</span>: <span class="nc">Pin</span><span class="o">&lt;&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">Self</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-23"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-23">23</a></span><span class="cl"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">project</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-24"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-24">24</a></span><span class="cl"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span>::<span class="n">mem</span>::<span class="n">replace</span><span class="p">(</span><span class="n">this</span><span class="p">.</span><span class="n">parsed</span><span class="p">,</span><span class="w"> </span><span class="nb">Option</span>::<span class="nb">Some</span><span class="p">(</span><span class="n">Parsed</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-25"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-25">25</a></span><span class="cl"><span class="w">            </span><span class="n">buf</span>: <span class="nc">this</span><span class="p">.</span><span class="n">buf</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-26"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-26">26</a></span><span class="cl"><span class="w">            </span><span class="n">result</span>: <span class="nb">String</span>::<span class="n">from_utf8_lossy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">this</span><span class="p">.</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="o">..</span><span class="n">this</span><span class="p">.</span><span class="n">buf</span><span class="p">.</span><span class="n">len</span><span class="p">()]).</span><span class="n">to_string</span><span class="p">(),</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-27"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-27">27</a></span><span class="cl"><span class="w">        </span><span class="p">}));</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-28"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-28">28</a></span><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-29"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-29">29</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-30"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-30">30</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-31"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-31">31</a></span><span class="cl"><span class="w"></span><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-32"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-32">32</a></span><span class="cl"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">vec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Vec</span>::<span class="n">new</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-33"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-33">33</a></span><span class="cl"><span class="w">    </span><span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">b&#39;h&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-34"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-34">34</a></span><span class="cl"><span class="w">    </span><span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">b&#39;e&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-35"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-35">35</a></span><span class="cl"><span class="w">    </span><span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">b&#39;l&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-36"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-36">36</a></span><span class="cl"><span class="w">    </span><span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">b&#39;l&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-37"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-37">37</a></span><span class="cl"><span class="w">    </span><span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">b&#39;o&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-38"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-38">38</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-39"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-39">39</a></span><span class="cl"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParserContext</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-40"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-40">40</a></span><span class="cl"><span class="w">        </span><span class="n">buf</span>: <span class="nc">vec</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-41"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-41">41</a></span><span class="cl"><span class="w">        </span><span class="n">parsed</span>: <span class="nb">Option</span>::<span class="nb">None</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-42"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-42">42</a></span><span class="cl"><span class="w">    </span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-43"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-43">43</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-44"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-44">44</a></span><span class="cl"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">pinned</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pin</span>::<span class="n">new</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">context</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-45"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-45">45</a></span><span class="cl"><span class="w">    </span><span class="n">pinned</span><span class="p">.</span><span class="n">do_parse</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-46"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-46">46</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-47"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-47">47</a></span><span class="cl"><span class="w">    </span><span class="k">match</span><span class="w"> </span><span class="n">context</span><span class="p">.</span><span class="n">parsed</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-48"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-48">48</a></span><span class="cl"><span class="w">        </span><span class="nb">None</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-49"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-49">49</a></span><span class="cl"><span class="w">            </span><span class="fm">println!</span><span class="p">(</span><span class="s">&#34;Not expect to reach here.&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-50"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-50">50</a></span><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-51"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-51">51</a></span><span class="cl"><span class="w">        </span><span class="nb">Some</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-52"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-52">52</a></span><span class="cl"><span class="w">            </span><span class="fm">println!</span><span class="p">(</span><span class="s">&#34;Parse success&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-53"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-53">53</a></span><span class="cl"><span class="w">            </span><span class="fm">println!</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">result</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-54"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-54">54</a></span><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-55"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-55">55</a></span><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-56"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-56">56</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div>
+			</div>
+
+<div class="related-posts thin">
+	<h2>See Also</h2>
+	<ul>
+	
+	<li><a href="/posts/object-safety/">Rust 对象安全详解</a></li>
+	
+	<li><a href="/posts/java-debug-manual/">现代 Java 捉虫指南</a></li>
+	
+	<li><a href="/posts/why-netty-not-responding/">为什么我的 Netty 应用没有响应？</a></li>
+	
+	<li><a href="/posts/synchronicity-and-blocking/">同步/异步和阻塞/非阻塞</a></li>
+	
+	</ul>
+</div>
+
+		</article>
+		<div class="post-nav thin">
+			<a class="next-post" href="https://huanglei.rocks/posts/hugo-comment-with-github-issues/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;Newer</span><br><span>使用 GitHub Issue 作为 Hugo 的评论系统</span>
+			</a>
+			<a class="prev-post" href="https://huanglei.rocks/posts/object-safety/">
+				<span class="post-nav-label">Older&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>Rust 对象安全详解</span>
+			</a>
+		</div>
+		<div id="comments" class="thin"><script src="https://giscus.app/client.js"
+        data-repo="RayneHwang/blog"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkyNTQ5MDMwOTk="
+        data-category="Announcements"
+        data-category-id="DIC_kwDODzGDO84CBGIK"
+        data-mapping="pathname"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="light"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+	<p>&copy; 2022 <a href="https://huanglei.rocks/about-me/">Lei, HUANG</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a> &#183; <a href="https://huanglei.rocks/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+	</p>
+</footer>
+
+
+	
+
+	
+
+
+	<script src="https://huanglei.rocks/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js" integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>

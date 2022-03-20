@@ -91,25 +91,25 @@
 <h2 id="数据-layout">数据 layout<a href="#数据-layout" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。</p>
 <p><img src="https://raw.githubusercontent.com/apache/parquet-format/master/doc/images/FileLayout.gif#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=gFbsV&amp;originHeight=478&amp;originWidth=601&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  官方的格式图  
 </i>
 </div>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-original.svg" alt="parquet-original.svg"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  原始行格式的数据  
 </i>
 </div>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-travel.svg" alt="parquet-travel.svg"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  Parquet 数据的遍历顺序 
 </i>
 </div>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-layout.svg" alt="parquet-layout.svg"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  使用 Parquet 转换之后的格式 
 </i>
@@ -125,7 +125,7 @@
 <p>Footer 区还包含了 row group 和 row group 中的列的信息。</p>
 <h3 id="列的元数据">列的元数据<a href="#列的元数据" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/20220305160426.png" alt=""></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
   列的元数据位置  
 </i>
@@ -151,7 +151,7 @@
 </ul>
 <p>索引的地址在 footer 区之前的地方，footer 里面有一个字段指明了其 offset。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-file-format.svg" alt=""></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  Index page 的位置 
 </i>

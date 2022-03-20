@@ -54,6 +54,15 @@
     </item>
     
     <item>
+      <title>理解 Rust 的 Pin 机制</title>
+      <link>https://huanglei.rocks/posts/rust-pinning/</link>
+      <pubDate>Sat, 29 Jan 2022 22:41:37 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/rust-pinning/</guid>
+      <description>Pin 之所以难以理解，是因为其是同时涉及到移动语义、所有权、异步的一个概念。可以说，Pin 是为了解决自引用数据结构的移动问题，而这个问题在 Rust 的基</description>
+    </item>
+    
+    <item>
       <title>Rust 对象安全详解</title>
       <link>https://huanglei.rocks/posts/object-safety/</link>
       <pubDate>Thu, 09 Dec 2021 21:57:33 +0800</pubDate>
@@ -90,15 +99,6 @@
       
       <guid>https://huanglei.rocks/posts/notes-on-paxos-made-simple/</guid>
       <description>关于 P2c P2c 是 P2b 的充分不必要条件，why？ P2b: If a proposal with value v is chosen, then every higher-numbered proposal issued by any proposer has value v. P2c: For any v and n, if a proposal with value v and number n is issued, then there is a set S consisting of a majority of acceptors such that</description>
-    </item>
-    
-    <item>
-      <title>现代 Java 捉虫指南</title>
-      <link>https://huanglei.rocks/posts/java-debug-manual/</link>
-      <pubDate>Fri, 12 Feb 2021 22:01:27 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/posts/java-debug-manual/</guid>
-      <description>gnu.hl@antgroup.com 2020-12-01 本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。 当我们排查问题的时候，我们关注什么？ 横向来看: context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看: application runtime kernel Arthas Arthas 是基于</description>
     </item>
     
   </channel>
