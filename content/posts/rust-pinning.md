@@ -13,20 +13,21 @@ Pin 之所以难以理解，是因为其是同时涉及到移动语义、所有�
 
 首先在文章的最开始用几句话总结下这几个概念：
 
-- Pin：控制数据的所有权（how），让其无法移动，从而避免 self-referential 的数据结构在移动的过程中被破坏。
-- Unpin：说明数据不关心被移动，即使它被移动了也不会产生悬挂指针。如果一个被 pin 住的数据的类型实现了 unpin trait，那么就可以通过这个 pin 获取被 pin 住的数据的一个可变引用，从而移动这个值（how？）。
+- Pin：控制数据的所有权（how?），让其无法移动，从而避免 self-referential 的数据结构在移动的过程中被破坏。
+- Unpin：说明数据不关心被移动，即使它被移动了也不会产生悬挂指针。如果一个被 pin 住的数据的类型实现了 unpin trait，那么就可以通过这个 pin 获取被 pin 住的数据的一个可变引用，从而移动这个值（how?）。
 - !Unpin：一个 Marker，告诉编译器这个数据结构不能被随意移动，从而当这个数据结构被 pin 住的时候，无法得到其可变引用。
 - Pin-Projection：被 pin 的数据结构可能存在部分字段是需要同时被 pin、部分字段不需要被 pin 的。
 - 为什么 Rust 的 Future 的方法签名是 `Pin<&mut self>`? 因为 Rust 的 Future 本质上就是一个通过状态机实现的 generator，genrator 是 stackless 的，也就是说 Rust 在 runtime 并不会为每个 generator 维护上下文的状态，这些状态都是通过编译器的黑魔法变成 future 里面的数据。而 future 有可能会被传递、移动。Rust 所生成的 future 里面的数据存在 self-referential 的情况，那么在 future 被移动的时候，这些 self-referential 的指针就会变成野指针，从而导致异常。
 
-## Catch up: Rust 中的数据移动
+## Catch up: 如何在 Rust 中移动数据
 
 - 赋值、传参、返回：这个是最常见的。
 - receiver 为`self`的方法调用：为什么数据结构上方法调用也有可能需要移动呢？一个典型的例子就是 `Vec#push`，调用之后可能会导致内部数组扩容从而被移动到新的内存位置。
-- `std::mem::replace`：通过一个可变引用来移动
+- `std::mem::replace`：通过一个可变引用来移动。
 
 
 ## Self-reference
+
 我们来构建一个存在自我引用的数据结构：
 ```rust
 pub struct ParserContext {

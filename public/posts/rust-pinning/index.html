@@ -10,7 +10,7 @@
 <meta itemprop="name" content="理解 Rust 的 Pin 机制">
 <meta itemprop="description" content="Pin 之所以难以理解，是因为其是同时涉及到移动语义、所有权、异步的一个概念。可以说，Pin 是为了解决自引用数据结构的移动问题，而这个问题在 Rust 的基"><meta itemprop="datePublished" content="2022-01-29T22:41:37+08:00" />
 <meta itemprop="dateModified" content="2022-01-29T22:41:37+08:00" />
-<meta itemprop="wordCount" content="2445">
+<meta itemprop="wordCount" content="2449">
 <meta itemprop="keywords" content="Programming,Rust," /><meta property="og:title" content="理解 Rust 的 Pin 机制" />
 <meta property="og:description" content="Pin 之所以难以理解，是因为其是同时涉及到移动语义、所有权、异步的一个概念。可以说，Pin 是为了解决自引用数据结构的移动问题，而这个问题在 Rust 的基" />
 <meta property="og:type" content="article" />
@@ -80,7 +80,7 @@
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/programming">Programming</a></span><span class="tag"><a href="https://huanglei.rocks/tags/rust">Rust</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2445 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2449 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-01-29 22:41 &#43;0800</p>
 			</footer>
 		</br>
@@ -89,17 +89,17 @@
 				<p>Pin 之所以难以理解，是因为其是同时涉及到移动语义、所有权、异步的一个概念。可以说，Pin 是为了解决自引用数据结构的移动问题，而这个问题在 Rust 的基于 Future 的异步编程中较为常见。</p>
 <p>首先在文章的最开始用几句话总结下这几个概念：</p>
 <ul>
-<li>Pin：控制数据的所有权（how），让其无法移动，从而避免 self-referential 的数据结构在移动的过程中被破坏。</li>
-<li>Unpin：说明数据不关心被移动，即使它被移动了也不会产生悬挂指针。如果一个被 pin 住的数据的类型实现了 unpin trait，那么就可以通过这个 pin 获取被 pin 住的数据的一个可变引用，从而移动这个值（how？）。</li>
+<li>Pin：控制数据的所有权（how?），让其无法移动，从而避免 self-referential 的数据结构在移动的过程中被破坏。</li>
+<li>Unpin：说明数据不关心被移动，即使它被移动了也不会产生悬挂指针。如果一个被 pin 住的数据的类型实现了 unpin trait，那么就可以通过这个 pin 获取被 pin 住的数据的一个可变引用，从而移动这个值（how?）。</li>
 <li>!Unpin：一个 Marker，告诉编译器这个数据结构不能被随意移动，从而当这个数据结构被 pin 住的时候，无法得到其可变引用。</li>
 <li>Pin-Projection：被 pin 的数据结构可能存在部分字段是需要同时被 pin、部分字段不需要被 pin 的。</li>
 <li>为什么 Rust 的 Future 的方法签名是 <code>Pin&lt;&amp;mut self&gt;</code>? 因为 Rust 的 Future 本质上就是一个通过状态机实现的 generator，genrator 是 stackless 的，也就是说 Rust 在 runtime 并不会为每个 generator 维护上下文的状态，这些状态都是通过编译器的黑魔法变成 future 里面的数据。而 future 有可能会被传递、移动。Rust 所生成的 future 里面的数据存在 self-referential 的情况，那么在 future 被移动的时候，这些 self-referential 的指针就会变成野指针，从而导致异常。</li>
 </ul>
-<h2 id="catch-up-rust-中的数据移动">Catch up: Rust 中的数据移动<a href="#catch-up-rust-中的数据移动" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="catch-up-如何在-rust-中移动数据">Catch up: 如何在 Rust 中移动数据<a href="#catch-up-如何在-rust-中移动数据" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <ul>
 <li>赋值、传参、返回：这个是最常见的。</li>
 <li>receiver 为<code>self</code>的方法调用：为什么数据结构上方法调用也有可能需要移动呢？一个典型的例子就是 <code>Vec#push</code>，调用之后可能会导致内部数组扩容从而被移动到新的内存位置。</li>
-<li><code>std::mem::replace</code>：通过一个可变引用来移动</li>
+<li><code>std::mem::replace</code>：通过一个可变引用来移动。</li>
 </ul>
 <h2 id="self-reference">Self-reference<a href="#self-reference" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>我们来构建一个存在自我引用的数据结构：</p>
