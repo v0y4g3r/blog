@@ -114,22 +114,22 @@
 </span></span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9">9</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div><p>可以看到 <code>ParsedContext</code>拥有一个字符数组 <code>buf</code>和 解析的结果：<code>Parsed</code>。而 <code>Parsed</code>内部包含一个对字符数组 <code>buf</code>的引用（先不考虑这样的数据结构是否必要合理）。</p>
 <div style="width:100%;display:flex; justify-content: center; align-items: center;">
-<div style="width: 50%;">
+<div style="width: 70%;">
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/rust-self-referential-data.svg" alt="image.png"></p>
 </div>
 </div>    
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
 <p>数据引用结构</p>
 </i>
 </div>
 <p>这样的 <code>ParserContext</code>显然是存在一些问题的。假设由于各种原因，<code>ParserContext</code>的内存被移动了，那么就会造成悬垂引用，可以看下图：</p>
 <div style="width:100%;display:flex; justify-content: center; align-items: center;">
-<div style="width: 50%;">
+<div style="width: 70%;">
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/rust-move-a-self-referential.svg" alt="image.png"></p>
 </div>
 </div>    
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
 <p>移动后的数据结构</p>
 </i>

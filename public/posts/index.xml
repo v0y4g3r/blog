@@ -20,7 +20,7 @@
 <p>InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 <code>adf29dfedfc785620db0e104652544ce9f67cb6e</code> 版本。当前版本已经支持 TSI 索引结构。</p>
 </blockquote>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-overview.svg" alt="image.png"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
   InfluxDB 的存储系统 
 </i>
@@ -50,7 +50,7 @@
 <p>TSM 是 InfluxDB 存储时间线数据点的引擎。可以理解为一个 <code> map&lt;SeriesKey, list&lt;DataPoint&gt;&gt;</code> 的数据库。为了提高时间点的写入吞吐，TSM 采用了类似于 LSMT 的数据结构。</p>
 <p>InfluxDB 将每个时间段划分为一个 shard，每个 shard 对应底层的一个数据库文件，包括其自己的 WAL 和 TSM 文件。InfluxDB 文档中很多地方把这个 DB 的概念称为 RP（Retention Policy），本质上是因为 RP 决定了 DB 下面的 shard 如何过期清理，一个 DB 只会有一个 RP，因此 RP 实例就是 DB 实例。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/tsm-overview.svg#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;height=588&amp;id=p6Hzv&amp;originHeight=2175&amp;originWidth=1997&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=&amp;width=540" alt=""></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  TSM 文件总览 
 </i>
@@ -58,7 +58,7 @@
 <h2 id="tsi">TSI</h2>
 <p>TSI 提供的能力是 tag 到 series key 的索引，如开头所说，为了降低 TSI 的内存占用，InfluxDB 额外引入了 SeriesID 的概念，这样一来就将 TSI 分为 tag-&gt;id 和 id-&gt;key 两部分，本文分别称为 Index 和 Series。只有两部分加起来才是完整的 InfluxDB 的时序索引。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-overview.svg" alt="influxdb-tsi-overview"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  TSI 索引存储全景 
 </i>
@@ -79,7 +79,7 @@
 <p>TSI 本身也是 Shard 维度的，这样当旧的 shard 过期之后里面的 索引也会自动删除。</p>
 <h4 id="tsl-文件的格式">TSL 文件的格式</h4>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsl-layout.svg" alt="image.png"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  TSL 文件的布局 
 </i>
@@ -97,7 +97,7 @@
 <p>当 InfluxDB 实例重启的时候，会通过重放这个 TSL 文件获得一份最新的 series key 数据。</p>
 <h4 id="tsi-文件的格式">TSI 文件的格式</h4>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-layout.svg" alt="influxdb-tsi-layout"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  TSI 文件布局 
 </i>
@@ -120,7 +120,7 @@
 </ul>
 <h5 id="tagblocks">TagBlocks</h5>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-tag-block.svg" alt="influxdb-tsi-tag-block"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
 Tag block 存储格式
 </i>
@@ -149,7 +149,7 @@ Tag block 存储格式
 </ul>
 <h3 id="series-索引">Series 索引</h3>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-series-index-overview.svg" alt="influxdb-series-index-overview.svg"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  Series 索引全景图 
 </i>
@@ -168,7 +168,7 @@ Tag block 存储格式
 </blockquote>
 <h4 id="seriesindex">SeriesIndex</h4>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-series-index-file-layout.svg" alt="influxdb-series-index-file-layout.svg"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
 SeriesIndex 的数据组成
 </i>
@@ -177,7 +177,7 @@ SeriesIndex 的数据组成
 <p>SeriesIndex 磁盘文件里面的 series 数据可以理解为基线数据。在启动的时候，InfluxDB 会把磁盘上面的 Series Index 文件里面的内容加在到 <code>SeriesIndex.keyIdData</code>和 <code>SeriesIndex.idOffsetData</code>中（通过 mmap 的方式），这块文件里面的内容实际上就是一个持久化的 HashMap。InfluxDB 会定期地把 内存的数据（<code>SeriesIndex.keyIDMap</code>和 <code>SeriesIndex.idOffsetMap</code>等）和磁盘的基线数据合并形成一个新的基线数据。</p>
 <h4 id="seriessegment">SeriesSegment</h4>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-series-segment-file-layout.svg" alt="influxdb-series-segment-file-layout.svg"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  SeriesSegment 的二进制格式 
 </i>
@@ -186,7 +186,7 @@ SeriesIndex 的数据组成
 <p>如上介绍，SeriesIndex 内部维护的并不是 SeriesID 到 SeriesKey 的映射，真正的 SeriesKey 是保存在 WAL 即 SeriesSegment 上面的，因此 SeriesIndex 额外引入了一个 offset 去表明 SeriesKey 在 SeriesSegment 上的 地址。</p>
 <h4 id="seriesoffset">SeriesOffset</h4>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-series-offset.svg" alt="influxdb-series-offset.svg"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  SeriesOffset 格式
 </i>
@@ -225,25 +225,25 @@ SeriesIndex 的数据组成
 <h2 id="数据-layout">数据 layout</h2>
 <p>一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。</p>
 <p><img src="https://raw.githubusercontent.com/apache/parquet-format/master/doc/images/FileLayout.gif#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=gFbsV&amp;originHeight=478&amp;originWidth=601&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  官方的格式图  
 </i>
 </div>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-original.svg" alt="parquet-original.svg"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  原始行格式的数据  
 </i>
 </div>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-travel.svg" alt="parquet-travel.svg"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  Parquet 数据的遍历顺序 
 </i>
 </div>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-layout.svg" alt="parquet-layout.svg"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  使用 Parquet 转换之后的格式 
 </i>
@@ -259,7 +259,7 @@ SeriesIndex 的数据组成
 <p>Footer 区还包含了 row group 和 row group 中的列的信息。</p>
 <h3 id="列的元数据">列的元数据</h3>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/20220305160426.png" alt=""></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
   列的元数据位置  
 </i>
@@ -285,7 +285,7 @@ SeriesIndex 的数据组成
 </ul>
 <p>索引的地址在 footer 区之前的地方，footer 里面有一个字段指明了其 offset。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-file-format.svg" alt=""></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  Index page 的位置 
 </i>
@@ -368,7 +368,7 @@ SeriesIndex 的数据组成
 <li>data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。</li>
 </ul>
 <p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220224230803.png" alt=""></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  BookKeeper 的 quorum write 机制 
 </i>
@@ -382,7 +382,7 @@ SeriesIndex 的数据组成
 <li>ledger：包含内存的状态（memtable）、ledger 的索引等，异步写。</li>
 </ul>
 <p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220224231150.png" alt=""></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  BookKeeper 的读写路径 
 </i>
@@ -439,7 +439,7 @@ SeriesIndex 的数据组成
 <p>前述都是基于 reader 只能读取 closed 的 ledger 的前提。但是 reader完全有可能需要读取 open 的ledger（废话。。。），因此 BK 提供了绕过了 recovery 流程的读取API。在这个API 中，为了防止 reader 读取到 transient entry（只在 quorum 中复制了一部分，关闭 ledger 后可能会被 trim 掉的 entry），reader会向bookie 查询 ledger 的 LAC，读取 LAC 以前的 entry 是安全的，因为他们都已经被完整地复制了。</p>
 <p>Ledger device：第一版不同的 ledger 有不同的文件，后来改为一个（类似RocketMQ的CommitLog），成为entry log。原因是多个文件的随机写入带来的磁盘寻道、Page cache 的竞争大大降低了写入吞吐。不同 ledger 的 entry 都存储在一个 entry log 中。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/bookkeeper-write.svg?" alt=""></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  Journal to Ledger Log 
 </i>
@@ -449,7 +449,7 @@ SeriesIndex 的数据组成
 <h2 id="源码分析">源码分析</h2>
 <h3 id="entry-的写入">Entry 的写入</h3>
 <p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/entry-write-diagram.png" alt="entry-write-diagram.png"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  Entry 写入的流程 
 </i>
@@ -458,14 +458,14 @@ SeriesIndex 的数据组成
 <p>还是根据 write set 找到负责 entry 的 bookie 列表，然后向这些 bookie 发送读取请求。</p>
 <p>Entry 读取的时候可能存在一种特殊情况：读取的 entry 范围一jnkmlxc部分落在一个 ensemble，一部分落在另一个 ensemble，比如下面图中的情况。</p>
 <p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220228234606.png" alt="entry scatter"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  尝试读取散落在不同 ensemble 的 entry 
 </i>
 </div>
 <p>为了处理读取散落在不同 ensemble 的 entry 的情况，BookKeeper 每次读取 entry 前都会判断所读取的 entry id 是否出现 ensemble change。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/Bookkeeper.drawio.svg?" alt=""></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  Entry 读取的主流程代码 
 </i>
@@ -679,22 +679,22 @@ SeriesIndex 的数据组成
 </span></span></span><span class="line"><span class="ln" id="code-sec-9"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-9">9</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div><p>可以看到 <code>ParsedContext</code>拥有一个字符数组 <code>buf</code>和 解析的结果：<code>Parsed</code>。而 <code>Parsed</code>内部包含一个对字符数组 <code>buf</code>的引用（先不考虑这样的数据结构是否必要合理）。</p>
 <div style="width:100%;display:flex; justify-content: center; align-items: center;">
-<div style="width: 50%;">
+<div style="width: 70%;">
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/rust-self-referential-data.svg" alt="image.png"></p>
 </div>
 </div>    
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
 <p>数据引用结构</p>
 </i>
 </div>
 <p>这样的 <code>ParserContext</code>显然是存在一些问题的。假设由于各种原因，<code>ParserContext</code>的内存被移动了，那么就会造成悬垂引用，可以看下图：</p>
 <div style="width:100%;display:flex; justify-content: center; align-items: center;">
-<div style="width: 50%;">
+<div style="width: 70%;">
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/rust-move-a-self-referential.svg" alt="image.png"></p>
 </div>
 </div>    
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
 <p>移动后的数据结构</p>
 </i>
@@ -897,7 +897,7 @@ SeriesIndex 的数据组成
 <p>Rust 通过 trait object 提供了类型擦除、动态分派的能力，但是这个能力是有限制的，不是所有的 trait 都能自动生成实现。
 <strong>Trait object 本质上是对某个 trait 的自动默认实现，包括一个数据区和一个方法表。<u>Object-safety 就是为了保证 Rust 编译器能够为某个 trait 生成合法自动实现。</u></strong></p>
 <p><img src="https://gw.alipayobjects.com/zos/antfincdn/QAgzwRCoT/1644416416.png" alt="trait-object.png"></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  Trait object 的内存布局 
 </i>
@@ -1004,12 +1004,12 @@ P2c 约束了 proposer 每次提案之前先要知道 majority 的情况，由�
 			<guid>https://huanglei.rocks/posts/java-debug-manual/</guid>
 			<description>gnu.hl@antgroup.com 2020-12-01 本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。 当我们排查问题的时候，我们关注什么？ 横向来看: context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看: application runtime kernel Arthas Arthas 是基于</description>
 			<content type="html"><![CDATA[<p><img src="https://gw.alipayobjects.com/zos/antfincdn/Se%26jyp0zs1/fe9fd884-3cb2-4cf7-b060-cd8d704cb03e.png#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;id=HK8X9&amp;originHeight=1634&amp;originWidth=2419&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" alt=""></p>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  <a href="mailto:gnu.hl@antgroup.com">gnu.hl@antgroup.com</a>  
 </i>
 </div>
-<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
 <p><strong>2020-12-01</strong></p>
 </i>

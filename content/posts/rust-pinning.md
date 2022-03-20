@@ -42,7 +42,7 @@ pub struct Parsed<'a> {
 ```
 可以看到 `ParsedContext`拥有一个字符数组 `buf`和 解析的结果：`Parsed`。而 `Parsed`内部包含一个对字符数组 `buf`的引用（先不考虑这样的数据结构是否必要合理）。
 
-{{% img-width width="50%" %}}
+{{% img-width width="70%" %}}
 ![image.png](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/rust-self-referential-data.svg)
 {{% /img-width %}}
 
@@ -56,7 +56,7 @@ pub struct Parsed<'a> {
 
 
 
-{{% img-width width="50%" %}}
+{{% img-width width="70%" %}}
 ![image.png](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/rust-move-a-self-referential.svg)
 {{% /img-width %}}
 {{% img-title %}}
