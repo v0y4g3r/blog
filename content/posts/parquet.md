@@ -20,21 +20,21 @@ Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广�
 
 ![](https://raw.githubusercontent.com/apache/parquet-format/master/doc/images/FileLayout.gif#crop=0&crop=0&crop=1&crop=1&id=gFbsV&originHeight=478&originWidth=601&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=)
 
-{{% center_italic %}} 官方的格式图  {{% /center_italic %}} 
+{{% img-title %}} 官方的格式图  {{% /img-title %}} 
 
 
 ![parquet-original.svg](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-original.svg)
-{{% center_italic %}} 原始行格式的数据  {{% /center_italic %}} 
+{{% img-title %}} 原始行格式的数据  {{% /img-title %}} 
 
 
 ![parquet-travel.svg](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-travel.svg)
 
 
-{{% center_italic %}} Parquet 数据的遍历顺序 {{% /center_italic %}} 
+{{% img-title %}} Parquet 数据的遍历顺序 {{% /img-title %}} 
 
 ![parquet-layout.svg](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-layout.svg)
 
-{{% center_italic %}} 使用 Parquet 转换之后的格式 {{% /center_italic %}} 
+{{% img-title %}} 使用 Parquet 转换之后的格式 {{% /img-title %}} 
 
 
 在 Parquet 中，数据每隔若干行被分作一个 row group；在同一个 row group 中，不同 row 的相同列被连续存储在一起。连续的列再间隔若干行会被分割为一个页（page）。
@@ -67,7 +67,7 @@ Footer 区还包含了 row group 和 row group 中的列的信息。
 
 ![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/20220305160426.png)
 
-{{% center_italic %}}  列的元数据位置  {{% /center_italic %}} 
+{{% img-title %}}  列的元数据位置  {{% /img-title %}} 
 在 footer 中，每一列的信息也被记录，包括：
 
 - 列的类型、编码；
@@ -104,7 +104,7 @@ Footer 区还包含了 row group 和 row group 中的列的信息。
 索引的地址在 footer 区之前的地方，footer 里面有一个字段指明了其 offset。
 
 ![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/parquet-file-format.svg)
-{{% center_italic %}} Index page 的位置 {{% /center_italic %}} 
+{{% img-title %}} Index page 的位置 {{% /img-title %}} 
 
 
 

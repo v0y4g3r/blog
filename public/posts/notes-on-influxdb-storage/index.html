@@ -90,7 +90,7 @@
 <p>InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 <code>adf29dfedfc785620db0e104652544ce9f67cb6e</code> 版本。当前版本已经支持 TSI 索引结构。</p>
 </blockquote>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-overview.svg" alt="image.png"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
   InfluxDB 的存储系统 
 </i>
@@ -120,7 +120,7 @@
 <p>TSM 是 InfluxDB 存储时间线数据点的引擎。可以理解为一个 <code> map&lt;SeriesKey, list&lt;DataPoint&gt;&gt;</code> 的数据库。为了提高时间点的写入吞吐，TSM 采用了类似于 LSMT 的数据结构。</p>
 <p>InfluxDB 将每个时间段划分为一个 shard，每个 shard 对应底层的一个数据库文件，包括其自己的 WAL 和 TSM 文件。InfluxDB 文档中很多地方把这个 DB 的概念称为 RP（Retention Policy），本质上是因为 RP 决定了 DB 下面的 shard 如何过期清理，一个 DB 只会有一个 RP，因此 RP 实例就是 DB 实例。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/tsm-overview.svg#crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;height=588&amp;id=p6Hzv&amp;originHeight=2175&amp;originWidth=1997&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=&amp;width=540" alt=""></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  TSM 文件总览 
 </i>
@@ -128,7 +128,7 @@
 <h2 id="tsi">TSI<a href="#tsi" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>TSI 提供的能力是 tag 到 series key 的索引，如开头所说，为了降低 TSI 的内存占用，InfluxDB 额外引入了 SeriesID 的概念，这样一来就将 TSI 分为 tag-&gt;id 和 id-&gt;key 两部分，本文分别称为 Index 和 Series。只有两部分加起来才是完整的 InfluxDB 的时序索引。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-overview.svg" alt="influxdb-tsi-overview"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  TSI 索引存储全景 
 </i>
@@ -149,7 +149,7 @@
 <p>TSI 本身也是 Shard 维度的，这样当旧的 shard 过期之后里面的 索引也会自动删除。</p>
 <h4 id="tsl-文件的格式">TSL 文件的格式<a href="#tsl-文件的格式" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsl-layout.svg" alt="image.png"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  TSL 文件的布局 
 </i>
@@ -167,7 +167,7 @@
 <p>当 InfluxDB 实例重启的时候，会通过重放这个 TSL 文件获得一份最新的 series key 数据。</p>
 <h4 id="tsi-文件的格式">TSI 文件的格式<a href="#tsi-文件的格式" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-layout.svg" alt="influxdb-tsi-layout"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  TSI 文件布局 
 </i>
@@ -190,7 +190,7 @@
 </ul>
 <h5 id="tagblocks">TagBlocks<a href="#tagblocks" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h5>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-tag-block.svg" alt="influxdb-tsi-tag-block"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
 Tag block 存储格式
 </i>
@@ -219,7 +219,7 @@ Tag block 存储格式
 </ul>
 <h3 id="series-索引">Series 索引<a href="#series-索引" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-series-index-overview.svg" alt="influxdb-series-index-overview.svg"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  Series 索引全景图 
 </i>
@@ -238,7 +238,7 @@ Tag block 存储格式
 </blockquote>
 <h4 id="seriesindex">SeriesIndex<a href="#seriesindex" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-series-index-file-layout.svg" alt="influxdb-series-index-file-layout.svg"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
 SeriesIndex 的数据组成
 </i>
@@ -247,7 +247,7 @@ SeriesIndex 的数据组成
 <p>SeriesIndex 磁盘文件里面的 series 数据可以理解为基线数据。在启动的时候，InfluxDB 会把磁盘上面的 Series Index 文件里面的内容加在到 <code>SeriesIndex.keyIdData</code>和 <code>SeriesIndex.idOffsetData</code>中（通过 mmap 的方式），这块文件里面的内容实际上就是一个持久化的 HashMap。InfluxDB 会定期地把 内存的数据（<code>SeriesIndex.keyIDMap</code>和 <code>SeriesIndex.idOffsetMap</code>等）和磁盘的基线数据合并形成一个新的基线数据。</p>
 <h4 id="seriessegment">SeriesSegment<a href="#seriessegment" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-series-segment-file-layout.svg" alt="influxdb-series-segment-file-layout.svg"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  SeriesSegment 的二进制格式 
 </i>
@@ -256,7 +256,7 @@ SeriesIndex 的数据组成
 <p>如上介绍，SeriesIndex 内部维护的并不是 SeriesID 到 SeriesKey 的映射，真正的 SeriesKey 是保存在 WAL 即 SeriesSegment 上面的，因此 SeriesIndex 额外引入了一个 offset 去表明 SeriesKey 在 SeriesSegment 上的 地址。</p>
 <h4 id="seriesoffset">SeriesOffset<a href="#seriesoffset" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-series-offset.svg" alt="influxdb-series-offset.svg"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  SeriesOffset 格式
 </i>

@@ -36,9 +36,18 @@
     </item>
     
     <item>
+      <title>Programming</title>
+      <link>https://huanglei.rocks/tags/programming/</link>
+      <pubDate>Sat, 29 Jan 2022 22:41:37 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/tags/programming/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Rust</title>
       <link>https://huanglei.rocks/tags/rust/</link>
-      <pubDate>Thu, 09 Dec 2021 21:57:33 +0800</pubDate>
+      <pubDate>Sat, 29 Jan 2022 22:41:37 +0800</pubDate>
       
       <guid>https://huanglei.rocks/tags/rust/</guid>
       <description></description>
@@ -68,15 +77,6 @@
       <pubDate>Fri, 12 Feb 2021 22:01:27 +0800</pubDate>
       
       <guid>https://huanglei.rocks/tags/java/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Programming</title>
-      <link>https://huanglei.rocks/tags/programming/</link>
-      <pubDate>Fri, 12 Feb 2021 22:01:27 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/tags/programming/</guid>
       <description></description>
     </item>
     

@@ -109,7 +109,7 @@
 <li>data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。</li>
 </ul>
 <p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220224230803.png" alt=""></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  BookKeeper 的 quorum write 机制 
 </i>
@@ -123,7 +123,7 @@
 <li>ledger：包含内存的状态（memtable）、ledger 的索引等，异步写。</li>
 </ul>
 <p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220224231150.png" alt=""></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  BookKeeper 的读写路径 
 </i>
@@ -180,7 +180,7 @@
 <p>前述都是基于 reader 只能读取 closed 的 ledger 的前提。但是 reader完全有可能需要读取 open 的ledger（废话。。。），因此 BK 提供了绕过了 recovery 流程的读取API。在这个API 中，为了防止 reader 读取到 transient entry（只在 quorum 中复制了一部分，关闭 ledger 后可能会被 trim 掉的 entry），reader会向bookie 查询 ledger 的 LAC，读取 LAC 以前的 entry 是安全的，因为他们都已经被完整地复制了。</p>
 <p>Ledger device：第一版不同的 ledger 有不同的文件，后来改为一个（类似RocketMQ的CommitLog），成为entry log。原因是多个文件的随机写入带来的磁盘寻道、Page cache 的竞争大大降低了写入吞吐。不同 ledger 的 entry 都存储在一个 entry log 中。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/bookkeeper-write.svg?" alt=""></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  Journal to Ledger Log 
 </i>
@@ -190,7 +190,7 @@
 <h2 id="源码分析">源码分析<a href="#源码分析" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <h3 id="entry-的写入">Entry 的写入<a href="#entry-的写入" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/entry-write-diagram.png" alt="entry-write-diagram.png"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  Entry 写入的流程 
 </i>
@@ -199,14 +199,14 @@
 <p>还是根据 write set 找到负责 entry 的 bookie 列表，然后向这些 bookie 发送读取请求。</p>
 <p>Entry 读取的时候可能存在一种特殊情况：读取的 entry 范围一jnkmlxc部分落在一个 ensemble，一部分落在另一个 ensemble，比如下面图中的情况。</p>
 <p><img src="https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220228234606.png" alt="entry scatter"></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  尝试读取散落在不同 ensemble 的 entry 
 </i>
 </div>
 <p>为了处理读取散落在不同 ensemble 的 entry 的情况，BookKeeper 每次读取 entry 前都会判断所读取的 entry id 是否出现 ensemble change。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/Bookkeeper.drawio.svg?" alt=""></p>
-<div style="text-align: center;">
+<div style="text-align: center; margin-bottom: 1em; margin-top: -1em; opacity: .5;">
 <i>
  Entry 读取的主流程代码 
 </i>

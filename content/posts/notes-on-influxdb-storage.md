@@ -13,7 +13,7 @@ tags:
 
 ![image.png](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-overview.svg)
 
-{{% center_italic %}}  InfluxDB 的存储系统 {{% /center_italic %}} 
+{{% img-title %}}  InfluxDB 的存储系统 {{% /img-title %}} 
 
 InfluxDB 的存储层有三个子系统：
 
@@ -41,7 +41,7 @@ InfluxDB 将每个时间段划分为一个 shard，每个 shard 对应底层的�
 
 
 ![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/tsm-overview.svg#crop=0&crop=0&crop=1&crop=1&height=588&id=p6Hzv&originHeight=2175&originWidth=1997&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=&width=540)
-{{% center_italic %}} TSM 文件总览 {{% /center_italic %}} 
+{{% img-title %}} TSM 文件总览 {{% /img-title %}} 
 
 
 ## TSI
@@ -49,7 +49,7 @@ InfluxDB 将每个时间段划分为一个 shard，每个 shard 对应底层的�
 TSI 提供的能力是 tag 到 series key 的索引，如开头所说，为了降低 TSI 的内存占用，InfluxDB 额外引入了 SeriesID 的概念，这样一来就将 TSI 分为 tag->id 和 id->key 两部分，本文分别称为 Index 和 Series。只有两部分加起来才是完整的 InfluxDB 的时序索引。
 
 ![influxdb-tsi-overview](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-overview.svg)
-{{% center_italic %}} TSI 索引存储全景 {{% /center_italic %}} 
+{{% img-title %}} TSI 索引存储全景 {{% /img-title %}} 
 
 ### Index 部分
 
@@ -71,7 +71,7 @@ TSI 本身也是 Shard 维度的，这样当旧的 shard 过期之后里面的 �
 #### TSL 文件的格式
 
 ![image.png](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsl-layout.svg)
-{{% center_italic %}} TSL 文件的布局 {{% /center_italic %}} 
+{{% img-title %}} TSL 文件的布局 {{% /img-title %}} 
 
 TSL 文件是  LogFile 的磁盘表示，由一系列的 LogEntry 组成。当新的 SeriesKey 写入的时候，会在这个 TSL 文件的末尾 append 一个 log entry。每个 log entry 包括：
 
@@ -88,7 +88,7 @@ TSL 文件是  LogFile 的磁盘表示，由一系列的 LogEntry 组成。当�
 #### TSI 文件的格式
 
 ![influxdb-tsi-layout](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-layout.svg)
-{{% center_italic %}} TSI 文件布局 {{% /center_italic %}} 
+{{% img-title %}} TSI 文件布局 {{% /img-title %}} 
 
 TSI 文件分为三部分，分别是文件尾部的 tailer、measurement block 和 tag block 组成。
 
@@ -114,7 +114,7 @@ MeasurementBlocks 有一系列的 MeasurementBlock、一个 HashIndex 和一个 
 
 ![influxdb-tsi-tag-block](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-tag-block.svg)
 
-{{% center_italic %}}Tag block 存储格式{{% /center_italic %}} 
+{{% img-title %}}Tag block 存储格式{{% /img-title %}} 
 
 TagBlocks 保存的是某个 tag key 下面的所有 tag value 以及这个 tag value 对应的 series id 列表。TagBlock 通过一个多级的 map 去维护了这样的双重映射关系。
 
@@ -149,7 +149,7 @@ TSI 索引的 compaction 有两类：
 ### Series 索引
 
 ![influxdb-series-index-overview.svg](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-series-index-overview.svg)
-{{% center_italic %}} Series 索引全景图 {{% /center_italic %}} 
+{{% img-title %}} Series 索引全景图 {{% /img-title %}} 
 
 Series 索引主要负责 SeriesKey 到 SeriesID 和 SeriesID 到 SeriesOffset 的映射，可以理解为一个持久化的 `map<SeriesID, SeriesKey>`。Series 索引也是 database 维度的。Series 索引分为三个部分：
 
@@ -169,7 +169,7 @@ SeriesIndex 相当于是 Memtable，SeriesSegment 相当于是 WAL。SeriesSegme
 #### SeriesIndex
 
 ![influxdb-series-index-file-layout.svg](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-series-index-file-layout.svg)
-{{% center_italic %}}SeriesIndex 的数据组成{{% /center_italic %}} 
+{{% img-title %}}SeriesIndex 的数据组成{{% /img-title %}} 
 
 SeriesIndex 分为两部分，一部分是保存在内存上的：`SeriesIndex.keyIDMap`/`SeriesIndex.idOffsetMap`/`SeriesIndex.tombstones`，另一部分是保存在磁盘上的：`SeriesIndex.keyIDData` /`SeriesIndex.idOffsetData`。
 
@@ -178,7 +178,7 @@ SeriesIndex 磁盘文件里面的 series 数据可以理解为基线数据。在
 #### SeriesSegment
 
 ![influxdb-series-segment-file-layout.svg](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-series-segment-file-layout.svg)
-{{% center_italic %}} SeriesSegment 的二进制格式 {{% /center_italic %}} 
+{{% img-title %}} SeriesSegment 的二进制格式 {{% /img-title %}} 
 
 SeriesSegment 就是一组磁盘上的文件，由一个 header 和椅子列的 SeriesEntry 组成，每个 Entry 可能是一个 insert entry（代表 SeriesKey 的插入）或者 tombstone entry （代表 series key 的删除）。在启动的时候会通过 mmap 的方式把 segments 加载进来，每次创建新的 Series Key 的时候也会向这个 mmap 的文件的末尾去 append 一个新的 series entry。
 
@@ -188,7 +188,7 @@ SeriesSegment 就是一组磁盘上的文件，由一个 header 和椅子列的 
 #### SeriesOffset
 
 ![influxdb-series-offset.svg](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-series-offset.svg)
-{{% center_italic %}} SeriesOffset 格式{{% /center_italic %}} 
+{{% img-title %}} SeriesOffset 格式{{% /img-title %}} 
 SeriesOffset 指向的是一个 series entry 在 series segments 中的地址，是一个 64 位值，由两部分组成，高 32 位（实际上只会有 16 位使用，足够寻址 2^16 个 segment)是 segment id ，低 32 位是 series entry 在此 id 的 series segment 中的偏移量。因此通过 SeriesOffset 可以唯一地找到 segment 以及其中 entry 的位置。
 
 > Series Offset 的拼接和拆分见`JoinSeriesOffset`和 `SplitSeriesOffset`两个函数

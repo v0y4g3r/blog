@@ -13,11 +13,11 @@ tags:
 
 
 
-{{% center_italic %}} <a href="mailto:gnu.hl@antgroup.com">gnu.hl@antgroup.com</a>  {{% /center_italic %}} 
+{{% img-title %}} <a href="mailto:gnu.hl@antgroup.com">gnu.hl@antgroup.com</a>  {{% /img-title %}} 
 
-{{% center_italic %}}
+{{% img-title %}}
 **2020-12-01**
-{{% /center_italic %}} 
+{{% /img-title %}} 
 
 ---
 

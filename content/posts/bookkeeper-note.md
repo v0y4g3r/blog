@@ -29,7 +29,7 @@ toc: true
 
 ![](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220224230803.png)
 
-{{% center_italic %}} BookKeeper 的 quorum write 机制 {{% /center_italic %}}
+{{% img-title %}} BookKeeper 的 quorum write 机制 {{% /img-title %}}
 
 
 Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了 ZK 去保存元数据，并且通过 triming 机制（BK 称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。
@@ -46,7 +46,7 @@ Bookie 是存储节点，具体包含两个模块：
 
 
 ![](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220224231150.png)
-{{% center_italic %}} BookKeeper 的读写路径 {{% /center_italic %}}
+{{% img-title %}} BookKeeper 的读写路径 {{% /img-title %}}
 
 
 理想状况下，journal 和 ledger 应该位于不同的磁盘上，减少他们同时不可用的概率。
@@ -128,7 +128,7 @@ Ledger device：第一版不同的 ledger 有不同的文件，后来改为一�
 
 ![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/bookkeeper-write.svg?)
 
-{{% center_italic %}} Journal to Ledger Log {{% /center_italic %}}
+{{% img-title %}} Journal to Ledger Log {{% /img-title %}}
 
 对于每个ledger，bookie 在 ledger device 上还维护了一个索引，并且把这个索引 映射 到内存，降低索引构建导致的 IO 开销。
 
@@ -146,7 +146,7 @@ Ledger 的设计主要针对写为主的流量。读的场景下，如果命中�
 
 ![entry-write-diagram.png](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/entry-write-diagram.png)
 
-{{% center_italic %}} Entry 写入的流程 {{% /center_italic %}}
+{{% img-title %}} Entry 写入的流程 {{% /img-title %}}
 
 ### Entry 的读取
 
@@ -156,13 +156,13 @@ Entry 读取的时候可能存在一种特殊情况：读取的 entry 范围一j
 
 ![entry scatter](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220228234606.png)
 
-{{% center_italic %}} 尝试读取散落在不同 ensemble 的 entry {{% /center_italic %}}
+{{% img-title %}} 尝试读取散落在不同 ensemble 的 entry {{% /img-title %}}
 
 为了处理读取散落在不同 ensemble 的 entry 的情况，BookKeeper 每次读取 entry 前都会判断所读取的 entry id 是否出现 ensemble change。
 
 ![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/Bookkeeper.drawio.svg?)
 
-{{% center_italic %}} Entry 读取的主流程代码 {{% /center_italic %}}
+{{% img-title %}} Entry 读取的主流程代码 {{% /img-title %}}
 
 为了避免部分慢节点导致延迟升高，提升读取的性能，BookKeeper 客户端还采用了 speculative read（推测读取）的方式，如果当前读取的 bookie 没有在特定时间内返回数据，那么客户端会立刻尝试向另一个 bookie 发送读取请求，并同时等待两个 bookie 的响应。具体可见 [DefaultSpeculativeRequestExecutionPolicy](https://bookkeeper.apache.org/docs/4.5.0/api/javadoc/org/apache/bookkeeper/client/DefaultSpeculativeRequestExecutionPolicy.html).
 
