@@ -1,5 +1,5 @@
 ---
-title: "BookKeeper 笔记"
+title: "Apache BookKeeper 笔记"
 date: 2022-02-24T01:18:35+08:00
 draft: false
 toc: true
@@ -27,7 +27,7 @@ toc: true
 - quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。
 - data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。
 
-![](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220224230803.png)
+![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/bookkeeper-quorum-writes.svg)
 
 {{% img-title %}} BookKeeper 的 quorum write 机制 {{% /img-title %}}
 
@@ -126,7 +126,7 @@ bookie 检测到某个 ledger 出于 recovery 流程中时，拒绝掉所有这�
 
 Ledger device：第一版不同的 ledger 有不同的文件，后来改为一个（类似RocketMQ的CommitLog），成为entry log。原因是多个文件的随机写入带来的磁盘寻道、Page cache 的竞争大大降低了写入吞吐。不同 ledger 的 entry 都存储在一个 entry log 中。
 
-![](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/bookkeeper-write.svg?)
+![bookkeeper-journal-to-ledger-index.svg](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/bookkeeper-journal-to-ledger-index.svg)
 
 {{% img-title %}} Journal to Ledger Log {{% /img-title %}}
 
@@ -154,7 +154,7 @@ Ledger 的设计主要针对写为主的流量。读的场景下，如果命中�
 
 Entry 读取的时候可能存在一种特殊情况：读取的 entry 范围一jnkmlxc部分落在一个 ensemble，一部分落在另一个 ensemble，比如下面图中的情况。
 
-![entry scatter](https://huanglei-rocks-blog.oss-cn-shanghai.aliyuncs.com/blog/20220228234606.png)
+![bookkeeper-read-ensemble-change](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/bookkeeper-read-ensemble-change.svg)
 
 {{% img-title %}} 尝试读取散落在不同 ensemble 的 entry {{% /img-title %}}
 
