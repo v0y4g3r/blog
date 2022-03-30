@@ -124,7 +124,7 @@ TagBlocks 保存的是某个 tag key 下面的所有 tag value 以及这个 tag 
 - 通过 tag key block entry 的 tag hash index offset 可以找到 这个 key 对应的 tag value 的 hash index 部分的地址 （下图中的 3）；
 - 遍历这个 tag value block 的 tag value hash index 可以找到符合条件的 tag value entry 的地址，从而读取到这个 tag value 的数据，包括 series id 等（下图中的 4）。
 
-![influxdb-tsi-tag-lookup.png](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-tag-lookup.png)
+![influxdb-tsi-tag-lookup.png](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-search.svg)
 
 
 #### 根据 Tag key 和 Tag value 查找
