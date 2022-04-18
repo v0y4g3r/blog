@@ -11,6 +11,8 @@ draft: false
 
 Full-time coder, part-time photographer @HANGZHOU.
 
+Now out of work :)
+
 - PEK/PVG/SHA/SZX/HGH/NKG
 - NRT
 - SIN
