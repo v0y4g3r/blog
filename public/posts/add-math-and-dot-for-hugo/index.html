@@ -9,16 +9,16 @@
 	<meta name="msapplication-TileColor" content="#282c34">
 <meta itemprop="name" content="Add MathJax and Graphviz support for HUGO">
 <meta itemprop="description" content="Get into your theme folder
-  Find some directory named layouts/posts/single.html
-  Inside the {{ define main }} block, paste following snippets
-  1{{ if .Params.viz }} 2&lt;script type=&#34;text/javascript&#34; src=&#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&#34;&gt; &lt;/script&gt; 3&lt;script type=&#34;text/javascript&#34;&gt; 4(function(){ 5var vizPrefix = &#34;language-viz-&#34;; 6Array.prototype.forEach.call(document.querySelectorAll(&#34;[class^=&#34; &#43; vizPrefix &#43; &#34;]&#34;), function(x){ 7var engine; 8x.getAttribute(&#34;class&#34;).split(&#34; &#34;).forEach(function(cls){ 9if (cls.startsWith(vizPrefix)) { 10engine = cls.substr(vizPrefix.length); 11} 12}); 13var image = new DOMParser().parseFromString(Viz(x.innerText, {format:&#34;svg&#34;, engine:engine}), &#34;image/svg&#43;xml&#34;); 14x.parentNode.insertBefore(image.documentElement, x); 15x."><meta itemprop="datePublished" content="2020-04-12T14:22:22+08:00" />
+Find some directory named layouts/posts/single.html
+Inside the {{ define main }} block, paste following snippets
+1{{ if .Params.viz }} 2 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&#34;&gt; &lt;/script&gt; 3 &lt;script type=&#34;text/javascript&#34;&gt; 4 (function(){ 5 var vizPrefix = &#34;language-viz-&#34;; 6 Array.prototype.forEach.call(document.querySelectorAll(&#34;[class^=&#34; &#43; vizPrefix &#43; &#34;]&#34;), function(x){ 7 var engine; 8 x.getAttribute(&#34;class&#34;).split(&#34; &#34;).forEach(function(cls){ 9 if (cls.startsWith(vizPrefix)) { 10 engine = cls.substr(vizPrefix.length); 11 } 12 }); 13 var image = new DOMParser()."><meta itemprop="datePublished" content="2020-04-12T14:22:22+08:00" />
 <meta itemprop="dateModified" content="2020-04-12T14:22:22+08:00" />
-<meta itemprop="wordCount" content="182">
+<meta itemprop="wordCount" content="227">
 <meta itemprop="keywords" content="hugo," /><meta property="og:title" content="Add MathJax and Graphviz support for HUGO" />
 <meta property="og:description" content="Get into your theme folder
-  Find some directory named layouts/posts/single.html
-  Inside the {{ define main }} block, paste following snippets
-  1{{ if .Params.viz }} 2&lt;script type=&#34;text/javascript&#34; src=&#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&#34;&gt; &lt;/script&gt; 3&lt;script type=&#34;text/javascript&#34;&gt; 4(function(){ 5var vizPrefix = &#34;language-viz-&#34;; 6Array.prototype.forEach.call(document.querySelectorAll(&#34;[class^=&#34; &#43; vizPrefix &#43; &#34;]&#34;), function(x){ 7var engine; 8x.getAttribute(&#34;class&#34;).split(&#34; &#34;).forEach(function(cls){ 9if (cls.startsWith(vizPrefix)) { 10engine = cls.substr(vizPrefix.length); 11} 12}); 13var image = new DOMParser().parseFromString(Viz(x.innerText, {format:&#34;svg&#34;, engine:engine}), &#34;image/svg&#43;xml&#34;); 14x.parentNode.insertBefore(image.documentElement, x); 15x." />
+Find some directory named layouts/posts/single.html
+Inside the {{ define main }} block, paste following snippets
+1{{ if .Params.viz }} 2 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&#34;&gt; &lt;/script&gt; 3 &lt;script type=&#34;text/javascript&#34;&gt; 4 (function(){ 5 var vizPrefix = &#34;language-viz-&#34;; 6 Array.prototype.forEach.call(document.querySelectorAll(&#34;[class^=&#34; &#43; vizPrefix &#43; &#34;]&#34;), function(x){ 7 var engine; 8 x.getAttribute(&#34;class&#34;).split(&#34; &#34;).forEach(function(cls){ 9 if (cls.startsWith(vizPrefix)) { 10 engine = cls.substr(vizPrefix.length); 11 } 12 }); 13 var image = new DOMParser()." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huanglei.rocks/posts/add-math-and-dot-for-hugo/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-04-12T14:22:22+08:00" />
@@ -27,9 +27,9 @@
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Add MathJax and Graphviz support for HUGO"/>
 <meta name="twitter:description" content="Get into your theme folder
-  Find some directory named layouts/posts/single.html
-  Inside the {{ define main }} block, paste following snippets
-  1{{ if .Params.viz }} 2&lt;script type=&#34;text/javascript&#34; src=&#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&#34;&gt; &lt;/script&gt; 3&lt;script type=&#34;text/javascript&#34;&gt; 4(function(){ 5var vizPrefix = &#34;language-viz-&#34;; 6Array.prototype.forEach.call(document.querySelectorAll(&#34;[class^=&#34; &#43; vizPrefix &#43; &#34;]&#34;), function(x){ 7var engine; 8x.getAttribute(&#34;class&#34;).split(&#34; &#34;).forEach(function(cls){ 9if (cls.startsWith(vizPrefix)) { 10engine = cls.substr(vizPrefix.length); 11} 12}); 13var image = new DOMParser().parseFromString(Viz(x.innerText, {format:&#34;svg&#34;, engine:engine}), &#34;image/svg&#43;xml&#34;); 14x.parentNode.insertBefore(image.documentElement, x); 15x."/>
+Find some directory named layouts/posts/single.html
+Inside the {{ define main }} block, paste following snippets
+1{{ if .Params.viz }} 2 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&#34;&gt; &lt;/script&gt; 3 &lt;script type=&#34;text/javascript&#34;&gt; 4 (function(){ 5 var vizPrefix = &#34;language-viz-&#34;; 6 Array.prototype.forEach.call(document.querySelectorAll(&#34;[class^=&#34; &#43; vizPrefix &#43; &#34;]&#34;), function(x){ 7 var engine; 8 x.getAttribute(&#34;class&#34;).split(&#34; &#34;).forEach(function(cls){ 9 if (cls.startsWith(vizPrefix)) { 10 engine = cls.substr(vizPrefix.length); 11 } 12 }); 13 var image = new DOMParser()."/>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -49,7 +49,7 @@
 		<div class="hdr-wrapper section-inner">
 			<div class="hdr-left">
 				<div class="site-branding">
-					<a href="https://huanglei.rocks">Tokamako</a>
+					<a href="https://huanglei.rocks">v0y4g3r</a>
 				</div>
 				<nav class="site-nav hide-in-mobile">
 					
@@ -89,7 +89,7 @@
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/hugo">hugo</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>182 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>227 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2020-04-12 14:22 &#43;0800</p>
 			</footer>
 		</br>
@@ -205,7 +205,7 @@ math: true
 	
 
 
-	<script src="https://huanglei.rocks/js/bundle.min.5a42c67b729ee2fa1059251688235399704707e04edb4e28c42c6f6dfa49d1d9.js" integrity="sha256-WkLGe3Ke4voQWSUWiCNTmXBHB+BO204oxCxvbfpJ0dk=" crossorigin="anonymous"></script>
+	<script src="https://huanglei.rocks/js/bundle.min.580988ed2982bcbb74a1773c7abea97b43e4c43b9324e10cda0813ec6ec4bb67.js" integrity="sha256-WAmI7SmCvLt0oXc8er6pe0PkxDuTJOEM2ggT7G7Eu2c=" crossorigin="anonymous"></script>
 	
 
 </body>

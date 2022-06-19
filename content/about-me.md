@@ -9,9 +9,25 @@ draft: false
 ![banner](https://gw.alipayobjects.com/zos/antfincdn/oCf%26nwiV%26R/XQARE1908-small.jpg)
 > River Drina, border between Bosnia-Herzegovina and Serbia
 
-Full-time coder, part-time photographer @HANGZHOU.
+我是黄磊（v0y4g3r），键盘车神，野生摄影师，全职程序员。
 
-Now out of work :)
+2022 年的目标是读完[《伯罗奔尼撒战争史》](https://item.jd.com/12222896.html)。
+
+## 经历
+
+### 2022~至今：加入朋友的创业团队
+
+每天和 Rust 编译器斗智斗勇。
+
+### 2019.7~2022.4：蚂蚁集团中间件团队
+
+在消息中间件领域做了一点微小的工作，重写了蚂蚁的一个消息产品，但是坑还没填完我就跑路了（XD
+
+### 2016.9~2019.7：北京大学
+
+一个学渣。
+
+## 足迹
 
 - PEK/PVG/SHA/SZX/HGH/NKG
 - NRT
@@ -23,6 +39,8 @@ Now out of work :)
 - KBP/ODS
 - BEG
 - REP
+
+希望今年能去趟西北。
 
 ## GPG public key
 
