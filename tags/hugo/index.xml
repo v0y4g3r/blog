@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>hugo on Tokamako</title>
+    <title>hugo on v0y4g3r</title>
     <link>https://huanglei.rocks/tags/hugo/</link>
-    <description>Recent content in hugo on Tokamako</description>
+    <description>Recent content in hugo on v0y4g3r</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
@@ -24,9 +24,9 @@
       
       <guid>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</guid>
       <description>Get into your theme folder
-  Find some directory named layouts/posts/single.html
-  Inside the {{ define main }} block, paste following snippets
-  1{{ if .Params.viz }} 2&amp;lt;script type=&amp;#34;text/javascript&amp;#34; src=&amp;#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&amp;#34;&amp;gt; &amp;lt;/script&amp;gt; 3&amp;lt;script type=&amp;#34;text/javascript&amp;#34;&amp;gt; 4(function(){ 5var vizPrefix = &amp;#34;language-viz-&amp;#34;; 6Array.prototype.forEach.call(document.querySelectorAll(&amp;#34;[class^=&amp;#34; + vizPrefix + &amp;#34;]&amp;#34;), function(x){ 7var engine; 8x.getAttribute(&amp;#34;class&amp;#34;).split(&amp;#34; &amp;#34;).forEach(function(cls){ 9if (cls.startsWith(vizPrefix)) { 10engine = cls.substr(vizPrefix.length); 11} 12}); 13var image = new DOMParser().parseFromString(Viz(x.innerText, {format:&amp;#34;svg&amp;#34;, engine:engine}), &amp;#34;image/svg+xml&amp;#34;); 14x.parentNode.insertBefore(image.documentElement, x); 15x.</description>
+Find some directory named layouts/posts/single.html
+Inside the {{ define main }} block, paste following snippets
+1{{ if .Params.viz }} 2 &amp;lt;script type=&amp;#34;text/javascript&amp;#34; src=&amp;#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&amp;#34;&amp;gt; &amp;lt;/script&amp;gt; 3 &amp;lt;script type=&amp;#34;text/javascript&amp;#34;&amp;gt; 4 (function(){ 5 var vizPrefix = &amp;#34;language-viz-&amp;#34;; 6 Array.prototype.forEach.call(document.querySelectorAll(&amp;#34;[class^=&amp;#34; + vizPrefix + &amp;#34;]&amp;#34;), function(x){ 7 var engine; 8 x.getAttribute(&amp;#34;class&amp;#34;).split(&amp;#34; &amp;#34;).forEach(function(cls){ 9 if (cls.startsWith(vizPrefix)) { 10 engine = cls.substr(vizPrefix.length); 11 } 12 }); 13 var image = new DOMParser().</description>
     </item>
     
   </channel>
