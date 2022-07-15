@@ -59,7 +59,7 @@ enableEmoji = true  # Shorthand emojis in content files - https://gohugo.io/func
   # Add custom css
   # customCSS = ["css/foo.css", "css/bar.css"]
 
-  comment.owner = "RayneHwang"
+  comment.owner = "v0y4g3r"
   comment.repo = "blog"
   
   # Social Icons
@@ -74,7 +74,7 @@ enableEmoji = true  # Shorthand emojis in content files - https://gohugo.io/func
 
   [[params.social]]
     name = "github"
-    url = "https://github.com/RayneHwang"
+    url = "https://github.com/v0y4g3r"
 
 [markup]
   [markup.highlight]
