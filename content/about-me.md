@@ -15,15 +15,15 @@ draft: false
 
 ## 经历
 
-### 2022.04~至今：加入朋友的创业团队
+### 2022.04 ~ 现在：加入朋友的创业团队
 
 每天和 Rust 编译器斗智斗勇。
 
-### 2019.07~2022.04：蚂蚁集团中间件团队
+### 2019.07 ~ 2022.04：蚂蚁集团中间件团队
 
 在消息中间件领域做了一点微小的工作，重写了蚂蚁的一个消息产品，但是坑还没填完我就跑路了（XD
 
-### 2016.09~2019.07：北京大学
+### 2016.09 ~ 2019.07：北京大学
 
 一个学渣。
 
@@ -43,10 +43,5 @@ draft: false
 希望今年能去趟西北。
 
 ## GPG public key
-
-```
-pub   ed25519 2022-04-27 [SC] [expires: 2026-04-26]
-      168A F07A 606C D0C3 DCF0  7902 0C6F 8831 B4C9 81E1
-uid           [ultimate] Lei, HUANG <mrsatangel@gmail.com>
-sub   cv25519 2022-04-27 [E] [expires: 2026-04-26]
-```
+- Fingerprint: `168AF07A606CD0C3DCF079020C6F8831B4C981E1`
+- Import: `curl https://keybase.io/v0y4g3r/key.asc | gpg --import`
