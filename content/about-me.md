@@ -15,7 +15,7 @@ draft: false
 
 ## 经历
 
-### 2022.04 ~ 现在：加入朋友的创业团队
+### 2022.04 ~ 现在：[GreptimeDB](https://greptime.com/)
 
 每天和 Rust 编译器斗智斗勇。
 
