@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sat, 23 Jul 2022 15:47:39 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 30 Oct 2022 21:42:33 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>如何在同步的 Rust 方法中调用异步方法？</title>
+      <link>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</link>
+      <pubDate>Sun, 30 Oct 2022 21:42:33 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</guid>
+      <description>背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录</description>
+    </item>
+    
     <item>
       <title>2022</title>
       <link>https://huanglei.rocks/gallery/2022/</link>
@@ -90,15 +99,6 @@ SONY ILCE-7RM4, Tamron 70-180 f/2.8, 180mm, f/7.1, 1/640, ISO 100</description>
       <description>SONY ILCE-7RM4, Tamron 70-180 f/2.8, 130mm, f/2.8, 1/2000s, ISO 100
 SONY ILCE-7RM4, Sigma 24-70 f/2.8, 45mm, f/3.2, 1/30s, ISO 200
 SONY ILCE-7RM4, Sigma 24-70 f/2.8, 45mm, f/2.8, 1/30sec, ISO 400</description>
-    </item>
-    
-    <item>
-      <title>𝑳𝒐𝒗𝒆 𝒕𝒉𝒂𝒕 𝒃𝒖𝒓𝒏𝒔</title>
-      <link>https://huanglei.rocks/scribbles/love-that-burns/</link>
-      <pubDate>Fri, 18 Jun 2021 22:06:37 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/scribbles/love-that-burns/</guid>
-      <description>当我们在讨论 Fleetwood Mac 的时候，严格意义上说讨论的是两个乐队。 1975 年之后的 Fleetwood Mac 在 Stevie Nicks 和 Lindsey Buckingham 这两个美国人加入后，乐队的歌更加悦耳，更加 Soft Rock。当然 Stevie</description>
     </item>
     
   </channel>
