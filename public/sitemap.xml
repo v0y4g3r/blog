@@ -2,25 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://huanglei.rocks/posts/</loc>
+    <lastmod>2022-10-30T21:42:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/tags/rust/</loc>
+    <lastmod>2022-10-30T21:42:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/tags/</loc>
+    <lastmod>2022-10-30T21:42:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/</loc>
+    <lastmod>2022-10-30T21:42:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</loc>
+    <lastmod>2022-10-30T21:42:33+08:00</lastmod>
+  </url><url>
     <loc>https://huanglei.rocks/gallery/2022/</loc>
     <lastmod>2022-07-23T15:47:39+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/gallery/</loc>
     <lastmod>2022-07-23T15:47:39+08:00</lastmod>
   </url><url>
-    <loc>https://huanglei.rocks/</loc>
-    <lastmod>2022-07-23T15:47:39+08:00</lastmod>
-  </url><url>
     <loc>https://huanglei.rocks/tags/database/</loc>
     <lastmod>2022-03-12T17:42:25+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/posts/notes-on-influxdb-storage/</loc>
-    <lastmod>2022-03-12T17:42:25+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/posts/</loc>
-    <lastmod>2022-03-12T17:42:25+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/tags/</loc>
     <lastmod>2022-03-12T17:42:25+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/posts/parquet/</loc>
@@ -42,9 +48,6 @@
     <lastmod>2022-02-10T15:07:10+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/tags/programming/</loc>
-    <lastmod>2022-01-29T22:41:37+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/tags/rust/</loc>
     <lastmod>2022-01-29T22:41:37+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/posts/rust-pinning/</loc>

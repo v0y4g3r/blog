@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sat, 29 Jan 2022 22:41:37 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 30 Oct 2022 21:42:33 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>如何在同步的 Rust 方法中调用异步方法？</title>
+      <link>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</link>
+      <pubDate>Sun, 30 Oct 2022 21:42:33 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</guid>
+      <description>背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录</description>
+    </item>
+    
     <item>
       <title>理解 Rust 的 Pin 机制</title>
       <link>https://huanglei.rocks/posts/rust-pinning/</link>
