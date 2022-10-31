@@ -5,13 +5,13 @@
     <loc>https://huanglei.rocks/posts/</loc>
     <lastmod>2022-10-30T21:42:33+08:00</lastmod>
   </url><url>
+    <loc>https://huanglei.rocks/</loc>
+    <lastmod>2022-10-30T21:42:33+08:00</lastmod>
+  </url><url>
     <loc>https://huanglei.rocks/tags/rust/</loc>
     <lastmod>2022-10-30T21:42:33+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/tags/</loc>
-    <lastmod>2022-10-30T21:42:33+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/</loc>
     <lastmod>2022-10-30T21:42:33+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</loc>
