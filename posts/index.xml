@@ -10,7 +10,7 @@
 		<atom:link href="https://huanglei.rocks/posts/index.xml" rel="self" type="application/rss+xml" />
 		
 		<item>
-			<title>如何在同步的 Rust 方法中调用异步方法？</title>
+			<title>如何在同步的 Rust 方法中调用异步代码？</title>
 			<link>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</link>
 			<pubDate>Sun, 30 Oct 2022 21:42:33 +0800</pubDate>
 			
@@ -19,7 +19,7 @@
 			<content type="html"><![CDATA[<h2 id="背景和问题">背景和问题</h2>
 <p>最近在做我们的 <a href="https://greptime.com/">GreptimeDB</a> 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录一下。</p>
 <p>我们的整个项目是基于 <a href="https://tokio.rs/">Tokio</a> 这个异步 Rust runtime 的，它将协作式的任务运行和调度方便地封装在 <code>.await</code> 调用中，非常简洁优雅。但是这样也让不熟悉 Tokio 底层原理的用户一不小心就掉入到坑里。</p>
-<p>我们遇到的问题是，需要实现一个第三方库的 trait ，而这个 trait 是同步的😅
+<p>我们遇到的问题是，需要在一个第三方库的 trait 实现中执行一些异步代码，而这个 trait 是同步的😅
 ，我们无法修改这个 trait 的定义。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="k">trait</span><span class="w"> </span><span class="n">Sequencer</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl"><span class="w">    </span><span class="k">fn</span> <span class="nf">generate</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">i32</span><span class="o">&gt;</span><span class="p">;</span><span class="w">

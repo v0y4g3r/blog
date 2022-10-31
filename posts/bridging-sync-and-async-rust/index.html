@@ -7,11 +7,11 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<meta name="theme-color" content="#282c34">
 	<meta name="msapplication-TileColor" content="#282c34">
-<meta itemprop="name" content="如何在同步的 Rust 方法中调用异步方法？">
+<meta itemprop="name" content="如何在同步的 Rust 方法中调用异步代码？">
 <meta itemprop="description" content="背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录"><meta itemprop="datePublished" content="2022-10-30T21:42:33+08:00" />
 <meta itemprop="dateModified" content="2022-10-30T21:42:33+08:00" />
-<meta itemprop="wordCount" content="3221">
-<meta itemprop="keywords" content="Rust," /><meta property="og:title" content="如何在同步的 Rust 方法中调用异步方法？" />
+<meta itemprop="wordCount" content="3231">
+<meta itemprop="keywords" content="Rust," /><meta property="og:title" content="如何在同步的 Rust 方法中调用异步代码？" />
 <meta property="og:description" content="背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huanglei.rocks/posts/bridging-sync-and-async-rust/" /><meta property="article:section" content="posts" />
@@ -19,7 +19,7 @@
 <meta property="article:modified_time" content="2022-10-30T21:42:33+08:00" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="如何在同步的 Rust 方法中调用异步方法？"/>
+<meta name="twitter:title" content="如何在同步的 Rust 方法中调用异步代码？"/>
 <meta name="twitter:description" content="背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录"/>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -29,7 +29,7 @@
 	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
 	<link rel="shortcut icon" href="/favicon.ico">
 
-	<title>如何在同步的 Rust 方法中调用异步方法？</title>
+	<title>如何在同步的 Rust 方法中调用异步代码？</title>
 	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.59177ed03f2ade6e25a6fb1a3e78e4b791305b680396425a9fbd19250459a02c.css" integrity="sha256-WRd+0D8q3m4lpvsaPnjkt5EwW2gDlkJan70ZJQRZoCw=" crossorigin="anonymous">
 	
 </head>
@@ -53,7 +53,7 @@
 				</nav>
 			</div>
 			<div class="hdr-right hdr-icons">
-				<button id="toc-btn" class="hdr-btn desktop-only-ib" title="Table of Contents"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="https://twitter.com/ratuthomm" target="_blank" rel="noopener me" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a><a href="https://www.instagram.com/tokamako/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/v0y4g3r" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+				<button id="toc-btn" class="hdr-btn desktop-only-ib" title="Table of Contents"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="https://twitter.com/ratuthomm" target="_blank" rel="noopener me" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a><a href="https://www.instagram.com/ratuthomm" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/v0y4g3r" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
 			</div>
 		</div>
     <script defer data-domain="huanglei.rocks" src="https://plausible.io/js/plausible.js"></script>
@@ -73,7 +73,7 @@
 		<article class="thin">
 			<header class="post-header">
 				<div class="post-meta"><span>Oct 30, 2022</span></div>
-				<h1>如何在同步的 Rust 方法中调用异步方法？</h1>
+				<h1>如何在同步的 Rust 方法中调用异步代码？</h1>
 			</header>
 
 			<hr class="post-end">
@@ -81,7 +81,7 @@
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/rust">Rust</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>3221 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>3231 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-10-30 21:42 &#43;0800</p>
 			</footer>
 		</br>
@@ -90,7 +90,7 @@
 				<h2 id="背景和问题">背景和问题<a href="#背景和问题" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>最近在做我们的 <a href="https://greptime.com/">GreptimeDB</a> 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录一下。</p>
 <p>我们的整个项目是基于 <a href="https://tokio.rs/">Tokio</a> 这个异步 Rust runtime 的，它将协作式的任务运行和调度方便地封装在 <code>.await</code> 调用中，非常简洁优雅。但是这样也让不熟悉 Tokio 底层原理的用户一不小心就掉入到坑里。</p>
-<p>我们遇到的问题是，需要实现一个第三方库的 trait ，而这个 trait 是同步的😅
+<p>我们遇到的问题是，需要在一个第三方库的 trait 实现中执行一些异步代码，而这个 trait 是同步的😅
 ，我们无法修改这个 trait 的定义。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl"><span class="k">trait</span><span class="w"> </span><span class="n">Sequencer</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl"><span class="w">    </span><span class="k">fn</span> <span class="nf">generate</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">i32</span><span class="o">&gt;</span><span class="p">;</span><span class="w">
