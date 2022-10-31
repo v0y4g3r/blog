@@ -9,7 +9,7 @@
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
     <lastBuildDate>Sun, 30 Oct 2022 21:42:33 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/rust/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>如何在同步的 Rust 方法中调用异步方法？</title>
+      <title>如何在同步的 Rust 方法中调用异步代码？</title>
       <link>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</link>
       <pubDate>Sun, 30 Oct 2022 21:42:33 +0800</pubDate>
       

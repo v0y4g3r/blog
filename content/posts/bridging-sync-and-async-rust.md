@@ -1,5 +1,5 @@
 ---
-title: "如何在同步的 Rust 方法中调用异步方法？"
+title: "如何在同步的 Rust 方法中调用异步代码？"
 date: 2022-10-30T21:42:33+08:00
 draft: false
 toc: true
@@ -9,11 +9,12 @@ tags:
 ---
 
 ## 背景和问题
+
 最近在做我们的 [GreptimeDB](https://greptime.com/) 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录一下。
 
 我们的整个项目是基于 [Tokio](https://tokio.rs/) 这个异步 Rust runtime 的，它将协作式的任务运行和调度方便地封装在 `.await` 调用中，非常简洁优雅。但是这样也让不熟悉 Tokio 底层原理的用户一不小心就掉入到坑里。
 
-我们遇到的问题是，需要实现一个第三方库的 trait ，而这个 trait 是同步的{{< emoji ":sweat_smile:" >}}，我们无法修改这个 trait 的定义。
+我们遇到的问题是，需要在一个第三方库的 trait 实现中执行一些异步代码，而这个 trait 是同步的{{< emoji ":sweat_smile:" >}}，我们无法修改这个 trait 的定义。
 ```rust
 trait Sequencer {
     fn generate(&self) -> Vec<i32>;

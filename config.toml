@@ -70,7 +70,7 @@ enableEmoji = false  # Shorthand emojis in content files - https://gohugo.io/fun
 
   [[params.social]]
     name = "instagram"
-    url = "https://www.instagram.com/tokamako/"
+    url = "https://www.instagram.com/ratuthomm"
 
   [[params.social]]
     name = "github"
