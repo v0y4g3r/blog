@@ -149,7 +149,7 @@ fn generate(&self) -> Vec<i32> {
 }
 ```
 
-调用 `generate`方法的肯定是 Tokio 的 executor，那么 block_on 里面的 `self.generate_async().await`这个 future 又是谁在 poll 呢？一开始我以为，`futures::executor::block_on`会有一个内部的 runtme 去负责 `generate_async`的 poll。于是点进去[代码](https://docs.rs/futures-executor/0.3.6/src/futures_executor/local_pool.rs.html#77-104)（主要是`futures_executor::local_pool::run_executor`这个方法）：
+调用 `generate`方法的肯定是 Tokio 的 executor，那么 block_on 里面的 `self.generate_async().await`这个 future 又是谁在 poll 呢？一开始我以为，`futures::executor::block_on`会有一个内部的 runtime 去负责 `generate_async`的 poll。于是点进去[代码](https://docs.rs/futures-executor/0.3.6/src/futures_executor/local_pool.rs.html#77-104)（主要是`futures_executor::local_pool::run_executor`这个方法）：
 
 ```rust
 fn run_executor<T, F: FnMut(&mut Context<'_>) -> Poll<T>>(mut f: F) -> T {
