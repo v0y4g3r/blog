@@ -36,7 +36,7 @@ impl PlainSequencer {
 
 impl Sequencer for PlainSequencer {
     fn generate(&self) -> Vec<i32> {
-		self.generate_async().await
+        self.generate_async().await
     }
 }
 ```
@@ -63,7 +63,7 @@ impl Sequencer for PlainSequencer {
 
 #[cfg(test)]
 mod tests{
-	#[tokio::test]
+    #[tokio::test]
     async fn test_sync_method() {
         let sequencer = PlainSequencer {
             bound: 3
@@ -239,7 +239,6 @@ fn generate(&self) -> Vec<i32> {
 }
 
 // 那么你可以在调用 generate 之前使用 spawn_blocking 避免死锁
-#[tokio::test]
 #[tokio::test]
 async fn test_sync_method() {
     let sequencer = PlainSequencer {
