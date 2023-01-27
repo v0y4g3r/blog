@@ -17,7 +17,6 @@
 <meta property="og:url" content="https://huanglei.rocks/posts/notes-on-influxdb-storage/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-03-12T17:42:25+08:00" />
 <meta property="article:modified_time" content="2022-03-12T17:42:25+08:00" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Notes on InfluxDB Storage Engine"/>
 <meta name="twitter:description" content="InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。 InfluxDB 的存储系统 InfluxDB 的存储层有三个子系统： TSM：数"/>
@@ -206,12 +205,12 @@ Tag block 存储格式
 </ul>
 <p><img src="https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-tsi-search.svg" alt="influxdb-tsi-tag-lookup.png"></p>
 <h4 id="根据-tag-key-和-tag-value-查找">根据 Tag key 和 Tag value 查找<a href="#根据-tag-key-和-tag-value-查找" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-latex" data-lang="latex"><span class="line"><span class="ln" id="code-sec-1"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-1">1</a></span><span class="cl">Index.TagValueSeriesIDIterator 						@tsdb/index/tsi1/index.go:999
-</span></span><span class="line"><span class="ln" id="code-sec-2"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-2">2</a></span><span class="cl"><span class="k">\-</span>-- Partition.TagValueSeriesIDIterator 	@tsdb/index/tsi1/index.go:1010
-</span></span><span class="line"><span class="ln" id="code-sec-3"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-3">3</a></span><span class="cl">    <span class="k">\-</span>-- IndexFile.TagValueSeriesIDSet 		@tsdb/index/tsi1/partition.go:805
-</span></span><span class="line"><span class="ln" id="code-sec-4"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-4">4</a></span><span class="cl">        <span class="k">\-</span>-- TagBlock.DecodeTagValueElem	@tsdb/index/tsi1/index<span class="nb">_</span>file.go:335
-</span></span><span class="line"><span class="ln" id="code-sec-5"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-5">5</a></span><span class="cl">              <span class="nb">^</span>~ 这里的 tagblocks 在启动的时候就会从磁盘上的 IndexFile 读取到IndexFile.tblks 中来，
-</span></span><span class="line"><span class="ln" id="code-sec-6"><a style="outline: none; text-decoration:none; color:inherit" href="#code-sec-6">6</a></span><span class="cl">                  而 IndexFile 之外的变更保留在 LogFile 的内存索引中
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-latex" data-lang="latex"><span class="line"><span class="ln" id="code-sec-1"><a class="lnlinks" href="#code-sec-1">1</a></span><span class="cl">Index.TagValueSeriesIDIterator 						@tsdb/index/tsi1/index.go:999
+</span></span><span class="line"><span class="ln" id="code-sec-2"><a class="lnlinks" href="#code-sec-2">2</a></span><span class="cl"><span class="k">\-</span>-- Partition.TagValueSeriesIDIterator 	@tsdb/index/tsi1/index.go:1010
+</span></span><span class="line"><span class="ln" id="code-sec-3"><a class="lnlinks" href="#code-sec-3">3</a></span><span class="cl">    <span class="k">\-</span>-- IndexFile.TagValueSeriesIDSet 		@tsdb/index/tsi1/partition.go:805
+</span></span><span class="line"><span class="ln" id="code-sec-4"><a class="lnlinks" href="#code-sec-4">4</a></span><span class="cl">        <span class="k">\-</span>-- TagBlock.DecodeTagValueElem	@tsdb/index/tsi1/index<span class="nb">_</span>file.go:335
+</span></span><span class="line"><span class="ln" id="code-sec-5"><a class="lnlinks" href="#code-sec-5">5</a></span><span class="cl">              <span class="nb">^</span>~ 这里的 tagblocks 在启动的时候就会从磁盘上的 IndexFile 读取到IndexFile.tblks 中来，
+</span></span><span class="line"><span class="ln" id="code-sec-6"><a class="lnlinks" href="#code-sec-6">6</a></span><span class="cl">                  而 IndexFile 之外的变更保留在 LogFile 的内存索引中
 </span></span></code></pre></div><h4 id="index-compaction">Index Compaction<a href="#index-compaction" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>TSI 索引的 compaction 有两类：</p>
 <ul>
@@ -357,7 +356,7 @@ SeriesIndex 的数据组成
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-	<p>&copy; 2022 <a href="https://huanglei.rocks/about-me/">Lei, HUANG</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a> &#183; <a href="https://huanglei.rocks/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+	<p>&copy; 2023 <a href="https://huanglei.rocks/about-me/">Lei, HUANG</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a> &#183; <a href="https://huanglei.rocks/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
 	</p>
 </footer>
 
