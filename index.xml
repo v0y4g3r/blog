@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sun, 30 Oct 2022 21:42:33 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 10 Feb 2023 19:30:39 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2023</title>
+      <link>https://huanglei.rocks/gallery/2023/</link>
+      <pubDate>Fri, 10 Feb 2023 19:30:39 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/gallery/2023/</guid>
+      <description>Ricoh GR3 24mm, f/4, 1/30s, ISO 6400</description>
+    </item>
+    
     <item>
       <title>如何在同步的 Rust 方法中调用异步代码？</title>
       <link>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</link>
@@ -88,17 +97,6 @@ SONY ILCE-7RM4, Tamron 70-180 f/2.8, 180mm, f/7.1, 1/640, ISO 100</description>
       
       <guid>https://huanglei.rocks/posts/object-safety/</guid>
       <description>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety，这反而是初学者最为困惑的点。 为什么需要</description>
-    </item>
-    
-    <item>
-      <title>December 2021</title>
-      <link>https://huanglei.rocks/gallery/2021/</link>
-      <pubDate>Sun, 05 Dec 2021 12:15:59 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/gallery/2021/</guid>
-      <description>SONY ILCE-7RM4, Tamron 70-180 f/2.8, 130mm, f/2.8, 1/2000s, ISO 100
-SONY ILCE-7RM4, Sigma 24-70 f/2.8, 45mm, f/3.2, 1/30s, ISO 200
-SONY ILCE-7RM4, Sigma 24-70 f/2.8, 45mm, f/2.8, 1/30sec, ISO 400</description>
     </item>
     
   </channel>
