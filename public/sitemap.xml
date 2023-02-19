@@ -2,23 +2,29 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://huanglei.rocks/posts/</loc>
+    <lastmod>2023-02-19T18:28:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/tags/programming/</loc>
+    <lastmod>2023-02-19T18:28:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/</loc>
+    <lastmod>2023-02-19T18:28:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/tags/rust/</loc>
+    <lastmod>2023-02-19T18:28:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/tags/</loc>
+    <lastmod>2023-02-19T18:28:33+08:00</lastmod>
+  </url><url>
+    <loc>https://huanglei.rocks/posts/send-sync/</loc>
+    <lastmod>2023-02-19T18:28:33+08:00</lastmod>
+  </url><url>
     <loc>https://huanglei.rocks/gallery/2023/</loc>
     <lastmod>2023-02-10T19:30:39+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/gallery/</loc>
     <lastmod>2023-02-10T19:30:39+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/</loc>
-    <lastmod>2023-02-10T19:30:39+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/posts/</loc>
-    <lastmod>2022-10-30T21:42:33+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/tags/rust/</loc>
-    <lastmod>2022-10-30T21:42:33+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/tags/</loc>
-    <lastmod>2022-10-30T21:42:33+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</loc>
     <lastmod>2022-10-30T21:42:33+08:00</lastmod>
@@ -49,9 +55,6 @@
   </url><url>
     <loc>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</loc>
     <lastmod>2022-02-10T15:07:10+08:00</lastmod>
-  </url><url>
-    <loc>https://huanglei.rocks/tags/programming/</loc>
-    <lastmod>2022-01-29T22:41:37+08:00</lastmod>
   </url><url>
     <loc>https://huanglei.rocks/posts/rust-pinning/</loc>
     <lastmod>2022-01-29T22:41:37+08:00</lastmod>
