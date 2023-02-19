@@ -10,7 +10,7 @@
 <meta itemprop="name" content="LSM Tree 笔记">
 <meta itemprop="description" content="写入（Write path） 先从磁盘（HDD）写入的特性引入 append-only 的 WAL。 对于 KV 结构，如果写入是 append only的，那么就需要合并，不然读取性能太差。"><meta itemprop="datePublished" content="2022-02-10T22:34:39+08:00" />
 <meta itemprop="dateModified" content="2022-02-10T22:34:39+08:00" />
-<meta itemprop="wordCount" content="923">
+<meta itemprop="wordCount" content="1177">
 <meta itemprop="keywords" content="Database," /><meta property="og:title" content="LSM Tree 笔记" />
 <meta property="og:description" content="写入（Write path） 先从磁盘（HDD）写入的特性引入 append-only 的 WAL。 对于 KV 结构，如果写入是 append only的，那么就需要合并，不然读取性能太差。" />
 <meta property="og:type" content="article" />
@@ -80,7 +80,7 @@
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/database">Database</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>923 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1177 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2022-02-10 22:34 &#43;0800</p>
 			</footer>
 		</br>
@@ -124,23 +124,28 @@
 </ul>
 <h2 id="sstable-文件格式">SSTable 文件格式<a href="#sstable-文件格式" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>按 Block 进行存储，可以参考 LevelDB 和 RocksDB 的 SST 文件的格式。</p>
-<h2 id="合并策略">合并策略<a href="#合并策略" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="compaction">Compaction<a href="#compaction" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <ul>
-<li>
-<p>分级合并（Leveling Merge Policy）</p>
+<li>Leveling compaction
 <ul>
-<li>每一级都有且只有一个文件</li>
+<li>当某个 level 出现一个新的 sorted run 的时候触发；</li>
+<li>每一级的文件只会组成一个 sorted run，也就是说不同文件的 key range 不会重叠；</li>
+<li>写放大较大，但查询性能好，适合写少读多的 workload。</li>
 </ul>
 </li>
-<li>
-<p>分层合并 (Tiering Merge Policy)</p>
+<li>Tiering compaction
 <ul>
-<li>每一级有多个小文件，每个小文件中的 key 不重叠（LevelDB 和 RocksDB采用，尽管他们称自己为 leveling merge）</li>
+<li>当某个 level 的 size 达到阈值时触发；</li>
+<li>每一级可能存在多个 sorted run；</li>
+<li>读放大和空间放大小，但 compaction 开销大，适合读多写少的 workload。</li>
 </ul>
 </li>
-<li>
-<p>合并时间：定时合并、达到阈值合并。</p>
-</li>
+</ul>
+<blockquote>
+<p>对于 tiering 和 leveling 的比较，我们可以考虑一种极限情况：只有一个 level。此时 tiering 变成一个 append only 的 log，每次产生一个新的 SST 只会 append 到 SST file queue 末尾，这种情况下写性能较高因为 flush 不涉及到已有的 SST，而读取性能则较差，因为有可能需要遍历所有的 SST。而 leveling 要求一层内只有一个 sorted run，因此会变成一个 sorted array，每次 flush 都会导致现有的 SST 被完整重写以排序，因此写放大较大而读性能好。</p>
+</blockquote>
+<ul>
+<li>事实上工业级的 LSMT 往往会采用混合策略，比如 <a href="https://github.com/facebook/rocksdb/blob/9502856edd77260bf8a12a66f2a232078ddb2d60/db/compaction/compaction_picker_level.cc#L483-L484">RocksDB 在 Level 0 使用 tiering compaction</a> 以提高写性能而在其他 level 使用 leveling compaction 以提高查询性能。</li>
 </ul>
 <h2 id="读取read-path">读取（Read path）<a href="#读取read-path" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>核心原则：先热后冷读取最新的数据，一旦读取到就停止。</p>
@@ -193,7 +198,8 @@
 </ul>
 <h1 id="reference">Reference<a href="#reference" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
 <ul>
-<li><a href="https://www.youtube.com/watch?v=adamqSuHHck&amp;ab_channel=TalkGo">理论结合实践详解 lsm 树存储引擎（bitcask、moss、leveldb 等）</a></li>
+<li><a href="https://dl.acm.org/doi/abs/10.1145/3183713.3196927">Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/141186118">深入探讨LSM Compaction机制</a></li>
 </ul>
 
 			</div>
