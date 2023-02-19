@@ -53,14 +53,20 @@ LSMT 的数据分类
 
 
 
-## 合并策略
+## Compaction
 
-- 分级合并（Leveling Merge Policy）
-  - 每一级都有且只有一个文件
-- 分层合并 (Tiering Merge Policy)
-  - 每一级有多个小文件，每个小文件中的 key 不重叠（LevelDB 和 RocksDB采用，尽管他们称自己为 leveling merge）
+- Leveling compaction
+  - 当某个 level 出现一个新的 sorted run 的时候触发；
+  - 每一级的文件只会组成一个 sorted run，也就是说不同文件的 key range 不会重叠；
+  - 写放大较大，但查询性能好，适合写少读多的 workload。
+- Tiering compaction
+  - 当某个 level 的 size 达到阈值时触发；
+  - 每一级可能存在多个 sorted run；
+  - 读放大和空间放大小，但 compaction 开销大，适合读多写少的 workload。
 
-- 合并时间：定时合并、达到阈值合并。
+> 对于 tiering 和 leveling 的比较，我们可以考虑一种极限情况：只有一个 level。此时 tiering 变成一个 append only 的 log，每次产生一个新的 SST 只会 append 到 SST file queue 末尾，这种情况下写性能较高因为 flush 不涉及到已有的 SST，而读取性能则较差，因为有可能需要遍历所有的 SST。而 leveling 要求一层内只有一个 sorted run，因此会变成一个 sorted array，每次 flush 都会导致现有的 SST 被完整重写以排序，因此写放大较大而读性能好。
+
+- 事实上工业级的 LSMT 往往会采用混合策略，比如 [RocksDB 在 Level 0 使用 tiering compaction](https://github.com/facebook/rocksdb/blob/9502856edd77260bf8a12a66f2a232078ddb2d60/db/compaction/compaction_picker_level.cc#L483-L484) 以提高写性能而在其他 level 使用 leveling compaction 以提高查询性能。
 
 ## 读取（Read path）
 
@@ -115,6 +121,7 @@ Append-only 导致过期数据一致存在，直到被清理
 
 # Reference
 
-- [理论结合实践详解 lsm 树存储引擎（bitcask、moss、leveldb 等）](https://www.youtube.com/watch?v=adamqSuHHck&ab_channel=TalkGo)
+- [Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging](https://dl.acm.org/doi/abs/10.1145/3183713.3196927)
+- [深入探讨LSM Compaction机制](https://zhuanlan.zhihu.com/p/141186118)
 
 
