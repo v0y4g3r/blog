@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sun, 30 Oct 2022 21:42:33 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 19 Feb 2023 18:28:33 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>三个字母引发的惨案</title>
+      <link>https://huanglei.rocks/posts/send-sync/</link>
+      <pubDate>Sun, 19 Feb 2023 18:28:33 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/send-sync/</guid>
+      <description>问题 在 feat: compaction integration - GreptimeTeam/greptimedb #997 中，我们尝试把 table compaction 作为 flush 的后置任务触发，因此需要为 FlushJob增加一个 callback，因为涉及到异步操作，所以这个 callback</description>
+    </item>
+    
     <item>
       <title>如何在同步的 Rust 方法中调用异步代码？</title>
       <link>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</link>

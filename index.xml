@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Fri, 10 Feb 2023 19:30:39 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 19 Feb 2023 18:28:33 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>三个字母引发的惨案</title>
+      <link>https://huanglei.rocks/posts/send-sync/</link>
+      <pubDate>Sun, 19 Feb 2023 18:28:33 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/send-sync/</guid>
+      <description>问题 在 feat: compaction integration - GreptimeTeam/greptimedb #997 中，我们尝试把 table compaction 作为 flush 的后置任务触发，因此需要为 FlushJob增加一个 callback，因为涉及到异步操作，所以这个 callback</description>
+    </item>
+    
     <item>
       <title>2023</title>
       <link>https://huanglei.rocks/gallery/2023/</link>
@@ -88,15 +97,6 @@ SONY ILCE-7RM4, Tamron 70-180 f/2.8, 180mm, f/7.1, 1/640, ISO 100</description>
       
       <guid>https://huanglei.rocks/posts/rust-pinning/</guid>
       <description>Pin 之所以难以理解，是因为其是同时涉及到移动语义、所有权、异步的一个概念。可以说，Pin 是为了解决自引用数据结构的移动问题，而这个问题在 Rust 的基</description>
-    </item>
-    
-    <item>
-      <title>Rust 对象安全详解</title>
-      <link>https://huanglei.rocks/posts/object-safety/</link>
-      <pubDate>Thu, 09 Dec 2021 21:57:33 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/posts/object-safety/</guid>
-      <description>Rust 的 RFC 上只给出了 object-safety 的定义，但是没有解释为何在满足这些条件的时候 trait 是 object safe 的，以及为啥需要 object safety，这反而是初学者最为困惑的点。 为什么需要</description>
     </item>
     
   </channel>
