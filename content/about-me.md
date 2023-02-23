@@ -13,7 +13,6 @@ Hello, world!
 
 这里是黄磊，一位 Alfista/键盘车神/野生摄影师/全职程序员。
 
-2022 年的目标是读完[《伯罗奔尼撒战争史》](https://book.douban.com/subject/27058898/)。
 
 ## 经历
 
