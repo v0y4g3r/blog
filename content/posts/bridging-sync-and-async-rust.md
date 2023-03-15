@@ -113,10 +113,12 @@ cargo test --color=always --package tokio-demo --bin tt tests::test_sync_method 
      Running unittests src/common/tt.rs (target/debug/deps/tt-adb10abca6625c07)
 { "type": "suite", "event": "started", "test_count": 1 }
 { "type": "test", "event": "started", "name": "tests::test_sync_method" }
+
+# The test just hangs here...
 ```
 
 明明 `generate_async`方法里面只有一个简单的 sleep 调用，但是为什么 future 一直没完成呢？
-并且吊诡的是，同样的代码，在 `tokio::test`里面会 hang 住，但是在 `tokio::main`中则可以正常执行完毕：
+并且吊诡的是，同样的代码，在 `tokio::test` 里面会 hang 住，但是在 `tokio::main` 中则可以正常执行完毕：
 
 ```rust
 #[tokio::main]
@@ -142,23 +144,41 @@ vec: [0, 1, 2]
 
 ## Catchup
 
-凭着对 Rust 异步 runtime 的基本了解，我大概知道类似 Tokio 这样的异步 runtime 是一个 executor+scheduler+reactor 的模型。其中：
-
-- executor：在计算资源（在 std 环境下就是操作系统的 thread，嵌入式环境下则没有 thread 抽象）上执行真正的异步任务；
-- scheduler：负责维护一个异步任务的 FIFO 并且负责任务在不同 executor 之间调度；
-- reactor：抽象底层阻塞 IO，提供非阻塞事件监听和唤醒的功能（类似 epoll 那样）。
-
-Rust 中的一个异步代码块本质上是一个 future，
+在 Rust 中，异步代码块最终会被 [`make_async_expr`](https://github.com/rust-lang/rust/blob/7e966bcd03f6d0fae41f58cf80bcb10566ab971a/compiler/rustc_ast_lowering/src/expr.rs#L585) 编译成一个实现了 `std::future::Future` 的 generator:
 
 ```rust
-async {
-    println!("hello");
+#[tokio::test]
+async fn test_future() {
+    let future = async{
+        println!("hello");
+    };
+
+    // the above async block won't get executed until we await it.
+    future.await;
 }
 ```
 
-其是不会直接执行的，只有将其 spawn 到异步的 runtime 里面才会真正封装成一个任务交给 executor 执行。Runtime 有一套机制去唤醒异步任务，检查 future 的状态是否为 ready 等等。
+而 `.await` 本质上是一个语法糖，最终会被  [`lower_expr_await`](https://github.com/rust-lang/rust/blob/7e966bcd03f6d0fae41f58cf80bcb10566ab971a/compiler/rustc_ast_lowering/src/expr.rs#L717) 解开成为类似下面的语法结构:
 
-## 问题分析
+```rust
+// pseudo-rust code
+match ::std::future::IntoFuture::into_future(<expr>) {
+    mut __awaitee => loop {
+        match unsafe { ::std::future::Future::poll(
+            <::std::pin::Pin>::new_unchecked(&mut __awaitee),
+            ::std::future::get_context(task_context),
+        ) } {
+            ::std::task::Poll::Ready(result) => break result,
+            ::std::task::Poll::Pending => {}
+        }
+        task_context = yield ();
+    }
+}
+```
+
+在上面的伪代码中，可以看到有一个循环持续检查 generator 的状态是否 ready。既然如此是谁在检查呢？这就需要引入类似 Tokio 这样的异步 runtime 了，在这个 case 中，poll 的代码最终是交由 Tokio 的 executor 执行的。
+
+问题分析
 
 回顾完背景知识，我们再看一眼方法的实现：
 
@@ -239,7 +259,9 @@ thread '<unnamed>' panicked at 'there is no reactor running, must be called from
 ...
 ```
 
-### `tokio::main`和 `tokio::test`
+
+
+##  `tokio::main`和 `tokio::test`
 
 在分析完上面的原因之后，“为什么 `tokio::main`中不会 hang 住而 `tokio::test`会 hang 住”这个问题也很清楚了，他们两者所使用的的 runtime 并不一样。`tokio::main`使用的是多线程的 runtime，而 `tokio::test` 使用的是单线程的 runtime，而在单线程的 runtime 下，当前线程被 `futures::executor::block_on`卡死，那么用户提交的异步代码是一定没机会执行的，从而必然形成上面所说的死锁。
 
@@ -247,67 +269,11 @@ thread '<unnamed>' panicked at 'there is no reactor running, must be called from
 
 经过上面的分析，结合 Rust 基于 generator 的协作式异步特性，我们可以总结出 Rust 下桥接异步代码和同步代码的一些注意事项：
 
-- 在异步代码调用（可能阻塞的）同步代码时，请使用 `tokio::task::spawn_blocking` [[3]](https://docs.rs/tokio/0.2.22/tokio/task/fn.spawn_blocking.html)
-- 尽量避免在异步代码中进行大规模的 CPU 密集型计算，避免对任务调度的公平性造成影响（CPU 密集型任务可以使用 [rayon](https://docs.rs/rayon/latest/rayon/) 代替）
-- 在同步代码调用异步代码的时候，使用 `futures::executor::block_on`请务必注意和 `tokio::task::spawn_blocking`（或者`std::thread::spawn`）配合使用，因为前者会阻塞当前线程。理想情况是，通过一个 blocking-dedicated executor 去调用 `futures::executor::block_on`，然后再通过 `tokio::runtime::spawn`把任务丢回给原来的 runtime 去执行。
+- 将异步代码与同步代码结合使用可能会导致阻塞，因此不是一个明智的选择。
+-  在同步的上下文中调用异步代码时，请使用 `futures::executor::block_on` 并将异步代码 spawn 到另一个专用的 runtime 中执行 ，因为前者会阻塞当前线程。
+-  如果必须从异步的上下文中调用有可能阻塞的同步代码（比如文件 IO 等），则建议使用 `tokio::task::spawn_blocking` 在专门处理阻塞操作的 executor 上执行相应的代码。
 
-```rust
-// 如果你可以控制 generate 方法如何被调用
-fn generate(&self) -> Vec<i32> {
-    let bound = self.bound;
-    futures::executor::block_on(async {
-        RUNTIME.block_on(async {
-            let mut res = vec![];
-            for i in 0..bound {
-                res.push(i);
-                tokio::time::sleep(Duration::from_millis(100)).await;
-            }
-            res
-        })
-    })
-}
 
-// 那么你可以在调用 generate 之前使用 spawn_blocking 避免死锁
-#[tokio::test]
-async fn test_sync_method() {
-    let sequencer = PlainSequencer {
-        bound: 3
-    };
-    let vec = tokio::task::spawn_blocking(move || {
-        sequencer.generate()
-    });
-    println!("vec: {:?}", vec);
-}
-```
-
-```rust
-// 如果 generate 方法的调用方并不是你能控制的，那么请使用 std::thread::spawn
-fn generate(&self) -> Vec<i32> {
-    let bound = self.bound;
-    std::thread::spawn(move ||{
-        futures::executor::block_on(async {
-            RUNTIME.block_on(async {
-                let mut res = vec![];
-                for i in 0..bound {
-                    res.push(i);
-                    tokio::time::sleep(Duration::from_millis(100)).await;
-                }
-                res
-            })
-        })
-    }).join().unwrap()
-}
-
-#[tokio::test]
-async fn test_sync_method() {
-    let sequencer = PlainSequencer {
-        bound: 3
-    };
-	// 这里只是一个普通的同步方法调用
-    let vec = sequencer.generate();
-    println!("vec: {:?}", vec);
-}
-```
 
 ## 参考
 
@@ -315,4 +281,4 @@ async fn test_sync_method() {
 - [Generators and async/await](https://cfsamson.github.io/books-futures-explained/4_generators_async_await.html)
 - [Async and Await in Rust: a full proposal](https://news.ycombinator.com/item?id=17536441)
 - [calling futures::executor::block_on in block_in_place may hang](https://github.com/tokio-rs/tokio/issues/2603)
-- [tokio@0.2.14 + futures::executor::block_on causes hang](
+- [tokio@0.2.14 + futures::executor::block_on causes hang](https://github.com/tokio-rs/tokio/issues/2376)
