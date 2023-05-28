@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sun, 19 Feb 2023 18:28:33 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 28 May 2023 17:43:25 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Notes on Amazon Aurora</title>
+      <link>https://huanglei.rocks/posts/aurora/</link>
+      <pubDate>Sun, 28 May 2023 17:43:25 +0800</pubDate>
+      
+      <guid>https://huanglei.rocks/posts/aurora/</guid>
+      <description>Notes on Amazon Aurora Amazon Aurora SQL、事务处理等等完全基于 MySQL 将 page 这个层面的 IO 委托给基于 quorum-replication 的存储系统 基于 redo log 做数据复制，避免了 MySQL 正常复制场景下的大量 IO 支持 AZ+1 的容</description>
+    </item>
+    
     <item>
       <title>三个字母引发的惨案</title>
       <link>https://huanglei.rocks/posts/send-sync/</link>
@@ -88,15 +97,6 @@ SONY ILCE-7RM4, Tamron 70-180 f/2.8, 180mm, f/7.1, 1/640, ISO 100</description>
       
       <guid>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</guid>
       <description>安装 Octomments 按照 Octomments 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。 配置 GitHub issue 在配置文件中增加配置项： comment.owner：I</description>
-    </item>
-    
-    <item>
-      <title>理解 Rust 的 Pin 机制</title>
-      <link>https://huanglei.rocks/posts/rust-pinning/</link>
-      <pubDate>Sat, 29 Jan 2022 22:41:37 +0800</pubDate>
-      
-      <guid>https://huanglei.rocks/posts/rust-pinning/</guid>
-      <description>Pin 之所以难以理解，是因为其是同时涉及到移动语义、所有权、异步的一个概念。可以说，Pin 是为了解决自引用数据结构的移动问题，而这个问题在 Rust 的基</description>
     </item>
     
   </channel>
