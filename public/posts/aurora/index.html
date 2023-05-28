@@ -105,7 +105,7 @@
 </ul>
 </li>
 </ul>
-<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175431.png" alt=""></p>
+<p><img src="https://assets.huanglei.co/20230528175431.png" alt=""></p>
 <ul>
 <li>Aurora 的解决方法：the log is the database
 <ul>
@@ -115,7 +115,7 @@
 </ul>
 </li>
 </ul>
-<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175539.png" alt=""></p>
+<p><img src="https://assets.huanglei.co/20230528175539.png" alt=""></p>
 <h2 id="quorums">Quorums<a href="#quorums" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <ul>
 <li>Read-Write conflicts
@@ -163,7 +163,7 @@
 <li>因为 Aurora 设计目标需要容忍 AZ+1 failure</li>
 <li>节点 crash 是非常频繁的，比如运维操作。而一旦 3AZ 容灾模式下出现 AZ failure 的同时出现了机器下线或者 crash，那么就会立刻导致数据损坏。单个 AZ 挂掉再加一个节点挂掉的情况也能保证数据不丢失</li>
 </ul>
-<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175559.png" alt=""></p>
+<p><img src="https://assets.huanglei.co/20230528175559.png" alt=""></p>
 <ul>
 <li>上图是 3AZ （3 副本）情况，AZ 3 failure 之后，其他任何一个 AZ 只要一个节点出问题就会导致数据损坏。</li>
 <li>下图是 3AZ（6 副本），在 quroum 只剩 4/6 的时候（比如单 AZ failure），仍然可以支持写操作；在 quorum 只剩 3/6（单 AZ failure+单节点 crash ）的时候仍然可以支持读操作，并且可以依靠这个读操作快速恢复出一个副本从而继续提供写操作。这样就大大提升了系统的容灾能力。</li>
@@ -177,7 +177,7 @@
 </ul>
 <h2 id="storage-service-设计">Storage service 设计<a href="#storage-service-设计" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>核心目标：降低写入的延迟</p>
-<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175616.png" alt=""></p>
+<p><img src="https://assets.huanglei.co/20230528175616.png" alt=""></p>
 <ol>
 <li>接受主节点（primary instance）写入请求并且加入到内存队列中</li>
 <li>持久化到磁盘并且向主节点返回 ACK</li>
@@ -192,7 +192,7 @@
 <p>在上面的流程中所有的步骤都是异步的，而且只要 1 和 2 会影响写入的延迟</p>
 </blockquote>
 <h4 id="存储服务详细设计">存储服务详细设计<a href="#存储服务详细设计" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
-<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175647.png" alt=""></p>
+<p><img src="https://assets.huanglei.co/20230528175647.png" alt=""></p>
 <p>Aurora 存储结构</p>
 <ul>
 <li>Protection group &amp; segment
@@ -220,7 +220,7 @@
 </ul>
 </li>
 </ul>
-<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175706.png" alt=""></p>
+<p><img src="https://assets.huanglei.co/20230528175706.png" alt=""></p>
 <ul>
 <li>如上图 PG1 和 PG2 的 PGCL 分别为 103 和 104</li>
 <li>VCL 为 104，因为 104 之前的所有 log 都已经满足 Qw</li>
@@ -247,7 +247,7 @@
 </ul>
 </li>
 </ul>
-<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175721.png" alt=""></p>
+<p><img src="https://assets.huanglei.co/20230528175721.png" alt=""></p>
 <div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
  从完整的 Volume 例子来看，各个 segment、PG 上的 SCL、PGCL 和 VCL 
@@ -255,7 +255,7 @@
 </div>
 <h4 id="故障恢复crash-recovery">故障恢复（Crash recovery）<a href="#故障恢复crash-recovery" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>在恢复时，DB 实例需要根据存储节点的 SCL 恢复出来 PGCL 和 VCL</p>
-<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175743.png" alt=""></p>
+<p><img src="https://assets.huanglei.co/20230528175743.png" alt=""></p>
 <div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
 <i>
 故障恢复时进行日志截断（log truncation）

@@ -25,7 +25,7 @@ tags:
    - 真实世界的 HA 集群还需要一些其他的数据同步，比如 binlog 等等
    - 最糟糕的是这些写入都是同步的（图中的 1,2,3,4,5），可能导致延迟的成倍放大
 
-![](https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175431.png)
+![](https://assets.huanglei.co/20230528175431.png)
 
 
 - Aurora 的解决方法：the log is the database
@@ -34,7 +34,7 @@ tags:
    - 所谓的 page，只是 log application 的一个缓存
 
 
-![](https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175539.png)
+![](https://assets.huanglei.co/20230528175539.png)
 
 
 ## Quorums
@@ -63,7 +63,7 @@ tags:
 - 因为 Aurora 设计目标需要容忍 AZ+1 failure
 - 节点 crash 是非常频繁的，比如运维操作。而一旦 3AZ 容灾模式下出现 AZ failure 的同时出现了机器下线或者 crash，那么就会立刻导致数据损坏。单个 AZ 挂掉再加一个节点挂掉的情况也能保证数据不丢失
 
-![](https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175559.png)
+![](https://assets.huanglei.co/20230528175559.png)
 
 
 - 上图是 3AZ （3 副本）情况，AZ 3 failure 之后，其他任何一个 AZ 只要一个节点出问题就会导致数据损坏。
@@ -75,7 +75,7 @@ tags:
 ## Storage service 设计
 核心目标：降低写入的延迟
 
-![](https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175616.png)
+![](https://assets.huanglei.co/20230528175616.png)
 
 1. 接受主节点（primary instance）写入请求并且加入到内存队列中
 2. 持久化到磁盘并且向主节点返回 ACK
@@ -91,7 +91,7 @@ tags:
 
 #### 存储服务详细设计
 
-![](https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175647.png)
+![](https://assets.huanglei.co/20230528175647.png)
 
 Aurora 存储结构
 
@@ -108,7 +108,7 @@ Aurora 存储结构
    - PGCL 用来标识，PG 内部在此之前所有的写入已经持久化（到达 Qw ）了。
    - DB 实例在收到存储节点的 ACK 的时候，就能根据所有 6 副本当前的 SCL 判断自己的 PGCL
 
-![](https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175706.png)
+![](https://assets.huanglei.co/20230528175706.png)
 
    - 如上图 PG1 和 PG2 的 PGCL 分别为 103 和 104
    - VCL 为 104，因为 104 之前的所有 log 都已经满足 Qw
@@ -123,14 +123,14 @@ Aurora 存储结构
    - 小于 VCL 的最后一个 MTR 的 LSN
    - 用于规避 reader 看到不完整的 MTR，从而确保 MTR 的原子性
 
-![](https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175721.png)
+![](https://assets.huanglei.co/20230528175721.png)
 
 {{% img-title %}} 从完整的 Volume 例子来看，各个 segment、PG 上的 SCL、PGCL 和 VCL {{% /img-title %}} 
 
 #### 故障恢复（Crash recovery）
 在恢复时，DB 实例需要根据存储节点的 SCL 恢复出来 PGCL 和 VCL
 
-![](https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175743.png)
+![](https://assets.huanglei.co/20230528175743.png)
 {{% img-title %}}故障恢复时进行日志截断（log truncation）{{% /img-title %}} 
 
 
