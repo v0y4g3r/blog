@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#282c34">
+	<meta name="msapplication-TileColor" content="#282c34">
+<meta itemprop="name" content="Notes on Amazon Aurora">
+<meta itemprop="description" content="Notes on Amazon Aurora Amazon Aurora SQL、事务处理等等完全基于 MySQL 将 page 这个层面的 IO 委托给基于 quorum-replication 的存储系统 基于 redo log 做数据复制，避免了 MySQL 正常复制场景下的大量 IO 支持 AZ&#43;1 的容"><meta itemprop="datePublished" content="2023-05-28T17:43:25+08:00" />
+<meta itemprop="dateModified" content="2023-05-28T17:43:25+08:00" />
+<meta itemprop="wordCount" content="2321">
+<meta itemprop="keywords" content="Database," /><meta property="og:title" content="Notes on Amazon Aurora" />
+<meta property="og:description" content="Notes on Amazon Aurora Amazon Aurora SQL、事务处理等等完全基于 MySQL 将 page 这个层面的 IO 委托给基于 quorum-replication 的存储系统 基于 redo log 做数据复制，避免了 MySQL 正常复制场景下的大量 IO 支持 AZ&#43;1 的容" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huanglei.rocks/posts/aurora/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-05-28T17:43:25+08:00" />
+<meta property="article:modified_time" content="2023-05-28T17:43:25+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Notes on Amazon Aurora"/>
+<meta name="twitter:description" content="Notes on Amazon Aurora Amazon Aurora SQL、事务处理等等完全基于 MySQL 将 page 这个层面的 IO 委托给基于 quorum-replication 的存储系统 基于 redo log 做数据复制，避免了 MySQL 正常复制场景下的大量 IO 支持 AZ&#43;1 的容"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>Notes on Amazon Aurora</title>
+	<link rel="stylesheet" href="https://huanglei.rocks/css/style.min.9769612e13f1728d406e3a8c5fd8c525de278fb5793a661c18d8474d7acbfcc7.css" integrity="sha256-l2lhLhPxco1AbjqMX9jFJd4nj7V5OmYcGNhHTXrL/Mc=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://huanglei.rocks">Ratuthomm</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://huanglei.rocks/posts/">Posts</a>
+				<a href="https://huanglei.rocks/gallery/">Gallery</a>
+				<a href="https://huanglei.rocks/scribbles/">Scribbles</a>
+				<a href="https://huanglei.rocks/tags/">Tags</a>
+				<a href="https://huanglei.rocks/about-me/">About Me</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="toc-btn" class="hdr-btn desktop-only-ib" title="Table of Contents"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="https://twitter.com/ratuthomm" target="_blank" rel="noopener me" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a><a href="https://www.instagram.com/ratuthomm" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/v0y4g3r" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+    <script defer data-domain="huanglei.rocks" src="https://plausible.io/js/plausible.js"></script>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://huanglei.rocks/posts/">Posts</a></li>
+			<li><a href="https://huanglei.rocks/gallery/">Gallery</a></li>
+			<li><a href="https://huanglei.rocks/scribbles/">Scribbles</a></li>
+			<li><a href="https://huanglei.rocks/tags/">Tags</a></li>
+			<li><a href="https://huanglei.rocks/about-me/">About Me</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>May 28, 2023</span></div>
+				<h1>Notes on Amazon Aurora</h1>
+			</header>
+
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/database">Database</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2321 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2023-05-28 17:43 &#43;0800</p>
+			</footer>
+		</br>
+
+			<div class="content">
+				<h1 id="notes-on-amazon-aurora">Notes on Amazon Aurora<a href="#notes-on-amazon-aurora" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<h2 id="amazon-aurora">Amazon Aurora<a href="#amazon-aurora" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li>SQL、事务处理等等完全基于 MySQL</li>
+<li>将 page 这个层面的 IO 委托给基于 quorum-replication 的存储系统</li>
+<li>基于 redo log 做数据复制，避免了 MySQL 正常复制场景下的大量 IO</li>
+<li>支持 AZ+1 的容灾，简化了运维</li>
+</ul>
+<h2 id="the-log-is-the-database">The log is the database<a href="#the-log-is-the-database" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li>MySQL 的 IO 太多导致在云场景下写放大严重（3.1）
+<ul>
+<li>page 需要写到 heap file 里面</li>
+<li>redo log 需要写到 WAL 里面</li>
+<li>真实世界的 HA 集群还需要一些其他的数据同步，比如 binlog 等等</li>
+<li>最糟糕的是这些写入都是同步的（图中的 1,2,3,4,5），可能导致延迟的成倍放大</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175431.png" alt=""></p>
+<ul>
+<li>Aurora 的解决方法：the log is the database
+<ul>
+<li>只有 redo log 是写入到是跨 AZ 复制的 storage 层，因为将 redo log 回放一遍就可以得到 page 的最终状态</li>
+<li>DB 不直接写入 page 到 storage，storage 层将 log 物化为 page，on demand</li>
+<li>所谓的 page，只是 log application 的一个缓存</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175539.png" alt=""></p>
+<h2 id="quorums">Quorums<a href="#quorums" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li>Read-Write conflicts
+<ul>
+<li>Qr 和 Qw 一定会有交叉，一旦写入Qw，一定能够读到最新写入的数据</li>
+<li>Partial writes
+<ul>
+<li>假设一个 write 只写了 1 个节点就宕机了，那么这个写入实际上并未 commit</li>
+<li>reader 无论如何也是无法读取满足 Qr 的数据的</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Write-Write conflicts
+<ul>
+<li>对同一个状态的更改可能同时发生，在读取的时候 reader 可能从 Qr 中读取到不同的数据。这个时候需要在写入的时候加上版本号之类的机制判断
+<ul>
+<li>要么客户端从 Qr 中获取最高的版本，然后只能不停重试直到能够把这个版本的数据所依赖的副本数量补齐为止</li>
+<li>或者写入者维护一个最高的已确认版本号，读取的时候根据这个版本号来读取（适用于单 writer）</li>
+<li>或者 writer 每次写绝对多数（即 Qw &gt; n/2）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Quorum 和 Chain-replication
+<ul>
+<li>对 grey failure 节点处理更好
+<ul>
+<li>不需要检测故障或者等待超时</li>
+<li>在跨 AZ 复制或者长链路复制场景下时延更优</li>
+</ul>
+</li>
+<li>可以灵活调整 Qr 和 Qw 从而获得不同的写入、读取性能</li>
+<li>但是：
+<ul>
+<li>Qw 之外的节点需要同步最新的状态</li>
+<li>依赖 version number，因此更适合单 writer 场景（比如 WAL）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="为什么-aurora-需要-6-副本">为什么 Aurora 需要 6 副本?<a href="#为什么-aurora-需要-6-副本" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<ul>
+<li>因为 Aurora 设计目标需要容忍 AZ+1 failure</li>
+<li>节点 crash 是非常频繁的，比如运维操作。而一旦 3AZ 容灾模式下出现 AZ failure 的同时出现了机器下线或者 crash，那么就会立刻导致数据损坏。单个 AZ 挂掉再加一个节点挂掉的情况也能保证数据不丢失</li>
+</ul>
+<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175559.png" alt=""></p>
+<ul>
+<li>上图是 3AZ （3 副本）情况，AZ 3 failure 之后，其他任何一个 AZ 只要一个节点出问题就会导致数据损坏。</li>
+<li>下图是 3AZ（6 副本），在 quroum 只剩 4/6 的时候（比如单 AZ failure），仍然可以支持写操作；在 quorum 只剩 3/6（单 AZ failure+单节点 crash ）的时候仍然可以支持读操作，并且可以依靠这个读操作快速恢复出一个副本从而继续提供写操作。这样就大大提升了系统的容灾能力。</li>
+<li>为什么 6/4/3 可以容忍 AZ+1 失效？
+<ul>
+<li>当单个 AZ 失效的时候，quorum 还剩 4 个节点，这个时候仍然可，以接受 Qw=4 的写入</li>
+<li>如果这个时候又出现了单机 crash，仍然可以接受 Qr=3 的读请求，并且可以用读快速恢复出一个新的副本从而满足 Qw=4</li>
+<li>即使出现了单个 AZ 长时间的不可用，也可以降级为 4/3/2 的 quorum，使得即使 4 个节点也能接受写入请求</li>
+</ul>
+</li>
+</ul>
+<h2 id="storage-service-设计">Storage service 设计<a href="#storage-service-设计" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>核心目标：降低写入的延迟</p>
+<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175616.png" alt=""></p>
+<ol>
+<li>接受主节点（primary instance）写入请求并且加入到内存队列中</li>
+<li>持久化到磁盘并且向主节点返回 ACK</li>
+<li>将 log records 排序，找到自己所缺少的 log</li>
+<li>通过 gossip 协议向其他 storage node 请求缺少的 log 并补齐</li>
+<li>将连续的 log records apply 成为 data pages</li>
+<li>持久化到 S3 从而实现 time travel（基于时间点的快照）</li>
+<li>定期 GC</li>
+<li>定期校验 CRC</li>
+</ol>
+<blockquote>
+<p>在上面的流程中所有的步骤都是异步的，而且只要 1 和 2 会影响写入的延迟</p>
+</blockquote>
+<h4 id="存储服务详细设计">存储服务详细设计<a href="#存储服务详细设计" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175647.png" alt=""></p>
+<p>Aurora 存储结构</p>
+<ul>
+<li>Protection group &amp; segment
+<ul>
+<li>一个 database 的数据分布在不同的 PG 上</li>
+<li>PG 是逻辑上的一组 segments 组成的，segment 大小为 10G</li>
+</ul>
+</li>
+<li>SCL(Segment Complete LSN) (at storage server, per segment)
+<ul>
+<li>Segment 上最大的连续 LSN，可以认为是存储节点的 last log indexdra
+<ul>
+<li>注意这里的“连续”，并不代表是递增的连续。因为 LSN 本质上是 page 的偏移，不可能做到递增的连续。Aurora 这里的“连续”是通过 back link 机制实现的，即链表概念里面的连续：每个 log entry 都有一个指向前一个 entry 的连接。</li>
+<li>原文：&ldquo;SCL is the inclusive upper bound on log records <strong>continuously linked through the segment chain</strong> without gaps&rdquo;, &ldquo;Note that each segment of each PG only sees a subset of log records in the volume that affect the pages residing on that segment. <strong>Each log record contains a backlink that identifies the previous log record for that PG</strong>. These backlinks can be used to track the point of completeness of the log records that have reached each segment to establish a Segment Complete LSN (SCL) that identifies the greatest LSN below which all log records of the PG have been received. &quot;</li>
+</ul>
+</li>
+<li>SCL 之前（包含 SCL）的 log 都已经在当前存储节点上了</li>
+<li>存储节点在向 DB 实例返回写入 ACK 的同时会带上 SCL，这样 DB 节点就能知道所有存储节点最新的 SCL</li>
+</ul>
+</li>
+<li>PGCL(Protection Group Complete LSN) (at database instance, per PG)
+<ul>
+<li>PGCL 用来标识，PG 内部在此之前所有的写入已经持久化（到达 Qw ）了。</li>
+<li>DB 实例在收到存储节点的 ACK 的时候，就能根据所有 6 副本当前的 SCL 判断自己的 PGCL</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175706.png" alt=""></p>
+<ul>
+<li>如上图 PG1 和 PG2 的 PGCL 分别为 103 和 104</li>
+<li>VCL 为 104，因为 104 之前的所有 log 都已经满足 Qw</li>
+<li>VCL(Volume Complete LSN)	 (at database instance, per volume)
+<ul>
+<li>The database instance also locally advances a Volume Complete LSN (VCL) once there are no pending writes preventing PGCL from advancing for one of its protection groups.</li>
+<li>DB 实例必须确保整个 log chain 的完整性。小于等于 VCL 的事务都已经确认提交，在 recover 的时候一定能够从存储节点恢复出来。
+<ul>
+<li>VCL 和 SCL 有什么区别？SCL 是针对 segment 来说的，用处是 storage 节点之间互相补齐副本数量；VCL 是针对 DB 实例的整个 log chain 来说的</li>
+</ul>
+</li>
+<li>在 recover 的时候，LSN 大于 VCL 的数据必须被删除</li>
+<li>当事务的 commit redo log 的 LSN 小于等于 VCL 的时候，这个事务就可以被认为是 commit 了
+<ul>
+<li>Aurora must wait to acknowledge commits until it is able to  advance VCL beyond the requesting SCN. (2.3)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>VDL(Volume Durable LSN)
+<ul>
+<li>小于 VCL 的最后一个 MTR 的 LSN</li>
+<li>用于规避 reader 看到不完整的 MTR，从而确保 MTR 的原子性</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175721.png" alt=""></p>
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
+<i>
+ 从完整的 Volume 例子来看，各个 segment、PG 上的 SCL、PGCL 和 VCL 
+</i>
+</div>
+<h4 id="故障恢复crash-recovery">故障恢复（Crash recovery）<a href="#故障恢复crash-recovery" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>在恢复时，DB 实例需要根据存储节点的 SCL 恢复出来 PGCL 和 VCL</p>
+<p><img src="https://rocks-bucket-1253142855.cos.ap-shanghai.myqcloud.com/20230528175743.png" alt=""></p>
+<div style="text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;">
+<i>
+故障恢复时进行日志截断（log truncation）
+</i>
+</div>
+<h2 id="read-replica">Read replica<a href="#read-replica" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>通过只读副本提高读性能。Aurora 的只读副本与主副本连接相同的 storage volume，并且只读副本从主副本接收 redo log 流用于更新 DB instance 内存的 buffer cache。如果 redo log 流包含了不在当前只读副本内存中的 data page，只读副本是直接将这些 log 丢弃的，因为这些 page 一定可以从 storage volume 中读出来。</p>
+<h2 id="reference">Reference<a href="#reference" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li><a href="https://link.zhihu.com/?target=https%3A//web.stanford.edu/class/cs245/readings/aurora.pdf">Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Database</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//pages.cs.wisc.edu/~yxy/cs764-f20/papers/aurora-sigmod-18.pdf">Amazon Aurora: On Avoiding Distributed Consensus for I/Os, Commits, and Membership Changes</a></li>
+<li><a href="http://nil.lcs.mit.edu/6.824/2020/papers/aurora-faq.txt">Amazon Aurora FAQ - nil.lcs.mit.edu</a></li>
+<li><a href="https://pdos.csail.mit.edu/6.824/notes/l-aurora.txt">Lecture 10: Database logging, quorums, Amazon Aurora -  pdos.csail.mit.edu</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/549700484">从分布式Distributed、日志Log、一致性Consistency分析AWS Aurora for MySQL</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/391235701">01-AWS Aurora</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/508928878">Aurora读写细节分析</a></li>
+</ul>
+
+			</div>
+
+<div class="related-posts thin">
+	<h2>See Also</h2>
+	<ul>
+	
+	<li><a href="/posts/notes-on-influxdb-storage/">Notes on InfluxDB Storage Engine</a></li>
+	
+	<li><a href="/posts/parquet/">Apache Parquet 格式简介</a></li>
+	
+	<li><a href="/posts/note-on-lsmt/">LSM Tree 笔记</a></li>
+	
+	</ul>
+</div>
+
+		</article>
+		<aside id="toc">
+			<div class="toc-title">Table of Contents</div>
+			<nav id="TableOfContents">
+  <ul>
+    <li><a href="#amazon-aurora">Amazon Aurora</a></li>
+    <li><a href="#the-log-is-the-database">The log is the database</a></li>
+    <li><a href="#quorums">Quorums</a>
+      <ul>
+        <li><a href="#为什么-aurora-需要-6-副本">为什么 Aurora 需要 6 副本?</a></li>
+      </ul>
+    </li>
+    <li><a href="#storage-service-设计">Storage service 设计</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#存储服务详细设计">存储服务详细设计</a></li>
+            <li><a href="#故障恢复crash-recovery">故障恢复（Crash recovery）</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#read-replica">Read replica</a></li>
+    <li><a href="#reference">Reference</a></li>
+  </ul>
+</nav>
+		</aside>
+		<div class="post-nav thin">
+			<a class="prev-post" href="https://huanglei.rocks/posts/send-sync/">
+				<span class="post-nav-label">Older&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>三个字母引发的惨案</span>
+			</a>
+		</div>
+		<div id="comments" class="thin"><script src="https://giscus.app/client.js"
+        data-repo="v0y4g3r/blog"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkyNTQ5MDMwOTk="
+        data-category="Announcements"
+        data-category-id="DIC_kwDODzGDO84CBGIK"
+        data-mapping="pathname"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="light"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+	<p>&copy; 2023 <a href="https://huanglei.rocks/about-me/">Lei, HUANG</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>
+		&#183; <a href="https://huanglei.rocks/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+	</p>
+</footer>
+
+
+	
+
+	
+	  <script type="text/javascript">
+	    window.MathJax = {
+	      tex2jax: {
+	        inlineMath: [['$','$'], ['\\(','\\)']],
+	        displayMath: [['$$','$$'], ['\[','\]']],
+	        processEscapes: true,
+	        processEnvironments: true,
+	        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+	        TeX: { equationNumbers: { autoNumber: "AMS" },
+	          extensions: ["AMSmath.js", "AMSsymbols.js", "color.js"] }
+	      },
+	      AuthorInit: function () {
+	        MathJax.Hub.Register.StartupHook("Begin",function () {
+	          MathJax.Hub.Queue(function() {
+	            var all = MathJax.Hub.getAllJax(), i;
+	            for(i = 0; i < all.length; i += 1) {
+	              all[i].SourceElement().parentNode.className += ' has-jax';
+	            }
+	          })
+	        });
+	      }
+	    };
+	  </script>
+	  <script  type="text/javascript"
+	    src="https://cdn.bootcss.com/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+	  </script>
+	
+
+
+	<script src="https://huanglei.rocks/js/bundle.min.580988ed2982bcbb74a1773c7abea97b43e4c43b9324e10cda0813ec6ec4bb67.js" integrity="sha256-WAmI7SmCvLt0oXc8er6pe0PkxDuTJOEM2ggT7G7Eu2c=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>
