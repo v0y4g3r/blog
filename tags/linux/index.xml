@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Tue, 03 Apr 2018 05:58:37 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 03 Apr 2018 05:58:37 +0800</lastBuildDate>
+    <atom:link href="https://huanglei.rocks/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Manjaro 配置指南</title>
       <link>https://huanglei.rocks/posts/manjaro-config-manual/</link>
       <pubDate>Tue, 03 Apr 2018 05:58:37 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/manjaro-config-manual/</guid>
       <description>Manjaro 是基于 ArchLinux 的发行版, 既具备了开箱即用的用户友好性, 又继承了 ArchLinux 滚动更新的特性和内容丰富的 AUR 软件包, 并且内置了 MHWD ,方便用户管理硬件驱动. Manjaro 具有G</description>
     </item>
-    
   </channel>
 </rss>

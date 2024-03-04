@@ -7,24 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Fri, 12 Feb 2021 22:01:27 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 12 Feb 2021 22:01:27 +0800</lastBuildDate>
+    <atom:link href="https://huanglei.rocks/tags/java/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>现代 Java 捉虫指南</title>
       <link>https://huanglei.rocks/posts/java-debug-manual/</link>
       <pubDate>Fri, 12 Feb 2021 22:01:27 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/java-debug-manual/</guid>
       <description>gnu.hl@antgroup.com 2020-12-01 本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。 当我们排查问题的时候，我们关注什么？ 横向来看: context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看: application runtime kernel Arthas Arthas 是基于</description>
     </item>
-    
     <item>
       <title>为什么我的 Netty 应用没有响应？</title>
       <link>https://huanglei.rocks/posts/why-netty-not-responding/</link>
       <pubDate>Tue, 19 Mar 2019 22:41:37 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/why-netty-not-responding/</guid>
       <description>最终问题的根本原因还是没有深入理解 Netty 的线程模型。 想法就是等服务器端启动， bind成功后再启动client。要想监听server端bind成功</description>
     </item>
-    
   </channel>
 </rss>

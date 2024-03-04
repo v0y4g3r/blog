@@ -17,8 +17,8 @@
 <meta property="og:url" content="https://huanglei.rocks/posts/java-debug-manual/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-02-12T22:01:27+08:00" />
 <meta property="article:modified_time" content="2021-02-12T22:01:27+08:00" />
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="现代 Java 捉虫指南"/>
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="现代 Java 捉虫指南"/>
 <meta name="twitter:description" content="gnu.hl@antgroup.com 2020-12-01 本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。 当我们排查问题的时候，我们关注什么？ 横向来看: context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看: application runtime kernel Arthas Arthas 是基于"/>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -39,7 +39,7 @@
 		<div class="hdr-wrapper section-inner">
 			<div class="hdr-left">
 				<div class="site-branding">
-					<a href="https://huanglei.rocks">Ratuthomm</a>
+					<a href="https://huanglei.rocks/">Ratuthomm</a>
 				</div>
 				<nav class="site-nav hide-in-mobile">
 					
@@ -229,16 +229,16 @@ profiler start --event lock -d 10
 </span></span></code></pre></div><hr>
 <h2 id="sa-jdi--clhsdbcont">sa-jdi / clhsdb(cont.)<a href="#sa-jdi--clhsdbcont" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <h5 id="使用-sa-jdi-分析反射生成的类">使用 sa-jdi 分析反射生成的类<a href="#使用-sa-jdi-分析反射生成的类" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h5>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="ln" id="code-sec-1"><a class="lnlinks" href="#code-sec-1">1</a></span><span class="cl"><span class="kn">import</span> <span class="nn">sun.jvm.hotspot.oops.InstanceKlass</span><span class="o">;</span>
-</span></span><span class="line"><span class="ln" id="code-sec-2"><a class="lnlinks" href="#code-sec-2">2</a></span><span class="cl"><span class="kn">import</span> <span class="nn">sun.jvm.hotspot.tools.jcore.ClassFilter</span><span class="o">;</span>
-</span></span><span class="line"><span class="ln" id="code-sec-3"><a class="lnlinks" href="#code-sec-3">3</a></span><span class="cl">
-</span></span><span class="line"><span class="ln" id="code-sec-4"><a class="lnlinks" href="#code-sec-4">4</a></span><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MethodAccessorFilter</span> <span class="kd">implements</span> <span class="n">ClassFilter</span> <span class="o">{</span>
-</span></span><span class="line"><span class="ln" id="code-sec-5"><a class="lnlinks" href="#code-sec-5">5</a></span><span class="cl">    <span class="nd">@Override</span>
-</span></span><span class="line"><span class="ln" id="code-sec-6"><a class="lnlinks" href="#code-sec-6">6</a></span><span class="cl">    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">canInclude</span><span class="o">(</span><span class="n">InstanceKlass</span> <span class="n">instanceKlass</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="ln" id="code-sec-7"><a class="lnlinks" href="#code-sec-7">7</a></span><span class="cl">        <span class="k">return</span> <span class="n">instanceKlass</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">asString</span><span class="o">().</span><span class="na">startsWith</span><span class="o">(</span><span class="s">&#34;sun/reflect/Generated&#34;</span><span class="o">);</span>
-</span></span><span class="line"><span class="ln" id="code-sec-8"><a class="lnlinks" href="#code-sec-8">8</a></span><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="ln" id="code-sec-9"><a class="lnlinks" href="#code-sec-9">9</a></span><span class="cl"><span class="o">}</span>
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln" id="code-sec-1"><a class="lnlinks" href="#code-sec-1">1</a></span><span class="cl">java -classpath <span class="s2">&#34;.:</span><span class="nv">$JAVA_HOME</span><span class="s2">/lib/sa-jdi.jar&#34;</span> <span class="se">\
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="ln" id="code-sec-1"><a class="lnlinks" href="#code-sec-1">1</a></span><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">sun.jvm.hotspot.oops.InstanceKlass</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-2"><a class="lnlinks" href="#code-sec-2">2</a></span><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">sun.jvm.hotspot.tools.jcore.ClassFilter</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-3"><a class="lnlinks" href="#code-sec-3">3</a></span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-4"><a class="lnlinks" href="#code-sec-4">4</a></span><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MethodAccessorFilter</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ClassFilter</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-5"><a class="lnlinks" href="#code-sec-5">5</a></span><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-6"><a class="lnlinks" href="#code-sec-6">6</a></span><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">canInclude</span><span class="p">(</span><span class="n">InstanceKlass</span><span class="w"> </span><span class="n">instanceKlass</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-7"><a class="lnlinks" href="#code-sec-7">7</a></span><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">instanceKlass</span><span class="p">.</span><span class="na">getName</span><span class="p">().</span><span class="na">asString</span><span class="p">().</span><span class="na">startsWith</span><span class="p">(</span><span class="s">&#34;sun/reflect/Generated&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-8"><a class="lnlinks" href="#code-sec-8">8</a></span><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="ln" id="code-sec-9"><a class="lnlinks" href="#code-sec-9">9</a></span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln" id="code-sec-1"><a class="lnlinks" href="#code-sec-1">1</a></span><span class="cl">java -classpath <span class="s2">&#34;.:</span><span class="nv">$JAVA_HOME</span><span class="s2">/lib/sa-jdi.jar&#34;</span> <span class="se">\
 </span></span></span><span class="line"><span class="ln" id="code-sec-2"><a class="lnlinks" href="#code-sec-2">2</a></span><span class="cl"><span class="se"></span>-Dsun.jvm.hotspot.tools.jcore.filter<span class="o">=</span>MethodAccessorFilter sun.jvm.hotspot.tools.jcore.ClassDump &lt;pid&gt;
 </span></span></code></pre></div><blockquote>
 <p>SA-JDI is deprecated since Java9 &ndash; <a href="https://bugs.openjdk.java.net/browse/JDK-8158050">JDK-8158050</a></p>
@@ -858,7 +858,7 @@ sudo &lt;path-to&gt;/trace.py -p &lt;java_pid&gt; &#39;u::thread__sleep__begin&#
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-	<p>&copy; 2023 <a href="https://huanglei.rocks/about-me/">Lei, HUANG</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>
+	<p>&copy; 2024 <a href="https://huanglei.rocks//about-me/">Lei, HUANG</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>
 		&#183; <a href="https://huanglei.rocks/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
 	</p>
 </footer>

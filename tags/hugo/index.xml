@@ -1,33 +1,27 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>hugo on Ratuthomm</title>
+    <title>Hugo on Ratuthomm</title>
     <link>https://huanglei.rocks/tags/hugo/</link>
-    <description>Recent content in hugo on Ratuthomm</description>
+    <description>Recent content in Hugo on Ratuthomm</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Thu, 10 Feb 2022 15:07:10 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 10 Feb 2022 15:07:10 +0800</lastBuildDate>
+    <atom:link href="https://huanglei.rocks/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>使用 GitHub Issue 作为 Hugo 的评论系统</title>
       <link>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</link>
       <pubDate>Thu, 10 Feb 2022 15:07:10 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</guid>
       <description>安装 Octomments 按照 Octomments 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。 配置 GitHub issue 在配置文件中增加配置项： comment.owner：I</description>
     </item>
-    
     <item>
       <title>Add MathJax and Graphviz support for HUGO</title>
       <link>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</link>
       <pubDate>Sun, 12 Apr 2020 14:22:22 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/add-math-and-dot-for-hugo/</guid>
-      <description>Get into your theme folder
-Find some directory named layouts/posts/single.html
-Inside the {{ define main }} block, paste following snippets
-1{{ if .Params.viz }} 2 &amp;lt;script type=&amp;#34;text/javascript&amp;#34; src=&amp;#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&amp;#34;&amp;gt; &amp;lt;/script&amp;gt; 3 &amp;lt;script type=&amp;#34;text/javascript&amp;#34;&amp;gt; 4 (function(){ 5 var vizPrefix = &amp;#34;language-viz-&amp;#34;; 6 Array.prototype.forEach.call(document.querySelectorAll(&amp;#34;[class^=&amp;#34; + vizPrefix + &amp;#34;]&amp;#34;), function(x){ 7 var engine; 8 x.getAttribute(&amp;#34;class&amp;#34;).split(&amp;#34; &amp;#34;).forEach(function(cls){ 9 if (cls.startsWith(vizPrefix)) { 10 engine = cls.substr(vizPrefix.length); 11 } 12 }); 13 var image = new DOMParser().</description>
+      <description>Get into your theme folder&#xA;Find some directory named layouts/posts/single.html&#xA;Inside the {{ define main }} block, paste following snippets&#xA;1{{ if .Params.viz }} 2 &amp;lt;script type=&amp;#34;text/javascript&amp;#34; src=&amp;#34;https://cdn.bootcss.com/viz.js/1.8.2/viz.js&amp;#34;&amp;gt; &amp;lt;/script&amp;gt; 3 &amp;lt;script type=&amp;#34;text/javascript&amp;#34;&amp;gt; 4 (function(){ 5 var vizPrefix = &amp;#34;language-viz-&amp;#34;; 6 Array.prototype.forEach.call(document.querySelectorAll(&amp;#34;[class^=&amp;#34; + vizPrefix + &amp;#34;]&amp;#34;), function(x){ 7 var engine; 8 x.getAttribute(&amp;#34;class&amp;#34;).split(&amp;#34; &amp;#34;).forEach(function(cls){ 9 if (cls.startsWith(vizPrefix)) { 10 engine = cls.substr(vizPrefix.length); 11 } 12 }); 13 var image = new DOMParser().</description>
     </item>
-    
   </channel>
 </rss>

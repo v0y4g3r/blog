@@ -7,97 +7,77 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sun, 28 May 2023 17:43:25 +0800</lastBuildDate><atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 28 May 2023 17:43:25 +0800</lastBuildDate>
+    <atom:link href="https://huanglei.rocks/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Notes on Amazon Aurora</title>
       <link>https://huanglei.rocks/posts/aurora/</link>
       <pubDate>Sun, 28 May 2023 17:43:25 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/aurora/</guid>
       <description>Notes on Amazon Aurora Amazon Aurora SQL、事务处理等等完全基于 MySQL 将 page 这个层面的 IO 委托给基于 quorum-replication 的存储系统 基于 redo log 做数据复制，避免了 MySQL 正常复制场景下的大量 IO 支持 AZ+1 的容</description>
     </item>
-    
     <item>
       <title>三个字母引发的惨案</title>
       <link>https://huanglei.rocks/posts/send-sync/</link>
       <pubDate>Sun, 19 Feb 2023 18:28:33 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/send-sync/</guid>
       <description>问题 在 feat: compaction integration - GreptimeTeam/greptimedb #997 中，我们尝试把 table compaction 作为 flush 的后置任务触发，因此需要为 FlushJob增加一个 callback，因为涉及到异步操作，所以这个 callback</description>
     </item>
-    
     <item>
       <title>2023</title>
       <link>https://huanglei.rocks/gallery/2023/</link>
       <pubDate>Fri, 10 Feb 2023 19:30:39 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/gallery/2023/</guid>
       <description>Ricoh GR3 24mm, f/4, 1/30s, ISO 6400</description>
     </item>
-    
     <item>
       <title>如何在同步的 Rust 方法中调用异步代码？</title>
       <link>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</link>
       <pubDate>Sun, 30 Oct 2022 21:42:33 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</guid>
       <description>背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录</description>
     </item>
-    
     <item>
       <title>2022</title>
       <link>https://huanglei.rocks/gallery/2022/</link>
       <pubDate>Sat, 23 Jul 2022 15:47:39 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/gallery/2022/</guid>
-      <description>SONY ILCE-7RM4, Sigma 24-70 f/2.8, 24mm, f/5.6, 1/400s, ISO 200
-SONY ILCE-7RM4, Tamron 70-180 f/2.8, 180mm, f/7.1, 1/640, ISO 100</description>
+      <description>SONY ILCE-7RM4, Sigma 24-70 f/2.8, 24mm, f/5.6, 1/400s, ISO 200&#xA;SONY ILCE-7RM4, Tamron 70-180 f/2.8, 180mm, f/7.1, 1/640, ISO 100</description>
     </item>
-    
     <item>
       <title>Notes on InfluxDB Storage Engine</title>
       <link>https://huanglei.rocks/posts/notes-on-influxdb-storage/</link>
       <pubDate>Sat, 12 Mar 2022 17:42:25 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/notes-on-influxdb-storage/</guid>
       <description>InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。 InfluxDB 的存储系统 InfluxDB 的存储层有三个子系统： TSM：数</description>
     </item>
-    
     <item>
       <title>Apache Parquet 格式简介</title>
       <link>https://huanglei.rocks/posts/parquet/</link>
       <pubDate>Sat, 05 Mar 2022 15:44:33 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/parquet/</guid>
       <description>简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。 数据 layout 一个 Parquet 文件的数</description>
     </item>
-    
     <item>
       <title>Apache BookKeeper 笔记</title>
       <link>https://huanglei.rocks/posts/bookkeeper-note/</link>
       <pubDate>Thu, 24 Feb 2022 01:18:35 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/bookkeeper-note/</guid>
       <description>BookKeeper 的使用场景 WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等 核心理念 通过条带化写（</description>
     </item>
-    
     <item>
       <title>LSM Tree 笔记</title>
       <link>https://huanglei.rocks/posts/note-on-lsmt/</link>
       <pubDate>Thu, 10 Feb 2022 22:34:39 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/note-on-lsmt/</guid>
       <description>写入（Write path） 先从磁盘（HDD）写入的特性引入 append-only 的 WAL。 对于 KV 结构，如果写入是 append only的，那么就需要合并，不然读取性能太差。</description>
     </item>
-    
     <item>
       <title>使用 GitHub Issue 作为 Hugo 的评论系统</title>
       <link>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</link>
       <pubDate>Thu, 10 Feb 2022 15:07:10 +0800</pubDate>
-      
       <guid>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</guid>
       <description>安装 Octomments 按照 Octomments 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。 配置 GitHub issue 在配置文件中增加配置项： comment.owner：I</description>
     </item>
-    
   </channel>
 </rss>
