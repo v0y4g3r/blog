@@ -17,10 +17,10 @@ enableEmoji = false  # Shorthand emojis in content files - https://gohugo.io/fun
 # googleAnalytics = "UA-123-45"
 # disqusShortname = "yourdiscussshortname"
 
+enableRobotsTXT = true
+
 #staticDir=["/static"]
 
-[author]
-  name = "Lei, HUANG"
 
 [blackfriday]
   # hrefTargetBlank = true
@@ -68,6 +68,8 @@ enableEmoji = false  # Shorthand emojis in content files - https://gohugo.io/fun
     name = "twitter"
     url = "https://twitter.com/ratuthomm"
 
+  [[params.author]]
+    name = "Lei, HUANG"
   [[params.social]]
     name = "instagram"
     url = "https://www.instagram.com/ratuthomm"

@@ -1,0 +1,11 @@
+User-agent: *
+
+Disallow: /*.gif$
+Disallow: /*.jpg$
+Disallow: /*.jpeg$
+Disallow: /*.png$
+Disallow: /*.PNG$
+
+Disallow: /coding/194.html
+Disallow: /coding/inside-jdk-hashmap.html
+
