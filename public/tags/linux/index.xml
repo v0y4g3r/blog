@@ -14,7 +14,7 @@
       <link>https://huanglei.rocks/posts/manjaro-config-manual/</link>
       <pubDate>Tue, 03 Apr 2018 05:58:37 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/manjaro-config-manual/</guid>
-      <description>Manjaro 是基于 ArchLinux 的发行版, 既具备了开箱即用的用户友好性, 又继承了 ArchLinux 滚动更新的特性和内容丰富的 AUR 软件包, 并且内置了 MHWD ,方便用户管理硬件驱动. Manjaro 具有G</description>
+      <description>&lt;p&gt;Manjaro 是基于 ArchLinux 的发行版, 既具备了开箱即用的用户友好性, 又继承了 ArchLinux 滚动更新的特性和内容丰富的 AUR 软件包, 并且内置了 MHWD ,方便用户管理硬件驱动. Manjaro 具有GNOME/i3/xfce/KDE等多种图形界面可供选择. 以下是 Manjaro with KDE 的基本配置选项.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

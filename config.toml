@@ -59,6 +59,8 @@ enableRobotsTXT = true
   # Add custom css
   # customCSS = ["css/foo.css", "css/bar.css"]
 
+  author = "Lei, HUANG"
+  
   comment.owner = "v0y4g3r"
   comment.repo = "blog"
   
@@ -68,8 +70,6 @@ enableRobotsTXT = true
     name = "twitter"
     url = "https://twitter.com/ratuthomm"
 
-  [[params.author]]
-    name = "Lei, HUANG"
   [[params.social]]
     name = "instagram"
     url = "https://www.instagram.com/ratuthomm"

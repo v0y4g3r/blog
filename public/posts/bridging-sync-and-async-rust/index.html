@@ -9,14 +9,16 @@
 	<meta name="msapplication-TileColor" content="#282c34">
 
   <meta itemprop="name" content="如何在同步的 Rust 方法中调用异步代码？">
-  <meta itemprop="description" content="背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录">
+  <meta itemprop="description" content="背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录一下。
+我们的整个项目是基于 Tokio 这个异步 Rust runtime 的，它将协作式的任务运行和调度方便地封装在 .await 调用中，非常简洁优雅。但是这样也让不熟悉 Tokio 底层原理的用户一不小心就掉入到坑里。">
   <meta itemprop="datePublished" content="2022-10-30T21:42:33+08:00">
   <meta itemprop="dateModified" content="2022-10-30T21:42:33+08:00">
   <meta itemprop="wordCount" content="2804">
   <meta itemprop="keywords" content="Rust"><meta property="og:url" content="https://huanglei.rocks/posts/bridging-sync-and-async-rust/">
   <meta property="og:site_name" content="Ratuthomm">
   <meta property="og:title" content="如何在同步的 Rust 方法中调用异步代码？">
-  <meta property="og:description" content="背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录">
+  <meta property="og:description" content="背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录一下。
+我们的整个项目是基于 Tokio 这个异步 Rust runtime 的，它将协作式的任务运行和调度方便地封装在 .await 调用中，非常简洁优雅。但是这样也让不熟悉 Tokio 底层原理的用户一不小心就掉入到坑里。">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -26,7 +28,8 @@
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="如何在同步的 Rust 方法中调用异步代码？">
-  <meta name="twitter:description" content="背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录">
+  <meta name="twitter:description" content="背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录一下。
+我们的整个项目是基于 Tokio 这个异步 Rust runtime 的，它将协作式的任务运行和调度方便地封装在 .await 调用中，非常简洁优雅。但是这样也让不熟悉 Tokio 底层原理的用户一不小心就掉入到坑里。">
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -84,7 +87,7 @@
 
 			<hr class="post-end">
 			<footer class="post-info">
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>[map[name:Lei, HUANG]]</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>Lei, HUANG</p>
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/rust">Rust</a></span>
 				</p>

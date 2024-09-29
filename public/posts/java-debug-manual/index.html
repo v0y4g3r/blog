@@ -9,14 +9,24 @@
 	<meta name="msapplication-TileColor" content="#282c34">
 
   <meta itemprop="name" content="现代 Java 捉虫指南">
-  <meta itemprop="description" content="gnu.hl@antgroup.com 2020-12-01 本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。 当我们排查问题的时候，我们关注什么？ 横向来看: context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看: application runtime kernel Arthas Arthas 是基于">
+  <meta itemprop="description" content="
+gnu.hl@antgroup.com 2020-12-01
+本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。
+当我们排查问题的时候，我们关注什么？ 横向来看:
+context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看:
+application runtime kernel Arthas Arthas 是基于字节码增强的调试工具.">
   <meta itemprop="datePublished" content="2021-02-12T22:01:27+08:00">
   <meta itemprop="dateModified" content="2021-02-12T22:01:27+08:00">
   <meta itemprop="wordCount" content="1883">
   <meta itemprop="keywords" content="Java,Programming"><meta property="og:url" content="https://huanglei.rocks/posts/java-debug-manual/">
   <meta property="og:site_name" content="Ratuthomm">
   <meta property="og:title" content="现代 Java 捉虫指南">
-  <meta property="og:description" content="gnu.hl@antgroup.com 2020-12-01 本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。 当我们排查问题的时候，我们关注什么？ 横向来看: context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看: application runtime kernel Arthas Arthas 是基于">
+  <meta property="og:description" content="
+gnu.hl@antgroup.com 2020-12-01
+本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。
+当我们排查问题的时候，我们关注什么？ 横向来看:
+context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看:
+application runtime kernel Arthas Arthas 是基于字节码增强的调试工具.">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -27,7 +37,12 @@
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="现代 Java 捉虫指南">
-  <meta name="twitter:description" content="gnu.hl@antgroup.com 2020-12-01 本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。 当我们排查问题的时候，我们关注什么？ 横向来看: context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看: application runtime kernel Arthas Arthas 是基于">
+  <meta name="twitter:description" content="
+gnu.hl@antgroup.com 2020-12-01
+本文是作者 2021 年在蚂蚁内部分享时的 slides 经过脱敏之后的版本。
+当我们排查问题的时候，我们关注什么？ 横向来看:
+context/critical path/caller/callee (tracing) statistics/metrics (profiling) 纵向来看:
+application runtime kernel Arthas Arthas 是基于字节码增强的调试工具.">
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -85,7 +100,7 @@
 
 			<hr class="post-end">
 			<footer class="post-info">
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>[map[name:Lei, HUANG]]</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>Lei, HUANG</p>
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/java">Java</a></span><span class="tag"><a href="https://huanglei.rocks/tags/programming">Programming</a></span>
 				</p>
@@ -294,42 +309,42 @@ profiler start --event lock -d 10
 <hr>
 <h2 id="one-more-thing">One more thing<a href="#one-more-thing" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <table>
-<thead>
-<tr>
-<th>Component</th>
-<th>Tool</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Application on runtime(Java/Node/Ruby/PHP)</td>
-<td>Runtime debugger,eBPF</td>
-</tr>
-<tr>
-<td>Application (native code)</td>
-<td>System debugger,eBPF</td>
-</tr>
-<tr>
-<td>System libraries: /lib/*</td>
-<td>ltrace(1),eBPF</td>
-</tr>
-<tr>
-<td>System call interface</td>
-<td>strace(1), perf(1),eBPF</td>
-</tr>
-<tr>
-<td>Network Traffic</td>
-<td>tcpdump(8),eBPF</td>
-</tr>
-<tr>
-<td>Kernel: Scheduler, file systems, TCP, IP, etc</td>
-<td>ftrace(1), perf(1),eBPF</td>
-</tr>
-<tr>
-<td>Hardware: CPU internals, devicec</td>
-<td>perf, sar, eBPF</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Component</th>
+          <th style="text-align: left">Tool</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Application on runtime(Java/Node/Ruby/PHP)</td>
+          <td style="text-align: left">Runtime debugger,eBPF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Application (native code)</td>
+          <td style="text-align: left">System debugger,eBPF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">System libraries: /lib/*</td>
+          <td style="text-align: left">ltrace(1),eBPF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">System call interface</td>
+          <td style="text-align: left">strace(1), perf(1),eBPF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Network Traffic</td>
+          <td style="text-align: left">tcpdump(8),eBPF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Kernel: Scheduler, file systems, TCP, IP, etc</td>
+          <td style="text-align: left">ftrace(1), perf(1),eBPF</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Hardware: CPU internals, devicec</td>
+          <td style="text-align: left">perf, sar, eBPF</td>
+      </tr>
+  </tbody>
 </table>
 <hr>
 <h2 id="perf">Perf<a href="#perf" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
