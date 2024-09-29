@@ -9,14 +9,14 @@
 	<meta name="msapplication-TileColor" content="#282c34">
 
   <meta itemprop="name" content="三个字母引发的惨案">
-  <meta itemprop="description" content="问题 在 feat: compaction integration - GreptimeTeam/greptimedb #997 中，我们尝试把 table compaction 作为 flush 的后置任务触发，因此需要为 FlushJob增加一个 callback，因为涉及到异步操作，所以这个 callback">
+  <meta itemprop="description" content="问题 在 feat: compaction integration - GreptimeTeam/greptimedb #997 中，我们尝试把 table compaction 作为 flush 的后置任务触发，因此需要为 FlushJob增加一个 callback，因为涉及到异步操作，所以这个 callback 的定义是：">
   <meta itemprop="datePublished" content="2023-02-19T18:28:33+08:00">
   <meta itemprop="dateModified" content="2023-02-19T18:28:33+08:00">
   <meta itemprop="wordCount" content="2358">
   <meta itemprop="keywords" content="Rust,Programming"><meta property="og:url" content="https://huanglei.rocks/posts/send-sync/">
   <meta property="og:site_name" content="Ratuthomm">
   <meta property="og:title" content="三个字母引发的惨案">
-  <meta property="og:description" content="问题 在 feat: compaction integration - GreptimeTeam/greptimedb #997 中，我们尝试把 table compaction 作为 flush 的后置任务触发，因此需要为 FlushJob增加一个 callback，因为涉及到异步操作，所以这个 callback">
+  <meta property="og:description" content="问题 在 feat: compaction integration - GreptimeTeam/greptimedb #997 中，我们尝试把 table compaction 作为 flush 的后置任务触发，因此需要为 FlushJob增加一个 callback，因为涉及到异步操作，所以这个 callback 的定义是：">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -27,7 +27,7 @@
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="三个字母引发的惨案">
-  <meta name="twitter:description" content="问题 在 feat: compaction integration - GreptimeTeam/greptimedb #997 中，我们尝试把 table compaction 作为 flush 的后置任务触发，因此需要为 FlushJob增加一个 callback，因为涉及到异步操作，所以这个 callback">
+  <meta name="twitter:description" content="问题 在 feat: compaction integration - GreptimeTeam/greptimedb #997 中，我们尝试把 table compaction 作为 flush 的后置任务触发，因此需要为 FlushJob增加一个 callback，因为涉及到异步操作，所以这个 callback 的定义是：">
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -85,7 +85,7 @@
 
 			<hr class="post-end">
 			<footer class="post-info">
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>[map[name:Lei, HUANG]]</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>Lei, HUANG</p>
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://huanglei.rocks/tags/rust">Rust</a></span><span class="tag"><a href="https://huanglei.rocks/tags/programming">Programming</a></span>
 				</p>

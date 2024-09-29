@@ -14,7 +14,7 @@
       <link>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</link>
       <pubDate>Thu, 10 Feb 2022 15:07:10 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</guid>
-      <description>安装 Octomments 按照 Octomments 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。 配置 GitHub issue 在配置文件中增加配置项： comment.owner：I</description>
+      <description>&lt;h1 id=&#34;安装-octomments&#34;&gt;安装 Octomments&lt;/h1&gt;&#xA;&lt;p&gt;按照 &lt;a href=&#34;https://ocs.vercel.app/&#34;&gt;Octomments&lt;/a&gt; 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。&lt;/p&gt;&#xA;&lt;h1 id=&#34;配置-github-issue&#34;&gt;配置 GitHub issue&lt;/h1&gt;&#xA;&lt;p&gt;在配置文件中增加配置项：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;code&gt;comment.owner&lt;/code&gt;：Issue repo 的拥有者&lt;/li&gt;&#xA;&lt;li&gt;&lt;code&gt;comment.repo&lt;/code&gt;：Issue repo 的名字&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h1 id=&#34;配置-comment-组件&#34;&gt;配置 Comment 组件&lt;/h1&gt;&#xA;&lt;p&gt;在您的博客站点根目录下的&lt;code&gt;layouts/partials/comments.html&lt;/code&gt; 模板中增加：&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

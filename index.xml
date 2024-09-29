@@ -14,70 +14,70 @@
       <link>https://huanglei.rocks/posts/aurora/</link>
       <pubDate>Sun, 28 May 2023 17:43:25 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/aurora/</guid>
-      <description>Notes on Amazon Aurora Amazon Aurora SQL、事务处理等等完全基于 MySQL 将 page 这个层面的 IO 委托给基于 quorum-replication 的存储系统 基于 redo log 做数据复制，避免了 MySQL 正常复制场景下的大量 IO 支持 AZ+1 的容</description>
+      <description>&lt;h1 id=&#34;notes-on-amazon-aurora&#34;&gt;Notes on Amazon Aurora&lt;/h1&gt;&#xA;&lt;h2 id=&#34;amazon-aurora&#34;&gt;Amazon Aurora&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;SQL、事务处理等等完全基于 MySQL&lt;/li&gt;&#xA;&lt;li&gt;将 page 这个层面的 IO 委托给基于 quorum-replication 的存储系统&lt;/li&gt;&#xA;&lt;li&gt;基于 redo log 做数据复制，避免了 MySQL 正常复制场景下的大量 IO&lt;/li&gt;&#xA;&lt;li&gt;支持 AZ+1 的容灾，简化了运维&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;the-log-is-the-database&#34;&gt;The log is the database&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;MySQL 的 IO 太多导致在云场景下写放大严重（3.1）&#xA;&lt;ul&gt;&#xA;&lt;li&gt;page 需要写到 heap file 里面&lt;/li&gt;&#xA;&lt;li&gt;redo log 需要写到 WAL 里面&lt;/li&gt;&#xA;&lt;li&gt;真实世界的 HA 集群还需要一些其他的数据同步，比如 binlog 等等&lt;/li&gt;&#xA;&lt;li&gt;最糟糕的是这些写入都是同步的（图中的 1,2,3,4,5），可能导致延迟的成倍放大&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://assets.huanglei.co/20230528175431.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>三个字母引发的惨案</title>
       <link>https://huanglei.rocks/posts/send-sync/</link>
       <pubDate>Sun, 19 Feb 2023 18:28:33 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/send-sync/</guid>
-      <description>问题 在 feat: compaction integration - GreptimeTeam/greptimedb #997 中，我们尝试把 table compaction 作为 flush 的后置任务触发，因此需要为 FlushJob增加一个 callback，因为涉及到异步操作，所以这个 callback</description>
+      <description>&lt;h2 id=&#34;问题&#34;&gt;问题&lt;/h2&gt;&#xA;&lt;p&gt;在 &lt;a href=&#34;https://github.com/GreptimeTeam/greptimedb/pull/997&#34;&gt;feat: compaction integration - GreptimeTeam/greptimedb #997&lt;/a&gt; 中，我们尝试把 table compaction 作为 flush 的后置任务触发，因此需要为 &lt;code&gt;FlushJob&lt;/code&gt;增加一个 callback，因为涉及到异步操作，所以这个 callback 的定义是：&lt;/p&gt;</description>
     </item>
     <item>
       <title>2023</title>
       <link>https://huanglei.rocks/gallery/2023/</link>
       <pubDate>Fri, 10 Feb 2023 19:30:39 +0800</pubDate>
       <guid>https://huanglei.rocks/gallery/2023/</guid>
-      <description>Ricoh GR3 24mm, f/4, 1/30s, ISO 6400</description>
+      <description>&lt;style&gt;&#xA;.content img {&#xA;  max-width:100%;&#xA;}&#xA;&lt;/style&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://assets.huanglei.co/2023/spring.jpeg&#34; alt=&#34;spring.jpeg&#34;&gt;&lt;/p&gt;&#xA;&lt;div style=&#34;text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;&#34;&gt;&#xA;&lt;i&gt;&#xA;&lt;p&gt;Ricoh GR3 24mm, f/5, 1/320s, ISO 200&lt;/p&gt;&#xA;&lt;/i&gt;&#xA;&lt;/div&gt;&#xA;&lt;br&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://assets.huanglei.co/2023/sunset.jpeg&#34; alt=&#34;sunset.jpeg&#34;&gt;&lt;/p&gt;&#xA;&lt;div style=&#34;text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;&#34;&gt;&#xA;&lt;i&gt;&#xA;&lt;p&gt;Ricoh GR3 24mm, f/5, 1/100s, ISO 160&lt;/p&gt;&#xA;&lt;/i&gt;&#xA;&lt;/div&gt;&#xA;&lt;br&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://assets.huanglei.co/2023/early-summer.jpeg&#34; alt=&#34;early-summer.jpeg&#34;&gt;&lt;/p&gt;&#xA;&lt;div style=&#34;text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;&#34;&gt;&#xA;&lt;i&gt;&#xA;&lt;p&gt;ILCE-7RM4 150mm, f/7.1, 1/250s, ISO 100&lt;/p&gt;&#xA;&lt;/i&gt;&#xA;&lt;/div&gt;&#xA;&lt;br&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://assets.huanglei.co/2023/red-rock.jpeg&#34; alt=&#34;red-rock.jpeg&#34;&gt;&lt;/p&gt;&#xA;&lt;div style=&#34;text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;&#34;&gt;&#xA;&lt;i&gt;&#xA;&lt;p&gt;ILCE-7RM4 70mm, f/4.5, 1/600s, ISO 100&lt;/p&gt;&#xA;&lt;/i&gt;&#xA;&lt;/div&gt;&#xA;&lt;br&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://assets.huanglei.co/2023/jade.jpeg&#34; alt=&#34;jade.jpeg&#34;&gt;&lt;/p&gt;&#xA;&lt;div style=&#34;text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;&#34;&gt;&#xA;&lt;i&gt;&#xA;&lt;p&gt;Ricoh GR3 24mm, f/5.6  1/30s ISO200&lt;/p&gt;</description>
     </item>
     <item>
       <title>如何在同步的 Rust 方法中调用异步代码？</title>
       <link>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</link>
       <pubDate>Sun, 30 Oct 2022 21:42:33 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/bridging-sync-and-async-rust/</guid>
-      <description>背景和问题 最近在做我们的 GreptimeDB 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录</description>
+      <description>&lt;h2 id=&#34;背景和问题&#34;&gt;背景和问题&lt;/h2&gt;&#xA;&lt;p&gt;最近在做我们的 &lt;a href=&#34;https://greptime.com/&#34;&gt;GreptimeDB&lt;/a&gt; 项目的时候遇到一个关于在同步 Rust 方法中调用异步代码的问题，排查清楚之后大大加深了对异步 Rust 的理解，因此在这篇文章中记录一下。&lt;/p&gt;&#xA;&lt;p&gt;我们的整个项目是基于 &lt;a href=&#34;https://tokio.rs/&#34;&gt;Tokio&lt;/a&gt; 这个异步 Rust runtime 的，它将协作式的任务运行和调度方便地封装在 &lt;code&gt;.await&lt;/code&gt; 调用中，非常简洁优雅。但是这样也让不熟悉 Tokio 底层原理的用户一不小心就掉入到坑里。&lt;/p&gt;</description>
     </item>
     <item>
       <title>2022</title>
       <link>https://huanglei.rocks/gallery/2022/</link>
       <pubDate>Sat, 23 Jul 2022 15:47:39 +0800</pubDate>
       <guid>https://huanglei.rocks/gallery/2022/</guid>
-      <description>SONY ILCE-7RM4, Sigma 24-70 f/2.8, 24mm, f/5.6, 1/400s, ISO 200&#xA;SONY ILCE-7RM4, Tamron 70-180 f/2.8, 180mm, f/7.1, 1/640, ISO 100</description>
+      <description>&lt;style&gt;&#xA;.content img {&#xA;  max-width:100%;&#xA;}&#xA;&lt;/style&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://assets.huanglei.co/shenxianju.jpeg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;&#xA;&lt;div style=&#34;text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;&#34;&gt;&#xA;&lt;i&gt;&#xA;&lt;p&gt;SONY ILCE-7RM4, Sigma 24-70 f/2.8, 24mm, f/5.6, 1/400s, ISO 200&lt;/p&gt;&#xA;&lt;/i&gt;&#xA;&lt;/div&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://assets.huanglei.co/qiandaohu.jpeg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;&#xA;&lt;div style=&#34;text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;&#34;&gt;&#xA;&lt;i&gt;&#xA;&lt;p&gt;SONY ILCE-7RM4, Tamron 70-180 f/2.8, 180mm, f/7.1, 1/640, ISO 100&lt;/p&gt;&#xA;&lt;/i&gt;&#xA;&lt;/div&gt;</description>
     </item>
     <item>
       <title>Notes on InfluxDB Storage Engine</title>
       <link>https://huanglei.rocks/posts/notes-on-influxdb-storage/</link>
       <pubDate>Sat, 12 Mar 2022 17:42:25 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/notes-on-influxdb-storage/</guid>
-      <description>InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。 InfluxDB 的存储系统 InfluxDB 的存储层有三个子系统： TSM：数</description>
+      <description>&lt;blockquote&gt;&#xA;&lt;p&gt;InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 &lt;code&gt;adf29dfedfc785620db0e104652544ce9f67cb6e&lt;/code&gt; 版本。当前版本已经支持 TSI 索引结构。&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-overview.svg&#34; alt=&#34;image.png&#34;&gt;&lt;/p&gt;&#xA;&lt;div style=&#34;text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;&#34;&gt;&#xA;&lt;i&gt;&#xA;  InfluxDB 的存储系统 &#xA;&lt;/i&gt;&#xA;&lt;/div&gt;&#xA;&lt;p&gt;InfluxDB 的存储层有三个子系统：&lt;/p&gt;</description>
     </item>
     <item>
       <title>Apache Parquet 格式简介</title>
       <link>https://huanglei.rocks/posts/parquet/</link>
       <pubDate>Sat, 05 Mar 2022 15:44:33 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/parquet/</guid>
-      <description>简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。 数据 layout 一个 Parquet 文件的数</description>
+      <description>&lt;h2 id=&#34;简介&#34;&gt;简介&lt;/h2&gt;&#xA;&lt;p&gt;Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。&lt;/p&gt;&#xA;&lt;h2 id=&#34;数据-layout&#34;&gt;数据 layout&lt;/h2&gt;&#xA;&lt;p&gt;一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Apache BookKeeper 笔记</title>
       <link>https://huanglei.rocks/posts/bookkeeper-note/</link>
       <pubDate>Thu, 24 Feb 2022 01:18:35 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/bookkeeper-note/</guid>
-      <description>BookKeeper 的使用场景 WAL：比如 HDFS Namenode 的 EditLog（要求高可靠） 分布式存储：比如 Pulsar 的消息存储、DistributedLog 等 核心理念 通过条带化写（</description>
+      <description>&lt;h1 id=&#34;bookkeeper-的使用场景&#34;&gt;BookKeeper 的使用场景&lt;/h1&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;WAL：比如 HDFS Namenode 的 EditLog（要求高可靠）&lt;/li&gt;&#xA;&lt;li&gt;分布式存储：比如 Pulsar 的消息存储、DistributedLog 等&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h1 id=&#34;核心理念&#34;&gt;核心理念&lt;/h1&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;通过条带化写（Data Striping）实现数据的多副本，所有存储节点角色对等；&lt;/li&gt;&#xA;&lt;li&gt;通过其他的存储组件（ZooKeeper）实现元数据高可靠，故障恢复（recover）流程强依赖 ZK 的元数据；&#xA;&lt;ul&gt;&#xA;&lt;li&gt;也可以选用其他的存储服务，要求 1. CP 系统；2. 提供 CAS 原语&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;基于 RocksDB 提供 &lt;code&gt;(ledger, sequence) -&amp;gt; (file, physicalOffset)&lt;/code&gt;  的索引（&lt;code&gt;SingleDirectoryDbLedgerStorage#ledgerIndex&lt;/code&gt;）；&lt;/li&gt;&#xA;&lt;li&gt;同一时刻只有一个 writer 和多个 reader，通过 fencing 机制避免出现多 writer，避免 sequence 乱序；&lt;/li&gt;&#xA;&lt;li&gt;读写分离，冷热分离（tailing read/catch-up read）提高吞吐；&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h1 id=&#34;bookkeeper-的术语&#34;&gt;BookKeeper 的术语&lt;/h1&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;ledger：一写多读的 append-only 文件，ledger 的最小数据单元是 fragment；&lt;/li&gt;&#xA;&lt;li&gt;bookie：存储 ledger 的节点；&lt;/li&gt;&#xA;&lt;li&gt;ledger has many records， called：entry，每个entry都有一个 sequence number，可以根据 ledger + seq 来读取一部分 entry。&lt;/li&gt;&#xA;&lt;li&gt;quorum：几个 bookie 组成一个 quorum，通过复制提高可用性。&lt;/li&gt;&#xA;&lt;li&gt;data striping：数据块交织写入到各个设备，提高写入的性能。类似 RAID1 的机制。&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/bookkeeper-quorum-writes.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>LSM Tree 笔记</title>
       <link>https://huanglei.rocks/posts/note-on-lsmt/</link>
       <pubDate>Thu, 10 Feb 2022 22:34:39 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/note-on-lsmt/</guid>
-      <description>写入（Write path） 先从磁盘（HDD）写入的特性引入 append-only 的 WAL。 对于 KV 结构，如果写入是 append only的，那么就需要合并，不然读取性能太差。</description>
+      <description>&lt;h2 id=&#34;写入write-path&#34;&gt;写入（Write path）&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;先从磁盘（HDD）写入的特性引入 append-only 的 WAL。&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;对于 KV 结构，如果写入是 append only的，那么就需要合并，不然读取性能太差。&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;单文件合并性能差，因此需要按阈值切分为多个小文件，通过归并排序的思路优化合并的效率。&lt;/p&gt;</description>
     </item>
     <item>
       <title>使用 GitHub Issue 作为 Hugo 的评论系统</title>
       <link>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</link>
       <pubDate>Thu, 10 Feb 2022 15:07:10 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/hugo-comment-with-github-issues/</guid>
-      <description>安装 Octomments 按照 Octomments 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。 配置 GitHub issue 在配置文件中增加配置项： comment.owner：I</description>
+      <description>&lt;h1 id=&#34;安装-octomments&#34;&gt;安装 Octomments&lt;/h1&gt;&#xA;&lt;p&gt;按照 &lt;a href=&#34;https://ocs.vercel.app/&#34;&gt;Octomments&lt;/a&gt; 的介绍，将 Octomments 安装到您的 GitHub 账户，确保它拥有访问您的目标 repo 的 issue 的权限。&lt;/p&gt;&#xA;&lt;h1 id=&#34;配置-github-issue&#34;&gt;配置 GitHub issue&lt;/h1&gt;&#xA;&lt;p&gt;在配置文件中增加配置项：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;code&gt;comment.owner&lt;/code&gt;：Issue repo 的拥有者&lt;/li&gt;&#xA;&lt;li&gt;&lt;code&gt;comment.repo&lt;/code&gt;：Issue repo 的名字&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h1 id=&#34;配置-comment-组件&#34;&gt;配置 Comment 组件&lt;/h1&gt;&#xA;&lt;p&gt;在您的博客站点根目录下的&lt;code&gt;layouts/partials/comments.html&lt;/code&gt; 模板中增加：&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

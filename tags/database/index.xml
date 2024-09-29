@@ -14,28 +14,28 @@
       <link>https://huanglei.rocks/posts/aurora/</link>
       <pubDate>Sun, 28 May 2023 17:43:25 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/aurora/</guid>
-      <description>Notes on Amazon Aurora Amazon Aurora SQL、事务处理等等完全基于 MySQL 将 page 这个层面的 IO 委托给基于 quorum-replication 的存储系统 基于 redo log 做数据复制，避免了 MySQL 正常复制场景下的大量 IO 支持 AZ+1 的容</description>
+      <description>&lt;h1 id=&#34;notes-on-amazon-aurora&#34;&gt;Notes on Amazon Aurora&lt;/h1&gt;&#xA;&lt;h2 id=&#34;amazon-aurora&#34;&gt;Amazon Aurora&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;SQL、事务处理等等完全基于 MySQL&lt;/li&gt;&#xA;&lt;li&gt;将 page 这个层面的 IO 委托给基于 quorum-replication 的存储系统&lt;/li&gt;&#xA;&lt;li&gt;基于 redo log 做数据复制，避免了 MySQL 正常复制场景下的大量 IO&lt;/li&gt;&#xA;&lt;li&gt;支持 AZ+1 的容灾，简化了运维&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;the-log-is-the-database&#34;&gt;The log is the database&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;MySQL 的 IO 太多导致在云场景下写放大严重（3.1）&#xA;&lt;ul&gt;&#xA;&lt;li&gt;page 需要写到 heap file 里面&lt;/li&gt;&#xA;&lt;li&gt;redo log 需要写到 WAL 里面&lt;/li&gt;&#xA;&lt;li&gt;真实世界的 HA 集群还需要一些其他的数据同步，比如 binlog 等等&lt;/li&gt;&#xA;&lt;li&gt;最糟糕的是这些写入都是同步的（图中的 1,2,3,4,5），可能导致延迟的成倍放大&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://assets.huanglei.co/20230528175431.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>Notes on InfluxDB Storage Engine</title>
       <link>https://huanglei.rocks/posts/notes-on-influxdb-storage/</link>
       <pubDate>Sat, 12 Mar 2022 17:42:25 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/notes-on-influxdb-storage/</guid>
-      <description>InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 adf29dfedfc785620db0e104652544ce9f67cb6e 版本。当前版本已经支持 TSI 索引结构。 InfluxDB 的存储系统 InfluxDB 的存储层有三个子系统： TSM：数</description>
+      <description>&lt;blockquote&gt;&#xA;&lt;p&gt;InfluxDB 的存储引擎经过多次修改，本文描述的系统结构基于 InfluxDB 截止 2022-02-24 的 &lt;code&gt;adf29dfedfc785620db0e104652544ce9f67cb6e&lt;/code&gt; 版本。当前版本已经支持 TSI 索引结构。&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/influxdb-overview.svg&#34; alt=&#34;image.png&#34;&gt;&lt;/p&gt;&#xA;&lt;div style=&#34;text-align: center; margin-bottom: 1em; margin-top: -0.5em; opacity: .5;&#34;&gt;&#xA;&lt;i&gt;&#xA;  InfluxDB 的存储系统 &#xA;&lt;/i&gt;&#xA;&lt;/div&gt;&#xA;&lt;p&gt;InfluxDB 的存储层有三个子系统：&lt;/p&gt;</description>
     </item>
     <item>
       <title>Apache Parquet 格式简介</title>
       <link>https://huanglei.rocks/posts/parquet/</link>
       <pubDate>Sat, 05 Mar 2022 15:44:33 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/parquet/</guid>
-      <description>简介 Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。 数据 layout 一个 Parquet 文件的数</description>
+      <description>&lt;h2 id=&#34;简介&#34;&gt;简介&lt;/h2&gt;&#xA;&lt;p&gt;Parquet 是一种面向列的数据存储格式，在 Hadoop 生态中使用广泛。Parquet 文件是不可变的，如果需要修改，只能通过 rewrite 的方式实现。&lt;/p&gt;&#xA;&lt;h2 id=&#34;数据-layout&#34;&gt;数据 layout&lt;/h2&gt;&#xA;&lt;p&gt;一个 Parquet 文件的数据布局如下图所示。需要注意的是，官网上的这个图并没有包含 index pages。&lt;/p&gt;</description>
     </item>
     <item>
       <title>LSM Tree 笔记</title>
       <link>https://huanglei.rocks/posts/note-on-lsmt/</link>
       <pubDate>Thu, 10 Feb 2022 22:34:39 +0800</pubDate>
       <guid>https://huanglei.rocks/posts/note-on-lsmt/</guid>
-      <description>写入（Write path） 先从磁盘（HDD）写入的特性引入 append-only 的 WAL。 对于 KV 结构，如果写入是 append only的，那么就需要合并，不然读取性能太差。</description>
+      <description>&lt;h2 id=&#34;写入write-path&#34;&gt;写入（Write path）&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;先从磁盘（HDD）写入的特性引入 append-only 的 WAL。&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;对于 KV 结构，如果写入是 append only的，那么就需要合并，不然读取性能太差。&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;单文件合并性能差，因此需要按阈值切分为多个小文件，通过归并排序的思路优化合并的效率。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
