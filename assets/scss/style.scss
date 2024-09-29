@@ -246,9 +246,9 @@ table {
   bottom: 0;
   width: 100%;
   box-sizing: border-box;
-  box-shadow: -1px -2px 3px rgba(0, 0, 0, 0.45);
-  background-color: $dark-grey;
-  animation-duration: .3s;
+  box-shadow: -1px -2px 3px rgba(0,0,0,.45);
+  background-color: #dbd5c8;
+  animation-duration: .3s
 }
 
 .hdr-wrapper {
@@ -260,12 +260,14 @@ table {
 
   .site-branding {
     display: inline-block;
+    font-style: italic;
     margin-right: .8em;
     font-size: 1.2em;
   }
 
   .site-nav {
     display: inline-block;
+    font-style: italic;
     font-size: 1.1em;
     opacity: .8;
 
