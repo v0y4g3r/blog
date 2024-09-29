@@ -3,8 +3,6 @@ defaultContentLanguage = "en"
 # defaultContentLanguageInSubdir = true
 theme = "hermit-v2"
 
-[markup.goldmark.renderer]
-  unsafe= true
 
 [languages]
  [languages.en]
@@ -65,14 +63,16 @@ expiryDate = ["expiryDate"]
   # category = "categories"
 
 # Enable to get proper Mathjax support
-#[markup]
-#  [markup.goldmark]
-#    [markup.goldmark.extensions]
-#      [markup.goldmark.extensions.passthrough]
-#        enable = true
-#        [markup.goldmark.extensions.passthrough.delimiters]
-#          block = [['\[', '\]'], ['$$', '$$']]
-#          inline = [['\(', '\)']]
+[markup]
+ [markup.goldmark]
+    [markup.goldmark.renderer]
+    unsafe= true
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+        [markup.goldmark.extensions.passthrough.delimiters]
+          block = [['\[', '\]'], ['$$', '$$']]
+          inline = [['\(', '\)']]
 
 
 [params]
@@ -97,6 +97,7 @@ expiryDate = ["expiryDate"]
 
   homeSubtitlePrinter = true
   scrollToTop = true 
+  math = false
   global_mathjax = false
   readTime = true
   #readTimeSeparator = ""

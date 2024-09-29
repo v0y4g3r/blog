@@ -19,15 +19,15 @@ P2c 是 P2b 的充分不必要条件，why？
 >    - (b) `v` is the value of the highest-numbered proposal among all proposals numbered less than `n` accepted by the acceptors in S.
 
 
-已知 proposal:`(m,v)`被选中，要满足任意 proposer 提出序号 n （n > m）的 proposal 的值都是 `v`，那么只要满足条件：<u> $ \forall i\in [m,\ n-1]$ ，有 proposal `i` 的值是 `v` 1</u>，那么根据数学归纳法，proposal `n`的值也必然是 `v`。
+已知 proposal:`(m,v)`被选中，要满足任意 proposer 提出序号 n （n > m）的 proposal 的值都是 `v`，那么只要满足条件：<u> \( \forall i\in [m,\ n-1]\) ，有 proposal `i` 的值是 `v` 1</u>，那么根据数学归纳法，proposal `n`的值也必然是 `v`。
 
 1: 是附加假设，我们需要根据这个附加假设去约束 proposer 的行为，从而使得 P2b 能够被满足。下面就需要解释这个附加假设对 proposer 的行为做出了什么样的约束。
 
-由于 `(m,v)`已经被选中了，那就意味着存在一个 acceptor 的集合 C 满足任意 C 中的 acceptor 都 accept 了`(m,v)`，再加上我们需要让附加假设（满足 $i\in [m,\ n-1]$ ，有 proposal `i` 的值是 `v`）成立，
+由于 `(m,v)`已经被选中了，那就意味着存在一个 acceptor 的集合 C 满足任意 C 中的 acceptor 都 accept 了`(m,v)`，再加上我们需要让附加假设（满足 \(i\in [m,\ n-1]\) ，有 proposal `i` 的值是 `v`）成立，
 这就意味着所谓的 C-condition 2 ，对于 accept 了 `(m,v)` 的 acceptor 集合 C，满足：
 
-- (1)  C 中的所有 acceptor 都 accept 了 $[m,\ n-1]$ 中的一个 proposal（因为至少有`m`已经被 C 中的所有 acceptor 给 accept 了）
-- (2) $[m,\ n-1]$ 中所有的被任意 acceptor 所 accept 的 proposal 的值都是 `v`（注意，这里约束的对象从 proposer 变成了 acceptor，实际上 narrow down 了，因为是非拜占庭问题，所有被 acceptor 所 accept 的值都需要 proposer 提出）。
+- (1)  C 中的所有 acceptor 都 accept 了 \([m,\ n-1]\) 中的一个 proposal（因为至少有`m`已经被 C 中的所有 acceptor 给 accept 了）
+- (2) \([m,\ n-1]\) 中所有的被任意 acceptor 所 accept 的 proposal 的值都是 `v`（注意，这里约束的对象从 proposer 变成了 acceptor，实际上 narrow down 了，因为是非拜占庭问题，所有被 acceptor 所 accept 的值都需要 proposer 提出）。
 
 
 
