@@ -3,6 +3,9 @@ defaultContentLanguage = "en"
 # defaultContentLanguageInSubdir = true
 theme = "hermit-v2"
 
+[markup.goldmark.renderer]
+  unsafe= true
+
 [languages]
  [languages.en]
    title = 'Ratuthomm'
