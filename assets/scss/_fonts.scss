@@ -1,0 +1,31 @@
+// Default Fonts
+$fonts: "Futura", Verdana, "Verdana Ref", "Segoe UI", Candara, "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif;
+$code-fonts: Consolas, "Andale Mono WT", "Andale Mono", Menlo, Monaco, "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", "Courier New", Courier, "YaHei Consolas Hybrid", monospace, "Segoe UI Emoji", "PingFang SC", "Microsoft YaHei";
+
+@font-face {
+    font-family: "Futura";
+    font-style: bold;
+    src: url("/fonts/Futura-Bold-03.woff2") format("woff2");
+  }
+  
+@font-face {
+    font-family: "Futura";
+    src: url("/fonts/Futura-CondensedExtraBold-05.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Futura";
+    src: url("/fonts/Futura-CondensedMedium-04.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Futura";
+    font-style: normal;
+    src: url("/fonts/Futura-Medium-01.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Futura";
+    font-style: italic;
+    src: url("/fonts/Futura-MediumItalic-02.woff2") format("woff2");
+}

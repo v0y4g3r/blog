@@ -1,3 +1,153 @@
-baseURL = 'https://huanglei.rocks/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
+baseURL = "https://huanglei.rocks"
+defaultContentLanguage = "en"
+# defaultContentLanguageInSubdir = true
+theme = "hermit-v2"
+
+[languages]
+ [languages.en]
+   title = 'Ratuthomm'
+   [languages.en.params]
+     homeSubtitle = "\"Now it's time to leave the capsule if you dare.\""
+   weight = 1
+ [languages.fr]
+   title = 'Ratuthomm'
+   [languages.fr.params]
+     homeSubtitle = "\"Now it's time to leave the capsule if you dare.\""
+   weight = 2
+ [languages.it]
+   title = 'Ratuthomm'
+   [languages.it.params]
+     homeSubtitle = "\"Now it's time to leave the capsule if you dare.\""
+   weight = 3
+ 
+languageCode = "en-us"
+
+# title = "CHANGE ME"
+# enableGitInfo = true
+
+pygmentsCodefences  = true
+pygmentsUseClasses  = true
+hasCJKLanguage = true
+
+rssLimit = 10
+
+copyright = "CHANGE ME"
+enableEmoji = true
+
+#[services]
+#  [services.disqus]
+#    shortname = ''
+#  [services.googleAnalytics]
+#    id = ''
+
+[frontmatter]
+date = ["date", "publishDate", "lastmod"]
+lastmod = ["lastmod", ":git", "date", "publishDate"]
+publishDate = ["publishDate", "date"]
+expiryDate = ["expiryDate"]
+
+
+[params.author]
+  name = "Lei HUANG"
+  about = "CHANGE SITE AUTHOR ABOUT"
+
+[blackfriday]
+  # hrefTargetBlank = true
+  # noreferrerLinks = true
+  # nofollowLinks = true
+
+[taxonomies]
+  tag = "tags"
+  # Categories are disabled by default.
+  # category = "categories"
+
+# Enable to get proper Mathjax support
+#[markup]
+#  [markup.goldmark]
+#    [markup.goldmark.extensions]
+#      [markup.goldmark.extensions.passthrough]
+#        enable = true
+#        [markup.goldmark.extensions.passthrough.delimiters]
+#          block = [['\[', '\]'], ['$$', '$$']]
+#          inline = [['\(', '\)']]
+
+
+[params]
+  dateform        = "Jan 2, 2006"
+  dateformShort   = "Jan 2"
+  dateformNum     = "2006-01-02"
+  dateformNumTime = "2006-01-02 15:04 -0700"
+
+  # description = "CHANGE ME SITE DESCRIPTION"
+  # images = [""]
+  theme = "#2c68ac"
+
+  #homeSubtitle = "CHANGE ME HOME SUBTITLE"
+  footerCopyright = " CC BY-NC 4.0 "
+  # bgImg = ""
+  # gitUrl = "https://github.com/1bl4z3r/hermit-V2/tree/staging"
+
+  justifyContent = false
+
+  relatedPosts = true
+  code_copy_button = true
+
+  homeSubtitlePrinter = true
+  scrollToTop = true 
+  global_mathjax = false
+  readTime = true
+  readTimeSeparator = "CHANGE ME READ TIME"
+  # legacyLayout = false
+  shareSocial = true
+  # googleTagManager = "GTM-XXXXXXXX"
+  # tagSymbol = "#"
+  # categorySymbol = "⊲"
+  # pinned = "Pinned Posts"
+  # pinnedSVGname = "pin"
+  # descriptionInPosts= true
+  # initialPublish = "Initally Posted on: "
+  # human = ["single","posts"]
+  # noIndex = false
+  # denyRobots = "noindex, nofollow, noarchive"
+  # allowRobots = "index, follow"
+  # siteNoIndex = false
+  # noIndexPages = ["404 Page not found"]
+
+  
+  [[params.socialLinks]]
+    name = "mastodon"
+    url = "https://joinmastodon.org/"
+
+  [[params.socialLinks]]
+    name = "x"
+    url = "https://twitter.com/"
+
+  [[params.socialLinks]]
+    name = "github"
+    url = "https://github.com/1bl4z3r/hermit-V2/tree/staging"
+
+[menu]
+  [[menu.main]]
+    name = "Posts"
+    url = "posts/"
+    weight = 10
+
+  [[menu.main]]
+    name = "Gallery"
+    url = "gallery/"
+    weight = 15
+
+  [[menu.main]]
+    name = "Scribbles"
+    url = "scribbles/"
+    weight = 17
+
+  [[menu.main]]
+    name = "Tags"
+    url = "tags/"
+    weight = 18
+
+  [[menu.main]]
+    name = "About Me"
+    url = "about-me/"
+    weight = 20
