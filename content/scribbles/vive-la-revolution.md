@@ -3,6 +3,7 @@ title: "再谈热风"
 date: 2016-03-03T23:29:37+08:00
 draft: false
 toc: false
+type: posts
 images:
 tags: 
 

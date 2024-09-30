@@ -3,6 +3,7 @@ title: "你的问题是什么？"
 date: 2019-03-19T22:41:37+08:00
 draft: false
 toc: false
+type: posts
 images:
 tags: 
 ---

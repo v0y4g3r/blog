@@ -4,6 +4,7 @@ date: 2021-06-18T22:06:37+08:00
 draft: false
 toc: false
 images:
+type: posts
 tags: 
 
 ---

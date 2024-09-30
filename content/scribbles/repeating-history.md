@@ -3,6 +3,7 @@ title: "历史的循环"
 date: 2020-08-04T5:58:37+08:00
 draft: false
 toc: false
+type: posts
 images:
 tags: 
 ---
