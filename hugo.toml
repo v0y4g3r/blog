@@ -99,7 +99,7 @@ expiryDate = ["expiryDate"]
   readTime = true
   #readTimeSeparator = ""
   # legacyLayout = false
-  shareSocial = true
+  shareSocial = false
   # googleTagManager = "GTM-XXXXXXXX"
   # tagSymbol = "#"
   # categorySymbol = "⊲"
@@ -114,18 +114,16 @@ expiryDate = ["expiryDate"]
   # siteNoIndex = false
   # noIndexPages = ["404 Page not found"]
 
-  
-  [[params.socialLinks]]
-    name = "mastodon"
-    url = "https://joinmastodon.org/"
-
   [[params.socialLinks]]
     name = "x"
-    url = "https://twitter.com/"
+    url = "https://twitter.com/ratuthomm"
 
   [[params.socialLinks]]
     name = "github"
-    url = "https://github.com/1bl4z3r/hermit-V2/tree/staging"
+    url = "https://github.com/v0y4g3r"
+  [[params.socialLinks]]
+    name = "instagram"
+    url = "https://www.instagram.com/ratuthomm/"
 
 [menu]
   [[menu.main]]

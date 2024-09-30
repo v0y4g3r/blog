@@ -1,2 +1,6 @@
+[notFound]
+other = "糟糕，您要访问的页面不存在……"
+
 [wordCount]
 other = "{{.WordCount}} Words"
+
