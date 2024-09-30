@@ -36,8 +36,9 @@ Hello, world!
 - KBP/ODS
 - BEG
 - REP
+- KIX
+- SFO/SJC
 
-希望今年能去趟西北。
 
 ## GPG public key
 - Fingerprint: `168AF07A606CD0C3DCF079020C6F8831B4C981E1`
