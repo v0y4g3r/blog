@@ -23,6 +23,8 @@ enableGitInfo = true
 pygmentsCodefences  = true
 pygmentsUseClasses  = true
 
+comment.owner = "v0y4g3r"
+comment.repo = "blog"
 
 rssLimit = 10
 
