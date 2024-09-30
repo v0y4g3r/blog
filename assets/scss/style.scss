@@ -75,8 +75,8 @@ pre {
 }
 
 code {
-  color: hsl(0, 1%, 67%);
-  background: $dark-grey;
+  color: hsl(0, 3%, 87%);
+  background: #707586;;
   border-radius: 3px;
   padding: 0 3px;
   margin: 0 4px;
@@ -110,7 +110,6 @@ a {
 
   &:hover {
     color: #edeae2;
-    text-shadow: 0 0 1px #fff;
   }
 }
 
@@ -452,6 +451,10 @@ p.img-404 {
     font-style: italic;
     margin-top: .5em;
   }
+
+  a:hover {
+    color: #b5b5b5;
+  }
 }
 
 #home-footer {
@@ -590,7 +593,17 @@ hr.post-end {
   text-justify: inter-ideograph; //For IE/Edge
   {{- end }}
 
-  @include aTag;
+  a {
+    word-wrap: break-word;
+    border: none;
+    box-shadow: inset 0 -2px 0 $theme;
+    transition-property: box-shadow;
+    transition-duration: 0.1s;
+
+    &:hover {
+      box-shadow: inset 0 -1em $theme;
+    }
+  }
 
   figure {
     max-width: 100%;
