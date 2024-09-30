@@ -1,8 +1,9 @@
 baseURL = "https://huanglei.rocks"
-defaultContentLanguage = "en"
+defaultContentLanguage = "zh"
 # defaultContentLanguageInSubdir = true
 theme = "hermit-v2"
 
+hasCJKLanguage = true
 
 [languages]
  [languages.en]
@@ -10,25 +11,18 @@ theme = "hermit-v2"
    [languages.en.params]
      homeSubtitle = "\"Now it's time to leave the capsule if you dare.\""
    weight = 1
- [languages.fr]
+  [languages.zh]
    title = 'Ratuthomm'
-   [languages.fr.params]
+   [languages.zh.params]
      homeSubtitle = "\"Now it's time to leave the capsule if you dare.\""
-   weight = 2
- [languages.it]
-   title = 'Ratuthomm'
-   [languages.it.params]
-     homeSubtitle = "\"Now it's time to leave the capsule if you dare.\""
-   weight = 3
+   weight = 1
  
 languageCode = "en-us"
-
-# title = "CHANGE ME"
-# enableGitInfo = true
+enableGitInfo = true
 
 pygmentsCodefences  = true
 pygmentsUseClasses  = true
-hasCJKLanguage = true
+
 
 rssLimit = 10
 
@@ -87,6 +81,7 @@ expiryDate = ["expiryDate"]
 
   #homeSubtitle = "CHANGE ME HOME SUBTITLE"
   footerCopyright = " CC BY-NC 4.0 "
+  footerHideThemeName = true
   # bgImg = ""
   # gitUrl = "https://github.com/1bl4z3r/hermit-V2/tree/staging"
 
