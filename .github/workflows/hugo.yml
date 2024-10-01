@@ -28,6 +28,14 @@ defaults:
     shell: bash
 
 jobs:
+  # Check typos
+  typos:
+    name: Spell Check with Typos
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crate-ci/typos@master
+
   # Build job
   build:
     runs-on: ubuntu-latest
