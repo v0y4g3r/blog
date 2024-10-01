@@ -32,7 +32,7 @@ toc: true
 {{% img-title %}} BookKeeper 的 quorum write 机制 {{% /img-title %}}
 
 
-Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了 ZK 去保存元数据，并且通过 triming 机制（BK 称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。
+Striping 很容易就会导致读取者所看到的 log 不一致，因此 BK 引入了 ZK 去保存元数据，并且通过 trimming 机制（BK 称为 reader-initiated ledger recovery）来确保末尾未完整写完整个 quorum 的数据能够被安全删除并且对 reader 不可见。
 
 # 实现细节
 

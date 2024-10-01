@@ -1,0 +1,8 @@
+[default.extend-words]
+devels = "devels"
+
+[files]
+extend-exclude = [
+    "themes/*",
+    "resources/*",
+]

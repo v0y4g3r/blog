@@ -31,7 +31,7 @@ P2c 是 P2b 的充分不必要条件，why？
 
 
 
-那么只要 proposer 满足 P2c，就能满足所谓的 C-condition，从而实现 P2c -> C-condidtion -> 附加假设 1-> P2b 的证明路径。
+那么只要 proposer 满足 P2c，就能满足所谓的 C-condition，从而实现 P2c -> C-condition -> 附加假设 1-> P2b 的证明路径。
 > 为什么 P2c 可以保证 C-condidition？
 > P2c 约束了 proposer 每次提案之前先要知道 majority 的情况，由于`(m,v)`已经 chosen，因此符合 P2c 的 proposer 在提出 m+1 的时候，提案的值必然是 m（highest accepted proposal）的值 v，m+2、m+3 直到 n-1 都是这样，从而可以保证 C-condition 的 (2)，
 

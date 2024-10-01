@@ -40,4 +40,4 @@ tags:
 出来混，迟早要还的。
 
 
-![Drake's statue rmeoved](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/remoing-drake.png)
+![Drake's statue removed](https://cdn.jsdelivr.net/gh/RayneHwang/img-repo/remoing-drake.png)

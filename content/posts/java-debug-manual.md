@@ -270,7 +270,7 @@ java -classpath ".:$JAVA_HOME/lib/sa-jdi.jar" \
 | System call interface                         | strace(1), perf(1),eBPF |
 | Network Traffic                               | tcpdump(8),eBPF         |
 | Kernel: Scheduler, file systems, TCP, IP, etc | ftrace(1), perf(1),eBPF |
-| Hardware: CPU internals, devicec              | perf, sar, eBPF         |
+| Hardware: CPU internals, devices              | perf, sar, eBPF         |
 
 
 ---
@@ -504,14 +504,14 @@ XDP Operating modes
 
 -  Native mode 
    - Play with DMA buffer
-   - NO SKB ALLOCATON
+   - NO SKB ALLOCATION
    - Least overhead
    - Need driver modification
 -  SKB mode 
    - From `netif_receive_skb()`
    - After SKB and DMA allocation
    - More instructions
-   - Driver-Indepent
+   - Driver-Independent
 
 ---
 
