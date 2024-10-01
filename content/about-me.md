@@ -18,7 +18,7 @@ This is Lei, an Alfista/keyboard racer/part-time photographer/full-time programm
 Battling wits with the Rust compiler every day.
 
 ### 2019.07 ~ 2022.04：Infrastructure Team at Alipay
-Did a bit of minor work in rewriring Alipay's message queue, but I left before finishing all the work (XD
+Did a bit of minor work in rewriting Alipay's message queue, but I left before finishing all the work (XD
 
 ## Footprints
 - PEK/PVG/SHA/SZX/HGH/NKG
