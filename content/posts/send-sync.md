@@ -199,7 +199,7 @@ impl JobImpl {
 ```
 可以看到 `do_something`的 receiver 是 `JobImpl`的共享引用，那么`__self`自然就会被 coerce 成 `&JobImpl`。根据 `Send` 和 `Sync` 的绑定关系，如果 T 的共享引用是 `Send`，那么 T 自身必须是 `Sync`，这样就能解释为啥要求 `JobImpl: Sync`了。
 
-仅仅是因为 coercion 吗？我们可以试试把 `JobImpl::do_something`改成同步的签名 `fn do_something(&self) {}`，结果居然是可以编译的。显然问题不仅出在 receiver，也和 async 有关。我们都知道，Rust 的 async 本质上只是一个 generator 的语法糖，对 `JobImpl::do_something`的调用会被展开成一个实现了 Generator trait 的 struct，这个 struct 捕获了`JobImpl`的共享引用，而 `JobImpl`不满足`Sync`约束，从而 genrator 不满足 `Send`约束。
+仅仅是因为 coercion 吗？我们可以试试把 `JobImpl::do_something`改成同步的签名 `fn do_something(&self) {}`，结果居然是可以编译的。显然问题不仅出在 receiver，也和 async 有关。我们都知道，Rust 的 async 本质上只是一个 generator 的语法糖，对 `JobImpl::do_something`的调用会被展开成一个实现了 Generator trait 的 struct，这个 struct 捕获了`JobImpl`的共享引用，而 `JobImpl`不满足`Sync`约束，从而 generator 不满足 `Send`约束。
 
 因此我们只需要增加三个字母，把 `JobImpl::do_something`的 receiver 改成可变引用就行啦。
 

@@ -38,6 +38,7 @@ jobs:
 
   # Build job
   build:
+    needs: typos
     runs-on: ubuntu-latest
     env:
       HUGO_VERSION: 0.134.2
